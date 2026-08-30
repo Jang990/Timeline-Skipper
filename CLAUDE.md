@@ -101,7 +101,7 @@ describe('parseTimelineComment', () => {
 - `manifest.json`의 `permissions`, `host_permissions`, `matches` 추가나 변경
 - 런타임 의존성 추가, 번들러·빌드 도구 도입
 - 파일 삭제, 디렉토리 구조 변경
-- `git commit`, `git push`
+- `main` 브랜치에 직접 push (작업 브랜치에서의 commit/push는 자유)
 - 기존 테스트의 기대값 수정 — 테스트가 틀렸다고 판단되면 고치기 전에 먼저 말한다
 
 ## 모를 때
