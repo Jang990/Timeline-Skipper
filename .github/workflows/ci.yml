@@ -13,17 +13,16 @@ jobs:
         run: |
           BASE=$(git merge-base origin/${{ github.base_ref }} HEAD)
           FIRST=$(git rev-list ${BASE}..HEAD | tail -1)
-          CHANGED=$(git diff --name-only ${FIRST}..HEAD -- 'src/test/')
+          CHANGED=$(git diff --name-only ${FIRST}..HEAD -- 'tests/')
           if [ -n "$CHANGED" ]; then
             echo "::error::첫 커밋 이후 테스트가 수정됨"
             echo "$CHANGED"
             exit 1
           fi
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-node@v4
         with:
-          java-version: '21'        # build.gradle 의 버전에 맞출 것
-          distribution: 'temurin'
+          node-version: '22'
 
-      - run: chmod +x gradlew
-      - run: ./gradlew test
+      - run: npm ci
+      - run: npm test
