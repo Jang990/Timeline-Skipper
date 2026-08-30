@@ -6,7 +6,8 @@
       "Bash(gh pr create:*)",
       "Bash(gh pr view:*)",
       "Bash(gh pr diff:*)",
-      "Bash(./gradlew:*)"
+      "Bash(npm:*)",
+      "Bash(npx:*)"
     ],
     "ask": ["Bash(gh pr merge:*)"],
     "deny": [
