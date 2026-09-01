@@ -1,4 +1,4 @@
-import { findTrackAtTime } from './findTrackAtTime.js'
+import { findTrackAtTime } from '../tracks/findTrackAtTime.js'
 
 export function findSkipTarget(tracks, disabledStartSeconds, currentTimeSeconds) {
   const currentTrack = findTrackAtTime(tracks, currentTimeSeconds)
