@@ -33,11 +33,11 @@ function createRow(track, { disabledStartSeconds, onToggle, onSeek, onDelete, on
   checkbox.setAttribute('aria-label', `${track.title} 재생`)
   checkbox.addEventListener('change', () => onToggle(track.startSeconds))
 
-  const time = document.createElement('button')
-  time.type = 'button'
-  time.className = 'timeline-skip-time'
-  time.textContent = formatTimestamp(track.startSeconds)
-  time.addEventListener('click', () => onSeek(track.startSeconds))
+  const time = createButton({
+    label: formatTimestamp(track.startSeconds),
+    className: 'timeline-skip-time',
+    onClick: () => onSeek(track.startSeconds)
+  })
 
   // 댓글 본문은 남이 쓴 문자열이다. 항상 textContent로만 넣는다.
   const title = document.createElement('span')
