@@ -1,5 +1,5 @@
-import { parseTrackInput } from '../core/parseTrackInput.js'
-import { isTimestampTaken } from '../core/isTimestampTaken.js'
+import { parseTrackInput } from '../core/parse/parseTrackInput.js'
+import { isTimestampTaken } from '../core/tracks/isTimestampTaken.js'
 import { formatTimestamp } from './formatTimestamp.js'
 
 const INVALID_CLASS = 'is-invalid'

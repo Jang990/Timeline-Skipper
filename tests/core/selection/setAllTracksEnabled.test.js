@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { setAllTracksEnabled } from '../../src/core/setAllTracksEnabled.js'
+import { setAllTracksEnabled } from '../../../src/core/selection/setAllTracksEnabled.js'
 
 describe('setAllTracksEnabled', () => {
   it('전체 해제하면 모든 트랙의 시작 시각을 담은 Set을 반환한다', () => {

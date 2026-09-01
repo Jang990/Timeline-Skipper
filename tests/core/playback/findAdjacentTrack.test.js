@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { findAdjacentTrack } from '../../src/core/findAdjacentTrack.js'
+import { findAdjacentTrack } from '../../../src/core/playback/findAdjacentTrack.js'
 
 const tracks = [
   { startSeconds: 10, endSeconds: 100, title: '첫 곡' },

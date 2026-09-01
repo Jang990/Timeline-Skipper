@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { findTrackAtTime } from '../../src/core/findTrackAtTime.js'
+import { findTrackAtTime } from '../../../src/core/tracks/findTrackAtTime.js'
 
 const tracks = [
   { startSeconds: 10, endSeconds: 100, title: '첫 곡' },

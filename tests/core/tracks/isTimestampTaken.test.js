@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { isTimestampTaken } from '../../src/core/isTimestampTaken.js'
+import { isTimestampTaken } from '../../../src/core/tracks/isTimestampTaken.js'
 
 const tracks = [
   { startSeconds: 0, endSeconds: 90, title: '첫 곡' },

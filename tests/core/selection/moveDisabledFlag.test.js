@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { moveDisabledFlag } from '../../src/core/moveDisabledFlag.js'
+import { moveDisabledFlag } from '../../../src/core/selection/moveDisabledFlag.js'
 
 describe('moveDisabledFlag', () => {
   it('비활성이던 시각을 옮기면 새 시각이 비활성이 된다', () => {

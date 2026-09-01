@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { findLoopTarget } from '../../src/core/findLoopTarget.js'
+import { findLoopTarget } from '../../../src/core/playback/findLoopTarget.js'
 
 const tracks = [
   { startSeconds: 10, endSeconds: 100, title: '첫 곡' },

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { removeEntriesAt } from '../../src/core/removeEntriesAt.js'
+import { removeEntriesAt } from '../../../src/core/entries/removeEntriesAt.js'
 
 describe('removeEntriesAt', () => {
   it('해당 시각의 항목을 제거한 새 배열을 반환한다', () => {

@@ -1,4 +1,4 @@
-import { findTrackAtTime } from './findTrackAtTime.js'
+import { findTrackAtTime } from '../tracks/findTrackAtTime.js'
 
 // 곡 중간에서 "이전"을 누르면 그 곡의 처음으로 돌아간다. 음악 플레이어의 관습이다.
 // 이 시간 안이면 "방금 넘어왔다"고 보고 한 곡 더 앞으로 보낸다.
