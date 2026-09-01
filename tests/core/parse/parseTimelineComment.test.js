@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { parseTimelineComment } from '../../src/core/parseTimelineComment.js'
+import { parseTimelineComment } from '../../../src/core/parse/parseTimelineComment.js'
 
 describe('parseTimelineComment', () => {
   it('"00:01 Ballerino" 형식의 줄을 시각과 제목으로 분리한다', () => {

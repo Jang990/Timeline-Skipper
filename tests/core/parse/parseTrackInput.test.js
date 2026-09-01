@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { parseTrackInput } from '../../src/core/parseTrackInput.js'
+import { parseTrackInput } from '../../../src/core/parse/parseTrackInput.js'
 
 describe('parseTrackInput', () => {
   it('"4:29"와 제목을 초 단위 시각과 제목으로 만든다', () => {

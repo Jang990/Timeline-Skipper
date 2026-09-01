@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { buildTracks } from '../../src/core/buildTracks.js'
+import { buildTracks } from '../../../src/core/tracks/buildTracks.js'
 
 describe('buildTracks', () => {
   it('시각이 뒤섞여 있어도 시작 시각 오름차순으로 정렬한다', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { findSkipTarget } from '../../src/core/findSkipTarget.js'
+import { findSkipTarget } from '../../../src/core/playback/findSkipTarget.js'
 
 const tracks = [
   { startSeconds: 10, endSeconds: 100, title: '첫 곡' },

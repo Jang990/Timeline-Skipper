@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { upsertEntry } from '../../src/core/upsertEntry.js'
+import { upsertEntry } from '../../../src/core/entries/upsertEntry.js'
 
 describe('upsertEntry', () => {
   it('기존 시각의 항목을 새 항목으로 바꾼다', () => {
