@@ -1,4 +1,4 @@
-import { createButton } from './elements.js'
+import { createButton } from '../elements.js'
 
 export function createHeader({ tracks, disabledStartSeconds, onEnableAll, onDisableAll, onClear }) {
   const header = document.createElement('div')

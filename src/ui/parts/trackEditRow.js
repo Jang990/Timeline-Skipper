@@ -1,7 +1,7 @@
-import { parseTrackInput } from '../core/parse/parseTrackInput.js'
-import { isTimestampTaken } from '../core/tracks/isTimestampTaken.js'
-import { createButton, createInput } from './elements.js'
-import { formatTimestamp } from './formatTimestamp.js'
+import { parseTrackInput } from '../../core/parse/parseTrackInput.js'
+import { isTimestampTaken } from '../../core/tracks/isTimestampTaken.js'
+import { createButton, createInput } from '../elements.js'
+import { formatTimestamp } from '../formatTimestamp.js'
 
 const INVALID_CLASS = 'is-invalid'
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'

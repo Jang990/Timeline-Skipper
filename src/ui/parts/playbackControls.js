@@ -1,4 +1,4 @@
-import { createButton } from './elements.js'
+import { createButton } from '../elements.js'
 
 export function createControls({ isPaused, loopEnabled, onPrevious, onTogglePlay, onNext, onToggleLoop }) {
   const controls = document.createElement('div')

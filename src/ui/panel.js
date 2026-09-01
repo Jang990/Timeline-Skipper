@@ -1,9 +1,9 @@
 import { SELECTORS } from '../adapters/selectors.js'
 import { createEditingState } from './editingState.js'
-import { createList, createAddRow } from './trackList.js'
-import { createEditRow } from './trackEditRow.js'
-import { createControls } from './playbackControls.js'
-import { createHeader } from './panelHeader.js'
+import { createList, createAddRow } from './parts/trackList.js'
+import { createEditRow } from './parts/trackEditRow.js'
+import { createControls } from './parts/playbackControls.js'
+import { createHeader } from './parts/panelHeader.js'
 
 const PANEL_ID = 'timeline-skip-panel'
 const LIST_SELECTOR = '.timeline-skip-list'

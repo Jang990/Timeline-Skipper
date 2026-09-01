@@ -1,6 +1,6 @@
-import { createButton } from './elements.js'
+import { createButton } from '../elements.js'
 import { createEditRow } from './trackEditRow.js'
-import { formatTimestamp } from './formatTimestamp.js'
+import { formatTimestamp } from '../formatTimestamp.js'
 
 // 원본 댓글은 그대로 남아 언제든 다시 불러올 수 있다. 그래서 "삭제"가 아니라 "빼기"다.
 // 항목을 빼면 그 구간은 앞 트랙에 합쳐진다. 첫 트랙만은 앞이 없어 트랙 밖 구간이 된다.
