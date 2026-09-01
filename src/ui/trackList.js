@@ -1,3 +1,4 @@
+import { createButton } from './elements.js'
 import { createEditRow } from './trackEditRow.js'
 import { formatTimestamp } from './formatTimestamp.js'
 
@@ -64,15 +65,13 @@ function createRow(track, { disabledStartSeconds, onToggle, onSeek, onDelete, on
 // ✕는 파괴적인 삭제로 읽힌다. 목록에서 빼는 동작이므로 −를 쓴다(추가의 +와 짝).
 // 오클릭을 막으려고 체크박스 반대쪽 끝에 둔다.
 function createRowButton(symbol, ariaLabel, hint, onClick, extraClass = '') {
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.className = `timeline-skip-row-action ${extraClass}`.trim()
-  button.textContent = symbol
-  button.title = hint
-  button.setAttribute('aria-label', ariaLabel)
-  button.addEventListener('click', onClick)
-
-  return button
+  return createButton({
+    label: symbol,
+    className: `timeline-skip-row-action ${extraClass}`.trim(),
+    title: hint,
+    ariaLabel,
+    onClick
+  })
 }
 
 // 목록이 비어 있어도 보여야 한다. 댓글 없이 직접 만들어 쓰는 사람도 있다.
@@ -80,14 +79,14 @@ export function createAddRow(onStartAdd) {
   const row = document.createElement('div')
   row.className = 'timeline-skip-add-row'
 
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.className = 'timeline-skip-add'
-  button.textContent = '+ 직접 추가'
-  button.title = '지금 재생 위치로 트랙을 추가합니다'
-  button.addEventListener('click', onStartAdd)
-
-  row.append(button)
+  row.append(
+    createButton({
+      label: '+ 직접 추가',
+      className: 'timeline-skip-add',
+      title: '지금 재생 위치로 트랙을 추가합니다',
+      onClick: onStartAdd
+    })
+  )
 
   return row
 }

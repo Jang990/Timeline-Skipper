@@ -1,3 +1,5 @@
+import { createButton } from './elements.js'
+
 export function createHeader({ tracks, disabledStartSeconds, onEnableAll, onDisableAll, onClear }) {
   const header = document.createElement('div')
   header.className = 'timeline-skip-header'
@@ -20,15 +22,9 @@ export function createHeader({ tracks, disabledStartSeconds, onEnableAll, onDisa
 
 // 체크박스 하나로 전부 토글하는 대신 버튼 둘로 나눴다.
 // 이 패널에서는 "전체 해제 후 몇 개만 고르기"가 주 사용 흐름이라 항상 한 번에 닿아야 한다.
+// 글자가 곧 설명이라 툴팁과 aria-label을 따로 두지 않는다.
 function createActionButton(label, onClick, isDisabled) {
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.className = 'timeline-skip-action'
-  button.textContent = label
-  button.disabled = isDisabled
-  button.addEventListener('click', onClick)
-
-  return button
+  return createButton({ label, className: 'timeline-skip-action', isDisabled, onClick })
 }
 
 function toHeaderLabel(tracks, disabledStartSeconds) {
