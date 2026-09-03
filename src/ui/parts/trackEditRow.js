@@ -1,6 +1,7 @@
-import { parseTrackInput } from '../core/parse/parseTrackInput.js'
-import { isTimestampTaken } from '../core/tracks/isTimestampTaken.js'
-import { formatTimestamp } from './formatTimestamp.js'
+import { parseTrackInput } from '../../core/parse/parseTrackInput.js'
+import { isTimestampTaken } from '../../core/tracks/isTimestampTaken.js'
+import { createButton, createInput } from '../elements.js'
+import { formatTimestamp } from '../formatTimestamp.js'
 
 const INVALID_CLASS = 'is-invalid'
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
@@ -16,11 +17,14 @@ export function createEditRow(draft, { tracks, onSubmitEdit, onCancelEdit }) {
   const error = document.createElement('div')
   error.className = 'timeline-skip-error'
 
-  const timeInput = createInput('timeline-skip-time-input', formatTimestamp(draft.startSeconds))
+  const timeInput = createInput({
+    className: 'timeline-skip-time-input',
+    value: formatTimestamp(draft.startSeconds)
+  })
   timeInput.title = TIME_HINT
   timeInput.setAttribute('aria-label', '시작 시각')
 
-  const titleInput = createInput('timeline-skip-title-input', draft.title)
+  const titleInput = createInput({ className: 'timeline-skip-title-input', value: draft.title })
   titleInput.placeholder = '제목 (비우면 구간만 나눕니다)'
   titleInput.setAttribute('aria-label', '트랙 제목')
 
@@ -81,23 +85,12 @@ function handleKey(event, submit, onCancelEdit) {
   }
 }
 
-function createInput(className, value) {
-  const input = document.createElement('input')
-  input.type = 'text'
-  input.className = className
-  input.value = value
-
-  return input
-}
-
 function createEditButton(symbol, label, onClick) {
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.className = 'timeline-skip-edit-action'
-  button.textContent = symbol
-  button.title = label
-  button.setAttribute('aria-label', label)
-  button.addEventListener('click', onClick)
-
-  return button
+  return createButton({
+    label: symbol,
+    className: 'timeline-skip-edit-action',
+    title: label,
+    ariaLabel: label,
+    onClick
+  })
 }

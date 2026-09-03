@@ -1,3 +1,5 @@
+import { createButton } from '../elements.js'
+
 export function createControls({ isPaused, loopEnabled, onPrevious, onTogglePlay, onNext, onToggleLoop }) {
   const controls = document.createElement('div')
   controls.className = 'timeline-skip-controls'
@@ -13,13 +15,11 @@ export function createControls({ isPaused, loopEnabled, onPrevious, onTogglePlay
 }
 
 function createControlButton(symbol, label, onClick, isActive = false) {
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.className = isActive ? 'timeline-skip-control is-active' : 'timeline-skip-control'
-  button.textContent = symbol
-  button.title = label
-  button.setAttribute('aria-label', label)
-  button.addEventListener('click', onClick)
-
-  return button
+  return createButton({
+    label: symbol,
+    className: isActive ? 'timeline-skip-control is-active' : 'timeline-skip-control',
+    title: label,
+    ariaLabel: label,
+    onClick
+  })
 }

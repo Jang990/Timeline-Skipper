@@ -1,8 +1,9 @@
 import { SELECTORS } from '../adapters/selectors.js'
-import { createList, createAddRow } from './trackList.js'
-import { createEditRow } from './trackEditRow.js'
-import { createControls } from './playbackControls.js'
-import { createHeader } from './panelHeader.js'
+import { createEditingState } from './editingState.js'
+import { createList, createAddRow } from './parts/trackList.js'
+import { createEditRow } from './parts/trackEditRow.js'
+import { createControls } from './parts/playbackControls.js'
+import { createHeader } from './parts/panelHeader.js'
 
 const PANEL_ID = 'timeline-skip-panel'
 const LIST_SELECTOR = '.timeline-skip-list'
@@ -11,15 +12,10 @@ const TITLE_INPUT_SELECTOR = '.timeline-skip-title-input'
 // 페이지가 조금만 바뀌어도 다시 그리라는 요청이 온다.
 // 내용이 그대로면 건너뛰어야 체크박스가 깜빡이지 않는다.
 let lastSignature = null
-
-// 편집·추가 중인 행은 저장할 값이 아니라 화면만의 상태다. core도 content도 알 필요가 없다.
-let editingStartSeconds = null
-let addingDraftSeconds = null
 let lastRenderedEditKey = null
 let lastView = null
 
-const isEditing = () => editingStartSeconds !== null || addingDraftSeconds !== null
-const toEditKey = () => `${editingStartSeconds}#${addingDraftSeconds}`
+const editing = createEditingState()
 
 export function render(view) {
   lastView = view
@@ -32,26 +28,25 @@ export function render(view) {
   const panel = document.getElementById(PANEL_ID)
 
   // 편집 중에 다시 그리면 입력하던 글자가 사라진다. 편집 대상이 바뀔 때만 그린다.
-  if (panel !== null && isEditing() && toEditKey() === lastRenderedEditKey) {
+  if (panel !== null && editing.isEditing() && editing.toKey() === lastRenderedEditKey) {
     return
   }
 
-  const signature = `${toSignature(view)}#${toEditKey()}`
+  const signature = `${toSignature(view)}#${editing.toKey()}`
 
   if (panel !== null && signature === lastSignature) {
     return
   }
 
   lastSignature = signature
-  lastRenderedEditKey = toEditKey()
+  lastRenderedEditKey = editing.toKey()
   drawInto(panel ?? createPanel(container), view)
 }
 
 // 영상이 바뀌면 편집하던 행은 더 이상 없다. 열려 있던 편집을 닫지 않으면
 // 다른 영상의 목록에 그 수정이 적용된다.
 export function resetEditing() {
-  editingStartSeconds = null
-  addingDraftSeconds = null
+  editing.reset()
   lastRenderedEditKey = null
 }
 
@@ -74,7 +69,7 @@ function drawInto(target, view) {
   }
 
   // 고치려는 사람은 제목부터 손댄다. 바로 덮어쓸 수 있게 골라둔 채로 시작한다.
-  if (isEditing()) {
+  if (editing.isEditing()) {
     const titleInput = target.querySelector(TITLE_INPUT_SELECTOR)
 
     titleInput?.focus()
@@ -83,11 +78,19 @@ function drawInto(target, view) {
 }
 
 function toListView(view) {
-  return { ...view, editingStartSeconds, onStartEdit: startEditing, onCancelEdit: cancelEdit, onSubmitEdit: submitEdit }
+  return {
+    ...view,
+    editingStartSeconds: editing.getEditingStartSeconds(),
+    onStartEdit: startEditing,
+    onCancelEdit: cancelEdit,
+    onSubmitEdit: submitEdit
+  }
 }
 
 // 추가하는 동안에는 "+ 직접 추가" 자리가 그대로 입력 폼이 된다.
 function createAddArea(view) {
+  const addingDraftSeconds = editing.getAddingDraftSeconds()
+
   if (addingDraftSeconds === null) {
     return createAddRow(startAdding)
   }
@@ -98,36 +101,32 @@ function createAddArea(view) {
   )
 }
 
+// 아래 다섯은 상태를 바꾸고 다시 그리기만 한다. 무엇이 열리고 닫히는지는 editingState가 안다.
 function startEditing(startSeconds) {
-  editingStartSeconds = startSeconds
-  addingDraftSeconds = null
+  editing.startEditing(startSeconds)
   render(lastView)
-}
-
-// 편집을 먼저 닫아야 이어지는 그리기가 억제되지 않는다.
-function submitEdit(previousStartSeconds, entry) {
-  editingStartSeconds = null
-  lastView.onEdit(previousStartSeconds, entry)
 }
 
 // 듣다가 "여기부터 새 곡"이 되는 흐름이라 지금 재생 위치를 기본값으로 넣는다.
 function startAdding() {
-  const currentTimeSeconds = lastView.getCurrentTimeSeconds()
-
-  addingDraftSeconds = Number.isFinite(currentTimeSeconds) ? Math.floor(currentTimeSeconds) : 0
-  editingStartSeconds = null
+  editing.startAdding(lastView.getCurrentTimeSeconds())
   render(lastView)
 }
 
 // 편집이든 추가든 취소는 하나다. 열려 있던 입력을 닫고 원래 목록으로 돌아간다.
 function cancelEdit() {
-  editingStartSeconds = null
-  addingDraftSeconds = null
+  editing.cancel()
   render(lastView)
 }
 
+// 편집을 먼저 닫아야 이어지는 그리기가 억제되지 않는다.
+function submitEdit(previousStartSeconds, entry) {
+  editing.finishEdit()
+  lastView.onEdit(previousStartSeconds, entry)
+}
+
 function submitAdd(entry) {
-  addingDraftSeconds = null
+  editing.finishAdd()
   lastView.onAdd(entry)
 }
 
