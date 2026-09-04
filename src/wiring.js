@@ -30,12 +30,13 @@ export function start(modules) {
 }
 
 function toPanelView(modules, state, actions) {
-  const { player } = modules
+  const { player, playing } = modules
 
   return {
     tracks: state.tracks,
     disabledStartSeconds: state.disabledStartSeconds,
     loopEnabled: state.loopEnabled,
+    playingStartSeconds: playing.findPlayingStartSeconds(state.tracks, player.getCurrentTimeSeconds()),
     isPaused: player.isPaused(),
     getCurrentTimeSeconds: player.getCurrentTimeSeconds,
     onSeek: player.seekTo,
@@ -91,6 +92,10 @@ function bindPlayback(modules, state, draw) {
     if (targetSeconds !== null) {
       player.seekTo(targetSeconds)
     }
+
+    // 재생 중인 트랙 표시가 따라오려면 시간이 흐를 때도 그려야 한다.
+    // 실제 DOM 교체는 panel이 막는다(그릴 내용이 같으면 건너뛴다).
+    draw()
   })
 }
 
