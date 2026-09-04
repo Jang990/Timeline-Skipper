@@ -34,6 +34,19 @@
   text-decoration: line-through;
 }
 
+/* 지금 재생 중인 트랙. 체크 해제된 행(흐림·취소선)과 겹쳐도 읽히도록
+   글자색이 아니라 배경과 왼쪽 막대로 표시한다.
+   막대를 border로 그리면 그 행만 오른쪽으로 밀리므로 box-shadow로 얹는다. */
+.timeline-skip-row.is-playing {
+  border-radius: 4px;
+  background: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15));
+  box-shadow: inset 3px 0 0 var(--yt-spec-call-to-action, #3ea6ff);
+}
+
+.timeline-skip-row.is-playing .timeline-skip-title {
+  font-weight: 500;
+}
+
 .timeline-skip-time {
   flex: none;
   padding: 0;

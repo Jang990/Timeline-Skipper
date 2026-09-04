@@ -6,6 +6,7 @@
   const modulePaths = {
     parser: 'src/core/parse/parseTimelineComment.js',
     builder: 'src/core/tracks/buildTracks.js',
+    playing: 'src/core/tracks/findPlayingStartSeconds.js',
     skipper: 'src/core/playback/findSkipTarget.js',
     looper: 'src/core/playback/findLoopTarget.js',
     adjacent: 'src/core/playback/findAdjacentTrack.js',

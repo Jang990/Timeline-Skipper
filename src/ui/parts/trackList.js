@@ -21,11 +21,10 @@ export function createList(view) {
   return list
 }
 
-function createRow(track, { disabledStartSeconds, onToggle, onSeek, onDelete, onStartEdit }, isFirstTrack) {
+function createRow(track, view, isFirstTrack) {
+  const { disabledStartSeconds, playingStartSeconds, onToggle, onSeek, onDelete, onStartEdit } = view
   const isDisabled = disabledStartSeconds.has(track.startSeconds)
-
-  const row = document.createElement('div')
-  row.className = isDisabled ? 'timeline-skip-row is-disabled' : 'timeline-skip-row'
+  const row = createRowShell(isDisabled, track.startSeconds === playingStartSeconds)
 
   const checkbox = document.createElement('input')
   checkbox.type = 'checkbox'
@@ -57,6 +56,21 @@ function createRow(track, { disabledStartSeconds, onToggle, onSeek, onDelete, on
       'timeline-skip-remove'
     )
   )
+
+  return row
+}
+
+// 해제된 트랙을 지나는 중이면 두 상태가 겹친다. 하나가 다른 하나를 지우지 않도록 클래스로 따로 얹는다.
+function createRowShell(isDisabled, isPlaying) {
+  const row = document.createElement('div')
+  row.className = 'timeline-skip-row'
+  row.classList.toggle('is-disabled', isDisabled)
+  row.classList.toggle('is-playing', isPlaying)
+
+  // 색만으로는 화면을 읽어주는 사람에게 아무것도 전해지지 않는다.
+  if (isPlaying) {
+    row.setAttribute('aria-current', 'true')
+  }
 
   return row
 }
