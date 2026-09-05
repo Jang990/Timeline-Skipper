@@ -23,12 +23,12 @@
 }
 
 /* 좌우 여백은 모든 행이 함께 가진다. 재생 중인 행에만 주면 재생 위치가 넘어갈 때
-   그 행만 좌우로 밀린다. 왼쪽 12px은 is-playing 막대가 체크박스에 닿지 않도록 비워둔 자리다. */
+   그 행만 좌우로 밀린다. 왼쪽 8px은 is-playing 막대가 체크박스에 닿지 않도록 비워둔 자리다. */
 .timeline-skip-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
+  gap: 6px;
+  padding: 4px 8px;
 }
 
 .timeline-skip-row.is-disabled .timeline-skip-title {
@@ -223,7 +223,7 @@
 }
 
 .timeline-skip-add-row {
-  padding: 4px 12px 0;
+  padding: 4px 8px 0;
 }
 
 .timeline-skip-add {
@@ -248,9 +248,9 @@
   display: none;
 }
 
-/* 12px(행 패딩) + 72px(시각 칸) + 6px(편집 행 gap). 제목 입력칸 왼쪽에 맞춘다. */
+/* 8px(행 패딩) + 72px(시각 칸) + 6px(편집 행 gap). 제목 입력칸 왼쪽에 맞춘다. */
 .timeline-skip-error {
-  padding: 2px 0 4px 90px;
+  padding: 2px 0 4px 86px;
   color: #f28b82;
   font-size: 11px;
 }
