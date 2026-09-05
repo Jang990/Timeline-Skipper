@@ -22,11 +22,13 @@
   overflow-y: auto;
 }
 
+/* 좌우 여백은 모든 행이 함께 가진다. 재생 중인 행에만 주면 재생 위치가 넘어갈 때
+   그 행만 좌우로 밀린다. 왼쪽 8px은 is-playing 막대가 체크박스에 닿지 않도록 비워둔 자리다. */
 .timeline-skip-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 3px 0;
+  gap: 6px;
+  padding: 4px 8px;
 }
 
 .timeline-skip-row.is-disabled .timeline-skip-title {
@@ -36,10 +38,12 @@
 
 /* 지금 재생 중인 트랙. 체크 해제된 행(흐림·취소선)과 겹쳐도 읽히도록
    글자색이 아니라 배경과 왼쪽 막대로 표시한다.
-   막대를 border로 그리면 그 행만 오른쪽으로 밀리므로 box-shadow로 얹는다. */
+   막대를 border로 그리면 그 행만 오른쪽으로 밀리므로 box-shadow로 얹는다.
+   배경은 hover보다 옅게 둔다. 같은 농도면 마우스를 올렸을 때
+   재생 중이라 밝은 건지 hover라 밝은 건지 구분되지 않는다. */
 .timeline-skip-row.is-playing {
   border-radius: 4px;
-  background: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15));
+  background: rgba(128, 128, 128, 0.08);
   box-shadow: inset 3px 0 0 var(--yt-spec-call-to-action, #3ea6ff);
 }
 
@@ -219,7 +223,7 @@
 }
 
 .timeline-skip-add-row {
-  padding: 4px 0 0;
+  padding: 4px 8px 0;
 }
 
 .timeline-skip-add {
@@ -244,8 +248,9 @@
   display: none;
 }
 
+/* 8px(행 패딩) + 72px(시각 칸) + 6px(편집 행 gap). 제목 입력칸 왼쪽에 맞춘다. */
 .timeline-skip-error {
-  padding: 2px 0 4px 78px;
+  padding: 2px 0 4px 86px;
   color: #f28b82;
   font-size: 11px;
 }
