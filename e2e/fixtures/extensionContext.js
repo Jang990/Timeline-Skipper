@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { test as base, chromium, expect } from '@playwright/test'
 
 import { buildFixturePage } from './buildFixturePage.js'
+import { FIXTURE_VIDEO_URL, readFixtureVideo } from './media/fixtureVideo.js'
 
 // 확장은 일반 launch()로는 안 붙는다. persistent context여야 한다.
 const EXTENSION_PATH = fileURLToPath(new URL('../../', import.meta.url))
@@ -53,11 +54,15 @@ async function openWatchPage(context, fixture) {
   const consoleErrors = collectConsoleErrors(page)
 
   await page.route(YOUTUBE_PATTERN, (route) => {
+    if (route.request().url().endsWith(FIXTURE_VIDEO_URL)) {
+      return fulfillFixtureVideo(route)
+    }
+
     if (route.request().resourceType() === 'document') {
       return route.fulfill({
         status: 200,
         contentType: 'text/html; charset=utf-8',
-        body: buildFixturePage(fixture)
+        body: buildFixturePage({ videoSourceUrl: FIXTURE_VIDEO_URL, ...fixture })
       })
     }
 
@@ -68,6 +73,19 @@ async function openWatchPage(context, fixture) {
   await page.goto(WATCH_URL)
 
   return { page, readConsoleErrors: () => [...consoleErrors] }
+}
+
+// Accept-Ranges가 없으면 크롬이 video.seekable을 [0, 0]으로 잡고 seek을 전부 무시한다
+// (실측: currentTime을 넣어도 0에 머문다). 파일이 8KB라 통째로 돌려줘도 된다.
+function fulfillFixtureVideo(route) {
+  const body = readFixtureVideo()
+
+  return route.fulfill({
+    status: 200,
+    contentType: 'video/mp4',
+    headers: { 'Accept-Ranges': 'bytes', 'Content-Length': String(body.length) },
+    body
+  })
 }
 
 function collectConsoleErrors(page) {
