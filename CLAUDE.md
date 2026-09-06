@@ -98,33 +98,17 @@ describe('parseTimelineComment', () => {
 
 ## GitHub 규약
 
-작업의 종류(type)는 Angular 규약의 6가지다. 이 6가지가 라벨 이름이자 브랜치 이름의 앞부분이다.
+작업의 종류(type)는 Angular 규약의 6가지다. 라벨 이름이자 브랜치 이름의 앞부분이다.
 
-| type | 언제 |
-|---|---|
-| `feat` | 새 기능 |
-| `fix` | 버그 수정 |
-| `refactor` | 겉보기 동작이 그대로인 구조 개선 |
-| `test` | 테스트 추가·정비 |
-| `docs` | 문서만 변경 |
-| `chore` | 빌드·CI·설정 |
+`feat` 새 기능 · `fix` 버그 수정 · `refactor` 겉보기 동작이 그대로인 구조 개선 ·
+`test` 테스트 추가·정비 · `docs` 문서만 변경 · `chore` 빌드·CI·설정
 
-- **type은 라벨로만 표기한다. 이슈·PR 제목에 `feat:` 같은 prefix를 붙이지 않는다.**
-  제목과 라벨 양쪽에 적으면 한쪽만 고쳐져서 어긋난다. 라벨은 목록에서 필터가 되지만
-  제목의 prefix는 안 된다. 그래서 라벨을 남긴다.
+- **이슈·PR의 type은 라벨로만 표기한다.** 제목에 `feat:` 같은 prefix를 붙이지 않는다.
+  양쪽에 적으면 한쪽만 고쳐져 어긋나고, 목록에서 필터가 되는 것은 라벨뿐이다.
 - 이슈와 PR에는 type 라벨을 **정확히 하나** 붙인다. 두 개가 걸리면 작업을 쪼갠다.
-- 제목은 무엇을 하는지를 그대로 쓴다. `refactor: ui의 편집 상태 분리` → `ui의 편집 상태 분리`.
-- `e2e 발판:` 처럼 type이 아닌 말머리는 내용의 일부이므로 금지 대상이 아니다.
-
-**커밋 메시지와 브랜치 이름은 예외로 prefix를 유지한다.**
-
-- 커밋: `fix: 재생 중 강조 막대와 체크박스 사이에 여백을 준다` — `git log`에는 라벨이 없어서
-  prefix가 type을 알 수 있는 유일한 수단이다.
-- 브랜치: `<type>/#<이슈번호>` — 예: `feat/#10`, `refactor/#7`, `docs/#17`.
-
-type과 뜻이 겹치는 기본 라벨(`bug`, `enhancement`, `documentation`)은 삭제했다. 다시 만들지 않는다.
-`good first issue`, `help wanted`, `question`, `duplicate`, `invalid`, `wontfix`, `accessibility`는
-type과 겹치지 않으므로 type 라벨과 같이 붙여도 된다.
+- type과 뜻이 겹치는 라벨 만들지 않는다.
+- **커밋 메시지와 브랜치 이름에는 반대로 prefix를 쓴다.** `fix: 여백을 준다`,
+  `<type>/#<이슈번호>`. `git log`에는 라벨이 없어서 prefix가 유일한 신호다.
 
 ## 승인 없이 하지 않는 것
 

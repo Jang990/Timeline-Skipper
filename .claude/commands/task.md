@@ -5,11 +5,9 @@ argument-hint: [작업 설명]
 
 작업: $ARGUMENTS
 
-CLAUDE.md의 레이어 / 코드 / 테스트 규칙을 그대로 따른다.
+CLAUDE.md의 레이어 / 코드 / 테스트 / GitHub 규칙을 그대로 따른다.
 
-1. `gh issue create --label <type>` 로 이슈 생성.
-   type 은 Angular 규약: feat, fix, refactor, test, docs, chore. **정확히 하나만** 붙인다.
-   **제목에는 `feat:` 같은 prefix를 붙이지 않는다.** type 은 라벨로만 표기한다.
+1. `gh issue create --label <type>` 로 이슈 생성. type 라벨 하나, 제목에 prefix 없음.
    본문 형식:
    ## 목표         (한 문장)
    ## 완료 조건     (검증 가능한 문장들)
@@ -30,8 +28,7 @@ CLAUDE.md의 레이어 / 코드 / 테스트 규칙을 그대로 따른다.
 
 6. 테스트가 틀렸다고 판단되면 고치지 말고 멈춰서 말한다.
 
-7. `gh pr create --label <type> --body-file` 로 PR 생성.
-   라벨은 이슈에 붙인 것과 같은 것 하나. 제목에는 prefix를 붙이지 않는다.
+7. `gh pr create --label <type> --body-file` 로 PR 생성. 라벨은 이슈와 같은 것 하나.
    본문 형식:
    Closes #<번호>
    ## 무엇을 바꿨나
