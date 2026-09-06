@@ -1,4 +1,4 @@
-import { test, expect, WATCH_URL } from './fixtures/extensionContext.js'
+import { test, expect, WATCH_URL } from '../fixtures/extensionContext.js'
 
 // 이 네 개는 실패 지점이 서로 다르다. 어느 것이 깨졌는지로 원인이 갈린다.
 // 1번만 실패 = 문서 가로채기 방식이 틀렸다
