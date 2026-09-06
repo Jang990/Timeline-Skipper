@@ -5,9 +5,10 @@ argument-hint: [작업 설명]
 
 작업: $ARGUMENTS
 
-CLAUDE.md의 레이어 / 코드 / 테스트 규칙을 그대로 따른다.
+CLAUDE.md의 레이어 / 코드 / 테스트 / GitHub 규칙을 그대로 따른다.
 
-1. `gh issue create` 로 이슈 생성. 본문 형식:
+1. `gh issue create --label <type>` 로 이슈 생성. type 라벨 하나, 제목에 prefix 없음.
+   본문 형식:
    ## 목표         (한 문장)
    ## 완료 조건     (검증 가능한 문장들)
    ## 건드리지 않을 것
@@ -16,7 +17,7 @@ CLAUDE.md의 레이어 / 코드 / 테스트 규칙을 그대로 따른다.
    이 사이클의 유일한 승인 지점이다.
 
 3. (승인 후) 브랜치 생성. 이름은 `<type>/#<이슈번호>` 형식.
-   type 은 Angular 규약: feat, fix, refactor, test, docs, chore
+   type 은 1번에서 라벨로 고른 것과 같은 것을 쓴다.
    예: `feat/#7`, `refactor/#12`
    이슈 번호는 1번에서 `gh issue create` 가 출력한 URL 끝의 숫자를 쓴다.
 
@@ -27,7 +28,8 @@ CLAUDE.md의 레이어 / 코드 / 테스트 규칙을 그대로 따른다.
 
 6. 테스트가 틀렸다고 판단되면 고치지 말고 멈춰서 말한다.
 
-7. `gh pr create --body-file` 로 PR 생성. 본문 형식:
+7. `gh pr create --label <type> --body-file` 로 PR 생성. 라벨은 이슈와 같은 것 하나.
+   본문 형식:
    Closes #<번호>
    ## 무엇을 바꿨나
    ## 테스트로 검증된 것   (테스트 이름을 그대로 나열)
