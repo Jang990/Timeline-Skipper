@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { buildFixturePage } from '../../e2e/fixtures/buildFixturePage.js'
+import { buildFixturePage } from '../fixtures/buildFixturePage.js'
 
 function countOccurrences(text, part) {
   return text.split(part).length - 1

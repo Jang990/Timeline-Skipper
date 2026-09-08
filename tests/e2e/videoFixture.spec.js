@@ -1,5 +1,5 @@
-import { test, expect } from './fixtures/extensionContext.js'
-import { FIXTURE_VIDEO_SECONDS } from './fixtures/media/fixtureVideo.js'
+import { test, expect } from '../fixtures/extensionContext.js'
+import { FIXTURE_VIDEO_SECONDS } from '../fixtures/media/fixtureVideo.js'
 
 // 아래 spec들은 전부 이 영상 위에서 돈다. 여기가 깨지면 나머지 실패는 원인이 아니라 증상이다.
 test.describe('픽스처 영상', () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
-import { buildStillVideoMp4 } from '../../e2e/fixtures/media/buildStillVideoMp4.js'
-import { FIXTURE_VIDEO_SECONDS, readFixtureVideo } from '../../e2e/fixtures/media/fixtureVideo.js'
+import { buildStillVideoMp4 } from '../fixtures/media/buildStillVideoMp4.js'
+import { FIXTURE_VIDEO_SECONDS, readFixtureVideo } from '../fixtures/media/fixtureVideo.js'
 
 const HOUR_SECONDS = 3600
 const CHUNK_OFFSET_BYTES = 4

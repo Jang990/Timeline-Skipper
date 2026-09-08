@@ -9,11 +9,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 잠글 것은 단언이지 장치가 아니다. tests/fixtures/까지 잠그면 구현 커밋이
+      # 자기가 쓰는 픽스처를 못 고쳐서 "테스트 먼저 → 구현" 순서가 성립하지 않는다.
       - name: 테스트 명세 잠금
         run: |
           BASE=$(git merge-base origin/${{ github.base_ref }} HEAD)
           FIRST=$(git rev-list ${BASE}..HEAD | tail -1)
-          CHANGED=$(git diff --name-only ${FIRST}..HEAD -- 'tests/')
+          CHANGED=$(git diff --name-only ${FIRST}..HEAD -- tests/ ':(exclude)tests/fixtures/')
           if [ -n "$CHANGED" ]; then
             echo "::error::첫 커밋 이후 테스트가 수정됨"
             echo "$CHANGED"
