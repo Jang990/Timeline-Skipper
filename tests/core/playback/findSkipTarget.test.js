@@ -74,4 +74,59 @@ describe('findSkipTarget', () => {
 
     expect(result).toBe(null)
   })
+
+  it('트랙 사이 빈 구간에서는 다음 켜진 트랙으로 보낸다', () => {
+    const trimmedTracks = [
+      { startSeconds: 10, endSeconds: 50, title: '짧게 자른 곡' },
+      { startSeconds: 100, endSeconds: 200, title: '다음 곡' }
+    ]
+
+    const result = findSkipTarget(trimmedTracks, new Set(), 60)
+
+    expect(result).toBe(100)
+  })
+
+  it('빈 구간 뒤의 트랙이 전부 해제됐으면 마지막 트랙의 끝으로 보낸다', () => {
+    const trimmedTracks = [
+      { startSeconds: 10, endSeconds: 50, title: '짧게 자른 곡' },
+      { startSeconds: 100, endSeconds: 200, title: '해제된 곡' }
+    ]
+
+    const result = findSkipTarget(trimmedTracks, new Set([100]), 60)
+
+    expect(result).toBe(200)
+  })
+
+  it('빈 구간 뒤가 전부 해제됐고 영상 길이를 모르면 건너뛰지 않는다', () => {
+    const liveTracks = [
+      { startSeconds: 10, endSeconds: 50, title: '짧게 자른 곡' },
+      { startSeconds: 100, endSeconds: null, title: '진행 중인 곡' }
+    ]
+
+    const result = findSkipTarget(liveTracks, new Set([100]), 60)
+
+    expect(result).toBe(null)
+  })
+
+  it('첫 트랙 시작 전은 빈 구간이어도 건드리지 않는다', () => {
+    const trimmedTracks = [
+      { startSeconds: 10, endSeconds: 50, title: '짧게 자른 곡' },
+      { startSeconds: 100, endSeconds: 200, title: '다음 곡' }
+    ]
+
+    const result = findSkipTarget(trimmedTracks, new Set(), 5)
+
+    expect(result).toBe(null)
+  })
+
+  it('마지막 트랙이 끝난 뒤에는 되돌려 보내지 않는다', () => {
+    const trimmedTracks = [
+      { startSeconds: 10, endSeconds: 50, title: '첫 곡' },
+      { startSeconds: 100, endSeconds: 150, title: '짧게 자른 마지막 곡' }
+    ]
+
+    const result = findSkipTarget(trimmedTracks, new Set(), 200)
+
+    expect(result).toBe(null)
+  })
 })
