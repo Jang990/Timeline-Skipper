@@ -123,4 +123,64 @@ describe('buildTracks', () => {
 
     expect(entries.map((entry) => entry.title)).toEqual(['둘째 곡', '첫 곡'])
   })
+
+  it('끝 시각이 있는 항목은 다음 트랙이 아니라 그 끝 시각에서 끝난다', () => {
+    const entries = [
+      { timestampSeconds: 10, endSeconds: 50, title: '짧게 자른 곡' },
+      { timestampSeconds: 100, title: '다음 곡' }
+    ]
+
+    const result = buildTracks(entries, 300)
+
+    expect(result.map((track) => track.endSeconds)).toEqual([50, 300])
+  })
+
+  it('끝 시각이 다음 트랙 시작보다 뒤면 다음 트랙 시작으로 줄인다', () => {
+    const entries = [
+      { timestampSeconds: 10, endSeconds: 200, title: '다음 곡을 덮는 곡' },
+      { timestampSeconds: 100, title: '다음 곡' }
+    ]
+
+    const result = buildTracks(entries, 300)
+
+    expect(result.map((track) => track.endSeconds)).toEqual([100, 300])
+  })
+
+  it('끝 시각이 시작 시각보다 앞이면 없는 것으로 친다', () => {
+    const entries = [
+      { timestampSeconds: 100, endSeconds: 50, title: '거꾸로 적힌 곡' },
+      { timestampSeconds: 200, title: '다음 곡' }
+    ]
+
+    const result = buildTracks(entries, 300)
+
+    expect(result.map((track) => track.endSeconds)).toEqual([200, 300])
+  })
+
+  it('끝 시각이 시작 시각과 같으면 없는 것으로 친다', () => {
+    const entries = [{ timestampSeconds: 100, endSeconds: 100, title: '길이가 없는 곡' }]
+
+    const result = buildTracks(entries, 300)
+
+    expect(result).toEqual([{ startSeconds: 100, endSeconds: 300, title: '길이가 없는 곡' }])
+  })
+
+  it('마지막 트랙의 끝 시각이 영상 길이를 넘으면 영상 길이로 줄인다', () => {
+    const entries = [{ timestampSeconds: 10, endSeconds: 500, title: '영상보다 긴 곡' }]
+
+    const result = buildTracks(entries, 300)
+
+    expect(result).toEqual([{ startSeconds: 10, endSeconds: 300, title: '영상보다 긴 곡' }])
+  })
+
+  it('영상 길이를 몰라도 끝 시각을 적은 마지막 트랙은 그 값을 그대로 쓴다', () => {
+    const entries = [
+      { timestampSeconds: 10, title: '첫 곡' },
+      { timestampSeconds: 100, endSeconds: 150, title: '마지막 곡' }
+    ]
+
+    const result = buildTracks(entries, Number.NaN)
+
+    expect(result.at(-1)).toEqual({ startSeconds: 100, endSeconds: 150, title: '마지막 곡' })
+  })
 })
