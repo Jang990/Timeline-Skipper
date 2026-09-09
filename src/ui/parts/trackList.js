@@ -33,7 +33,7 @@ function createRow(track, view, isFirstTrack) {
   checkbox.addEventListener('change', () => onToggle(track.startSeconds))
 
   const time = createButton({
-    label: formatTimestamp(track.startSeconds),
+    label: toTimeLabel(track),
     className: 'timeline-skip-time',
     onClick: () => onSeek(track.startSeconds)
   })
@@ -103,4 +103,14 @@ export function createAddRow(onStartAdd) {
   )
 
   return row
+}
+
+// 당겨둔 끝이 있을 때만 구간으로 보여준다. 전부 범위로 쓰면 손대지 않은 트랙까지
+// 끝을 정해둔 것처럼 보이고, 목록을 눈으로 훑기도 어려워진다.
+function toTimeLabel(track) {
+  if (track.trimmedEndSeconds === null) {
+    return formatTimestamp(track.startSeconds)
+  }
+
+  return `${formatTimestamp(track.startSeconds)} ~ ${formatTimestamp(track.trimmedEndSeconds)}`
 }

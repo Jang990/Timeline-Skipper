@@ -22,6 +22,15 @@ export function parseTrackInput(timeText, titleText) {
   }
 }
 
+// 끝 칸은 시작 시각 칸과 같은 형식을 받되 제목은 딸려오지 않는다.
+// 비워둔 것과 잘못 적은 것이 여기서는 똑같이 null이라, 둘을 가르는 일은
+// 원문을 쥐고 있는 편집 폼이 한다.
+export function parseEndSeconds(endText) {
+  const parsed = parseTimelineComment(toColonForm(endText.trim()))[0]
+
+  return parsed?.timestampSeconds ?? null
+}
+
 // 숫자를 뒤에서부터 두 자리씩 끊는다. 마지막 두 자리가 초, 그 앞이 분, 나머지가 시다.
 // "53" → "00:53", "1840" → "18:40", "10423" → "1:04:23"
 //
