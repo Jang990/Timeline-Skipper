@@ -28,7 +28,7 @@ allowed-tools: Bash(git:*)
 - fast-forward 가 아니다 (로컬에만 있는 커밋이 있다)
 - upstream 이 없거나 사라졌다
 
-## 3. 지울 후보 고르기
+## 3. 지울 브랜치 고르기
 
 `git branch --merged origin/main` 에서 아래를 뺀다.
 
@@ -37,24 +37,22 @@ allowed-tools: Bash(git:*)
 - 워크트리가 물고 있는 브랜치 (`git branch --format='%(refname:short) %(worktreepath)'`)
 - `worktree-` 로 시작하는 브랜치
 
-## 4. 멈추기
+## 4. 삭제
 
-후보를 마지막 커밋 요약과 함께 출력하고 멈춘다.
-승인 전에는 아무것도 지우지 않는다.
+묻지 않고 바로 지운다. 여기까지 남은 브랜치는 전부 `origin/main` 의 조상이라
+커밋이 사라지지 않는다. 없어지는 것은 이름표뿐이다.
 
-## 5. 삭제
+브랜치마다 sha 를 먼저 기록하고, `git merge-base --is-ancestor <브랜치> origin/main` 으로
+한 번 더 확인한 뒤 `git branch -d <브랜치>`. `-d` 가 거부하면 `-D` 를 쓴다.
 
-브랜치마다 `git merge-base --is-ancestor <브랜치> origin/main` 으로 확인하고
-`git branch -d <브랜치>`. `-d` 가 거부하면 `-D` 를 쓴다.
+`-d` 는 현재 HEAD 와 upstream 만 보기 때문에, `origin/main` 에 들어갔지만 지금 HEAD
+히스토리엔 없는 브랜치를 거부한다. `-D` 는 ancestor 확인을 통과한 브랜치에만 쓴다.
+확인이 실패하면 손대지 않는다.
 
-`-d` 는 현재 HEAD 와 upstream 만 보기 때문에, `origin/main` 에 들어갔지만
-지금 HEAD 히스토리엔 없는 브랜치를 거부한다. `-D` 는 ancestor 확인을 통과한
-브랜치에만 쓴다. 확인이 실패하면 손대지 않는다.
-
-## 6. 보고
+## 5. 보고
 
 - `main` 과 현재 브랜치가 어디서 어디로 갔는지. 건너뛴 것은 그 이유
-- 지운 브랜치
+- 지운 브랜치를 `<이름> <sha>` 로. 되살리려면 `git branch <이름> <sha>` 라고 덧붙인다
 - 남긴 브랜치와 이유
 
 squash·rebase 로 머지된 브랜치는 `--merged` 에 잡히지 않는다.
