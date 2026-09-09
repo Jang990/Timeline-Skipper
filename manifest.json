@@ -8,7 +8,7 @@
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["src/content.js"],
-      "css": ["src/ui/panel.css"],
+      "css": ["src/ui/panel.css", "src/ui/floating.css"],
       "run_at": "document_idle"
     }
   ],

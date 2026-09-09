@@ -5,7 +5,8 @@ import { createEditRow } from './parts/trackEditRow.js'
 import { createControls } from './parts/playbackControls.js'
 import { createHeader } from './parts/panelHeader.js'
 
-const PANEL_ID = 'timeline-skip-panel'
+// panelReveal이 같은 패널을 찾아야 한다. 이 id를 아는 곳은 여기 하나로 둔다.
+export const PANEL_ID = 'timeline-skip-panel'
 const LIST_SELECTOR = '.timeline-skip-list'
 const TITLE_INPUT_SELECTOR = '.timeline-skip-title-input'
 

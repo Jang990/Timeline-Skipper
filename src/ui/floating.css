@@ -1,0 +1,127 @@
+/* 유튜브 헤더가 z-index 2000대를 쓴다. 그 위로 올라와야 스크롤해도 가려지지 않는다.
+   전체화면에서는 이 요소가 top layer 밖이라 브라우저가 알아서 그리지 않는다.
+   껍데기는 자리만 잡는다. 생김새는 그 안에 놓이는 아이콘과 카드가 각자 가진다. */
+#timeline-skip-floating {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2500;
+  font-family: "Roboto", "Noto Sans KR", sans-serif;
+  font-size: 13px;
+}
+
+.timeline-skip-floating-icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--yt-spec-call-to-action, #3ea6ff);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.timeline-skip-floating-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.3));
+  border-radius: 12px;
+  background: var(--yt-spec-menu-background, #212121);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  color: var(--yt-spec-text-primary, #fff);
+}
+
+.timeline-skip-floating-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 패널 안에서는 조작부가 목록 위 한 칸을 차지하지만, 여기서는 줄 간격을 카드가 정한다. */
+.timeline-skip-floating-card .timeline-skip-controls {
+  margin-bottom: 0;
+}
+
+/* 패널의 버튼 폭 그대로 두면 카드가 제목보다 넓어진다. */
+.timeline-skip-floating-card .timeline-skip-control {
+  padding: 5px 10px;
+}
+
+/* 제목이 얼마나 길지 알 수 없다. 폭을 고정해야 곡이 바뀔 때마다 위젯이 들썩이지 않는다. */
+.timeline-skip-floating-title {
+  flex: none;
+  width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.timeline-skip-floating-title-text {
+  display: inline-block;
+}
+
+/* 넘칠 때만 붙는다. 넘친 만큼만 흐른다. */
+.timeline-skip-floating-title.is-scrolling .timeline-skip-floating-title-text {
+  animation: timeline-skip-marquee var(--timeline-skip-marquee-duration) linear infinite;
+}
+
+/* 끝까지 흐르고 잠깐 머문 뒤 처음으로 돌아온다. 되돌아오며 읽히는 글자가 없어야
+   눈이 첫 글자만 기다리면 된다. 흐르는 동안은 linear여야 읽는 속도가 일정하다. */
+@keyframes timeline-skip-marquee {
+  0%, 8% {
+    transform: translateX(0);
+  }
+
+  78%, 90% {
+    transform: translateX(var(--timeline-skip-marquee-distance));
+    animation-timing-function: ease-in-out;
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* 움직임을 줄이도록 설정한 사람에게 흐르는 글자는 읽기가 아니라 방해다. */
+@media (prefers-reduced-motion: reduce) {
+  .timeline-skip-floating-title.is-scrolling .timeline-skip-floating-title-text {
+    animation: none;
+  }
+
+  .timeline-skip-floating-title {
+    text-overflow: ellipsis;
+  }
+}
+
+.timeline-skip-floating-collapse,
+.timeline-skip-floating-jump {
+  flex: none;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.timeline-skip-floating-jump {
+  margin-left: auto;
+}
+
+.timeline-skip-floating-collapse:hover,
+.timeline-skip-floating-jump:hover {
+  background: rgba(128, 128, 128, 0.2);
+}
+
+/* 위젯에서 넘어온 사람이 목록을 눈으로 찾는 동안만 켜진다. 패널이 아니라 위젯이 만드는
+   상태라 이 규칙도 여기 둔다. */
+#timeline-skip-panel.is-revealed {
+  box-shadow: 0 0 0 2px var(--yt-spec-call-to-action, #3ea6ff);
+}
