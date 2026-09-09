@@ -20,6 +20,7 @@
     fullscreen: 'src/adapters/fullscreen.js',
     storage: 'src/adapters/storage.js',
     panel: 'src/ui/panel.js',
+    floatingState: 'src/ui/floatingState.js',
     panelReveal: 'src/ui/panelReveal.js',
     floating: 'src/ui/floating.js'
   }

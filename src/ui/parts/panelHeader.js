@@ -1,6 +1,6 @@
 import { createButton } from '../elements.js'
 
-export function createHeader({ tracks, disabledStartSeconds, onEnableAll, onDisableAll, onClear }) {
+export function createHeader({ tracks, disabledStartSeconds, floatingHidden, onEnableAll, onDisableAll, onClear, onSetFloatingHidden }) {
   const header = document.createElement('div')
   header.className = 'timeline-skip-header'
 
@@ -12,7 +12,8 @@ export function createHeader({ tracks, disabledStartSeconds, onEnableAll, onDisa
   actions.append(
     createActionButton('전체 선택', onEnableAll, tracks.length === 0),
     createActionButton('전체 해제', onDisableAll, tracks.length === 0),
-    createActionButton('비우기', onClear, false)
+    createActionButton('비우기', onClear, false),
+    createActionButton(toFloatingLabel(floatingHidden), () => onSetFloatingHidden(!floatingHidden), false)
   )
 
   header.append(title, actions)
@@ -25,6 +26,12 @@ export function createHeader({ tracks, disabledStartSeconds, onEnableAll, onDisa
 // 글자가 곧 설명이라 툴팁과 aria-label을 따로 두지 않는다.
 function createActionButton(label, onClick, isDisabled) {
   return createButton({ label, className: 'timeline-skip-action', isDisabled, onClick })
+}
+
+// 숨긴 위젯을 되돌리는 길은 여기 하나뿐이다. 목록이 비어도 눌러둘 수 있어야
+// 다음 영상에서 위젯이 뜬다.
+function toFloatingLabel(floatingHidden) {
+  return floatingHidden ? '위젯 보이기' : '위젯 숨기기'
 }
 
 function toHeaderLabel(tracks, disabledStartSeconds) {
