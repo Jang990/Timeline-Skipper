@@ -2,7 +2,7 @@ import { createTrackActions } from './trackActions.js'
 
 // core / adapters / ui를 연결한다. 계산은 core에, DOM은 adapters와 ui에 있다.
 export function start(modules) {
-  const { builder, player, storage, panel } = modules
+  const { builder, player, storage, panel, floating, fullscreen } = modules
 
   const state = {
     videoId: null,
@@ -14,7 +14,12 @@ export function start(modules) {
 
   const draw = () => {
     state.tracks = builder.buildTracks(state.entries, player.getDurationSeconds())
-    panel.render(toPanelView(modules, state, actions))
+
+    // 패널과 플로팅 위젯은 같은 것을 보여준다. view를 나눠 가져야 둘이 어긋나지 않는다.
+    const view = toView(modules, state, actions)
+
+    panel.render(view)
+    floating.render(view)
   }
 
   // 저장과 그리기는 항상 함께 일어난다. 동작들은 이 하나만 알면 된다.
@@ -27,10 +32,11 @@ export function start(modules) {
 
   bindPage(modules, state, actions, draw)
   bindPlayback(modules, state, draw)
+  fullscreen.onFullscreenChanged(draw)
 }
 
-function toPanelView(modules, state, actions) {
-  const { player, playing } = modules
+function toView(modules, state, actions) {
+  const { player, playing, panelReveal, fullscreen } = modules
 
   return {
     tracks: state.tracks,
@@ -38,6 +44,7 @@ function toPanelView(modules, state, actions) {
     loopEnabled: state.loopEnabled,
     playingStartSeconds: playing.findPlayingStartSeconds(state.tracks, player.getCurrentTimeSeconds()),
     isPaused: player.isPaused(),
+    isFullscreen: fullscreen.isFullscreen(),
     getCurrentTimeSeconds: player.getCurrentTimeSeconds,
     onSeek: player.seekTo,
     onTogglePlay: player.togglePlay,
@@ -50,7 +57,8 @@ function toPanelView(modules, state, actions) {
     onEnableAll: () => actions.setAllTracks(true),
     onDisableAll: () => actions.setAllTracks(false),
     onPrevious: () => goToAdjacentTrack(modules, state, 'previous'),
-    onNext: () => goToAdjacentTrack(modules, state, 'next')
+    onNext: () => goToAdjacentTrack(modules, state, 'next'),
+    onRevealPanel: panelReveal.reveal
   }
 }
 

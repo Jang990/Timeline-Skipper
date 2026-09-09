@@ -17,8 +17,11 @@
     player: 'src/adapters/youtubePlayer.js',
     comments: 'src/adapters/youtubeComments.js',
     page: 'src/adapters/youtubePage.js',
+    fullscreen: 'src/adapters/fullscreen.js',
     storage: 'src/adapters/storage.js',
-    panel: 'src/ui/panel.js'
+    panel: 'src/ui/panel.js',
+    panelReveal: 'src/ui/panelReveal.js',
+    floating: 'src/ui/floating.js'
   }
 
   const loaded = await Promise.all(
