@@ -13,9 +13,13 @@ jobs:
       # 자기가 쓰는 픽스처를 못 고쳐서 "테스트 먼저 → 구현" 순서가 성립하지 않는다.
       - name: 테스트 명세 잠금
         run: |
-          BASE=$(git merge-base origin/${{ github.base_ref }} HEAD)
-          FIRST=$(git rev-list ${BASE}..HEAD | tail -1)
-          CHANGED=$(git diff --name-only ${FIRST}..HEAD -- tests/ ':(exclude)tests/fixtures/')
+          # pull_request 체크아웃의 HEAD 는 브랜치 끝이 아니라 base 와 미리 합쳐본
+          # 머지 커밋이다. HEAD 를 끝점으로 쓰면 PR 이 열려 있는 동안 main 에 들어온
+          # 테스트까지 이 PR 이 고친 것으로 잡힌다.
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          BASE=$(git merge-base origin/${{ github.base_ref }} ${HEAD_SHA})
+          FIRST=$(git rev-list ${BASE}..${HEAD_SHA} | tail -1)
+          CHANGED=$(git diff --name-only ${FIRST}..${HEAD_SHA} -- tests/ ':(exclude)tests/fixtures/')
           if [ -n "$CHANGED" ]; then
             echo "::error::첫 커밋 이후 테스트가 수정됨"
             echo "$CHANGED"
