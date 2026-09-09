@@ -2,6 +2,9 @@
 // 트랙 목록은 기기 간에 공유할 만한 값이 아니기 때문이다.
 const KEY_PREFIX = 'video:'
 
+// 표시 설정은 영상이 아니라 사람에게 붙는다. 영상별 키와 섞이지 않도록 따로 둔다.
+const SETTINGS_KEY = 'settings'
+
 function toStorageKey(videoId) {
   return `${KEY_PREFIX}${videoId}`
 }
@@ -29,6 +32,17 @@ export async function readVideoState(videoId) {
     disabledStartSeconds: new Set(saved.disabled ?? []),
     loopEnabled: saved.loopEnabled ?? false
   }
+}
+
+// 저장된 값이 성한지는 여기서 따지지 않는다. 무엇이 올바른 값인지는 ui가 안다.
+export async function readSettings() {
+  const stored = await chrome.storage.local.get(SETTINGS_KEY)
+
+  return stored[SETTINGS_KEY]
+}
+
+export async function writeSettings({ floatingHidden, floatingExpanded }) {
+  await chrome.storage.local.set({ [SETTINGS_KEY]: { floatingHidden, floatingExpanded } })
 }
 
 // Set은 그대로 저장되지 않으므로 경계에서 배열로 바꾼다.

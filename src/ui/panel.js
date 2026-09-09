@@ -131,10 +131,10 @@ function submitAdd(entry) {
   lastView.onAdd(entry)
 }
 
-function toSignature({ tracks, disabledStartSeconds, isPaused, loopEnabled, playingStartSeconds }) {
+function toSignature({ tracks, disabledStartSeconds, isPaused, loopEnabled, playingStartSeconds, floatingHidden }) {
   const trackPart = tracks.map((track) => `${track.startSeconds}:${track.title}`).join('|')
 
-  return `${trackPart}#${[...disabledStartSeconds].join(',')}#${isPaused}#${loopEnabled}#${playingStartSeconds}`
+  return `${trackPart}#${[...disabledStartSeconds].join(',')}#${isPaused}#${loopEnabled}#${playingStartSeconds}#${floatingHidden}`
 }
 
 function createPanel(container) {

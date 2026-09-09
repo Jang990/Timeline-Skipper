@@ -2,21 +2,24 @@ import { createTrackActions } from './trackActions.js'
 
 // core / adapters / ui를 연결한다. 계산은 core에, DOM은 adapters와 ui에 있다.
 export function start(modules) {
-  const { builder, player, storage, panel, floating, fullscreen } = modules
+  const { builder, player, storage, panel, floating, fullscreen, floatingState } = modules
 
   const state = {
     videoId: null,
     entries: [],
     disabledStartSeconds: new Set(),
     loopEnabled: false,
-    tracks: []
+    tracks: [],
+
+    // 저장된 설정을 읽어 오기 전까지 쓸 값. 저장분이 없을 때와 같은 모습이어야 한다.
+    ...floatingState.toValidSettings(undefined)
   }
 
   const draw = () => {
     state.tracks = builder.buildTracks(state.entries, player.getDurationSeconds())
 
     // 패널과 플로팅 위젯은 같은 것을 보여준다. view를 나눠 가져야 둘이 어긋나지 않는다.
-    const view = toView(modules, state, actions)
+    const view = toView(modules, state, actions, commitSettings)
 
     panel.render(view)
     floating.render(view)
@@ -28,14 +31,28 @@ export function start(modules) {
     draw()
   }
 
+  // 표시 설정은 영상이 아니라 사람에게 붙는다. 저장하는 곳이 달라서 commit과 나눈다.
+  const commitSettings = (changes) => {
+    Object.assign(state, changes)
+    storage.writeSettings(state)
+    draw()
+  }
+
   const actions = createTrackActions({ state, modules, commit })
 
   bindPage(modules, state, actions, draw)
   bindPlayback(modules, state, draw)
   fullscreen.onFullscreenChanged(draw)
+  loadSettings(modules, state, draw)
 }
 
-function toView(modules, state, actions) {
+// 설정을 읽는 동안에도 화면은 떠 있어야 한다. 읽고 나서 다시 그린다.
+async function loadSettings({ storage, floatingState }, state, draw) {
+  Object.assign(state, floatingState.toValidSettings(await storage.readSettings()))
+  draw()
+}
+
+function toView(modules, state, actions, commitSettings) {
   const { player, playing, panelReveal, fullscreen } = modules
 
   return {
@@ -45,6 +62,8 @@ function toView(modules, state, actions) {
     playingStartSeconds: playing.findPlayingStartSeconds(state.tracks, player.getCurrentTimeSeconds()),
     isPaused: player.isPaused(),
     isFullscreen: fullscreen.isFullscreen(),
+    floatingHidden: state.floatingHidden,
+    floatingExpanded: state.floatingExpanded,
     getCurrentTimeSeconds: player.getCurrentTimeSeconds,
     onSeek: player.seekTo,
     onTogglePlay: player.togglePlay,
@@ -58,7 +77,9 @@ function toView(modules, state, actions) {
     onDisableAll: () => actions.setAllTracks(false),
     onPrevious: () => goToAdjacentTrack(modules, state, 'previous'),
     onNext: () => goToAdjacentTrack(modules, state, 'next'),
-    onRevealPanel: panelReveal.reveal
+    onRevealPanel: panelReveal.reveal,
+    onSetFloatingHidden: (floatingHidden) => commitSettings({ floatingHidden }),
+    onSetFloatingExpanded: (floatingExpanded) => commitSettings({ floatingExpanded })
   }
 }
 

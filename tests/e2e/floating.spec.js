@@ -13,6 +13,9 @@ const CONTROLS = `${FLOATING} .timeline-skip-controls`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
 const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 
+const HIDE_BUTTON = '#timeline-skip-panel button:has-text("위젯 숨기기")'
+const SHOW_BUTTON = '#timeline-skip-panel button:has-text("위젯 보이기")'
+
 test.describe('플로팅 위젯', () => {
   test('트랙이 없으면 위젯이 뜨지 않는다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [] })
@@ -147,6 +150,63 @@ test.describe('플로팅 위젯', () => {
 
     await expect(page.locator('#timeline-skip-panel')).toHaveClass(/is-revealed/)
   })
+
+  test('패널의 숨기기 버튼을 누르면 위젯이 사라진다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
+    await loadTimeline(page)
+
+    await expect(page.locator(FLOATING)).toBeAttached()
+
+    await page.locator(HIDE_BUTTON).click()
+
+    await expect(page.locator(FLOATING)).not.toBeAttached()
+  })
+
+  test('숨긴 뒤 보이기 버튼을 누르면 다시 나타난다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
+    await loadTimeline(page)
+    await page.locator(HIDE_BUTTON).click()
+
+    await expect(page.locator(FLOATING)).not.toBeAttached()
+
+    await page.locator(SHOW_BUTTON).click()
+
+    await expect(page.locator(ICON)).toBeVisible()
+  })
+
+  test('펼쳐둔 위젯을 숨겼다 보이면 펼친 채로 돌아온다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
+    await loadTimeline(page)
+    await expandWidget(page)
+
+    await page.locator(HIDE_BUTTON).click()
+    await expect(page.locator(FLOATING)).not.toBeAttached()
+
+    await page.locator(SHOW_BUTTON).click()
+
+    await expect(page.locator(CARD)).toBeVisible()
+  })
+
+  test('펼쳐둔 상태는 새로고침한 뒤에도 유지된다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
+    await loadTimeline(page)
+    await expandWidget(page)
+
+    await reloadWatchPage(page)
+
+    await expect(page.locator(CARD)).toBeVisible()
+  })
+
+  test('숨긴 상태는 새로고침한 뒤에도 유지된다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
+    await loadTimeline(page)
+    await page.locator(HIDE_BUTTON).click()
+    await expect(page.locator(FLOATING)).not.toBeAttached()
+
+    await reloadWatchPage(page)
+
+    await expect(page.locator(FLOATING)).not.toBeAttached()
+  })
 })
 
 // requestFullscreen은 사용자 조작이 있어야 불린다. Playwright의 클릭은 진짜 입력이라 그 조건을 채운다.
@@ -159,6 +219,13 @@ async function enterFullscreen(page) {
 
   await page.locator('#comments').click()
   await expect.poll(() => page.evaluate(() => document.fullscreenElement !== null)).toBe(true)
+}
+
+// 설정은 저장이 끝나기를 기다려 주지 않는다. 목록이 되살아난 것을 본 다음에 검증해야
+// 저장이 늦은 것과 상태가 틀린 것이 구분된다.
+async function reloadWatchPage(page) {
+  await page.reload()
+  await expect(page.locator('.timeline-skip-row').first()).toBeVisible()
 }
 
 async function loadTimeline(page) {
