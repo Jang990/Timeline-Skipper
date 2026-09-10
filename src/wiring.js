@@ -111,13 +111,14 @@ async function syncVideo({ page, storage, panel }, state) {
 }
 
 function bindPlayback(modules, state, draw) {
-  const { player } = modules
+  const { player, playback, panel } = modules
 
   // 재생/일시정지 아이콘이 실제 상태를 따라가야 한다.
   player.onPlayStateChanged(draw)
 
+  // 편집 중인지는 패널만 안다. 옮길지 말지는 core가 정한다.
   player.onTimeUpdate((currentTimeSeconds) => {
-    const targetSeconds = findPlaybackTarget(modules, state, currentTimeSeconds)
+    const targetSeconds = playback.findPlaybackTarget({ ...state, isEditing: panel.isEditing() }, currentTimeSeconds)
 
     if (targetSeconds !== null) {
       player.seekTo(targetSeconds)
@@ -127,15 +128,6 @@ function bindPlayback(modules, state, draw) {
     // 실제 DOM 교체는 panel이 막는다(그릴 내용이 같으면 건너뛴다).
     draw()
   })
-}
-
-// 반복이 켜져 있으면 되감기가 먼저다. 그래야 영상 끝까지 갔다 오는 헛걸음이 없다.
-function findPlaybackTarget({ looper, skipper }, state, currentTimeSeconds) {
-  const loopTarget = state.loopEnabled
-    ? looper.findLoopTarget(state.tracks, state.disabledStartSeconds, currentTimeSeconds)
-    : null
-
-  return loopTarget ?? skipper.findSkipTarget(state.tracks, state.disabledStartSeconds, currentTimeSeconds)
 }
 
 function goToAdjacentTrack({ adjacent, player }, state, direction) {
