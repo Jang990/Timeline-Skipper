@@ -97,7 +97,7 @@ function createAddArea(view) {
   }
 
   return createEditRow(
-    { startSeconds: addingDraftSeconds, title: '', previousStartSeconds: null },
+    { startSeconds: addingDraftSeconds, trimmedEndSeconds: null, title: '', previousStartSeconds: null },
     { tracks: view.tracks, onSubmitEdit: (previousStartSeconds, entry) => submitAdd(entry), onCancelEdit: cancelEdit }
   )
 }
@@ -132,7 +132,7 @@ function submitAdd(entry) {
 }
 
 function toSignature({ tracks, disabledStartSeconds, isPaused, loopEnabled, playingStartSeconds, floatingHidden }) {
-  const trackPart = tracks.map((track) => `${track.startSeconds}:${track.title}`).join('|')
+  const trackPart = tracks.map((track) => `${track.startSeconds}:${track.trimmedEndSeconds}:${track.title}`).join('|')
 
   return `${trackPart}#${[...disabledStartSeconds].join(',')}#${isPaused}#${loopEnabled}#${playingStartSeconds}#${floatingHidden}`
 }

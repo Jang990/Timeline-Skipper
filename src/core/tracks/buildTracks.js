@@ -15,11 +15,17 @@ export function buildTracks(entries, videoDurationSeconds) {
 
   const lastEndSeconds = hasDuration ? videoDurationSeconds : null
 
-  return uniqueEntries.map((entry, index) => ({
-    startSeconds: entry.timestampSeconds,
-    endSeconds: toEndSeconds(entry, uniqueEntries[index + 1]?.timestampSeconds ?? lastEndSeconds),
-    title: entry.title
-  }))
+  return uniqueEntries.map((entry, index) => {
+    const boundarySeconds = uniqueEntries[index + 1]?.timestampSeconds ?? lastEndSeconds
+    const trimmedEndSeconds = toTrimmedEndSeconds(entry, boundarySeconds)
+
+    return {
+      startSeconds: entry.timestampSeconds,
+      endSeconds: trimmedEndSeconds ?? boundarySeconds,
+      trimmedEndSeconds,
+      title: entry.title
+    }
+  })
 }
 
 // 정렬이 끝난 뒤라 같은 시각은 이웃해 있다. 먼저 적힌 쪽을 남긴다.
@@ -27,14 +33,20 @@ function isFirstOfSameTimestamp(entry, index, entries) {
   return index === 0 || entry.timestampSeconds !== entries[index - 1].timestampSeconds
 }
 
-// 적어둔 끝 시각은 경계(다음 트랙 시작, 마지막이면 영상 끝)를 넘지 못한다. 넘게 두면 트랙이
-// 겹치고, "한 시각에 트랙 하나"라는 전제 위에 선 재생 로직이 전부 무너진다.
-// 경계보다 앞이면 그 사이가 어느 트랙에도 속하지 않는 빈 구간이 된다.
-function toEndSeconds(entry, boundarySeconds) {
+// 사람이 당겨둔 끝. 경계(다음 트랙 시작, 마지막이면 영상 끝)에 닿는 끝은 여기서 null이 된다.
+// 재생이 쓰는 endSeconds와 갈라두지 않으면 화면이 둘을 구별하지 못해, 제목만 고쳐 저장해도
+// 그때의 파생값이 끝으로 굳는다. 그 뒤 이웃 트랙을 옮기면 뜻하지 않은 빈 구간이 생긴다.
+//
+// 경계를 넘는 끝을 그대로 두면 트랙이 겹치고, "한 시각에 트랙 하나"라는 전제가 무너진다.
+function toTrimmedEndSeconds(entry, boundarySeconds) {
   if (!Number.isFinite(entry.endSeconds) || entry.endSeconds <= entry.timestampSeconds) {
-    return boundarySeconds
+    return null
   }
 
   // 경계를 모르면(라이브, 길이 미확정) 적어둔 끝 시각이 유일한 근거다.
-  return boundarySeconds === null ? entry.endSeconds : Math.min(entry.endSeconds, boundarySeconds)
+  if (boundarySeconds === null) {
+    return entry.endSeconds
+  }
+
+  return entry.endSeconds < boundarySeconds ? entry.endSeconds : null
 }
