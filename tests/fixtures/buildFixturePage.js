@@ -36,15 +36,52 @@ function buildVideo(videoSourceUrl) {
   return `<video class="html5-main-video" src="${escapeHtml(videoSourceUrl)}"></video>`
 }
 
-function buildCommentThread(commentText) {
+function buildCommentThread(comment) {
+  const { text, replyTexts } = toComment(comment)
+
   return [
     '<ytd-comment-thread-renderer>',
+    buildCommentBody(text),
+    ...(replyTexts.length === 0 ? [] : [buildReplies(replyTexts)]),
+    '</ytd-comment-thread-renderer>'
+  ].join('\n')
+}
+
+// 대댓글이 필요한 댓글만 객체로 넘긴다. 문자열로 넘기는 기존 호출은 그대로 둔다.
+function toComment(comment) {
+  return typeof comment === 'string'
+    ? { text: comment, replyTexts: [] }
+    : { replyTexts: [], ...comment }
+}
+
+function buildCommentBody(commentText) {
+  return [
     '<ytd-comment-view-model id="comment"><div id="body"><div id="main">',
     '<ytd-expander id="expander"><div id="content" style="overflow: hidden">',
     `<yt-attributed-string id="content-text">${escapeHtml(commentText)}</yt-attributed-string>`,
     '</div></ytd-expander>',
-    '</div></div></ytd-comment-view-model>',
-    '</ytd-comment-thread-renderer>'
+    '</div></div></ytd-comment-view-model>'
+  ].join('\n')
+}
+
+// 대댓글은 원댓글 thread 안에 자기 thread를 갖고 중첩된다. 이 중첩 자체가 검증 대상이다 —
+// 확장에는 대댓글을 위한 코드가 없고, 자손 셀렉터가 대댓글까지 잡아주는 것에 기대고 있다.
+// 아래 구조는 2026-09-10 크롬 개발자 도구에서 실제 시청 페이지로 확인했다.
+function buildReplies(replyTexts) {
+  return [
+    '<ytd-comment-replies-renderer><div id="expanded-threads">',
+    ...replyTexts.map(buildReplyThread),
+    '</div></ytd-comment-replies-renderer>'
+  ].join('\n')
+}
+
+function buildReplyThread(replyText) {
+  return [
+    '<yt-sub-thread><div>',
+    '<ytd-comment-thread-renderer><div id="comment-container">',
+    buildCommentBody(replyText),
+    '</div></ytd-comment-thread-renderer>',
+    '</div></yt-sub-thread>'
   ].join('\n')
 }
 
