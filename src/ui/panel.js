@@ -98,7 +98,7 @@ function createAddArea(view) {
 
   return createEditRow(
     { startSeconds: addingDraftSeconds, trimmedEndSeconds: null, title: '', previousStartSeconds: null },
-    { tracks: view.tracks, onSubmitEdit: (previousStartSeconds, entry) => submitAdd(entry), onCancelEdit: cancelEdit }
+    { ...view, onSubmitEdit: (previousStartSeconds, entry) => submitAdd(entry), onCancelEdit: cancelEdit }
   )
 }
 

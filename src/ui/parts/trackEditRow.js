@@ -2,14 +2,14 @@ import { parseEndSeconds, parseTrackInput } from '../../core/parse/parseTrackInp
 import { isTimestampTaken } from '../../core/tracks/isTimestampTaken.js'
 import { createButton, createInput } from '../elements.js'
 import { formatTimestamp } from '../formatTimestamp.js'
+import { createTimeStepper } from './timeStepper.js'
 
 const INVALID_CLASS = 'is-invalid'
-const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
-const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다'
 const UNREADABLE_TIME = '시각을 읽을 수 없습니다. 예: 4:29 또는 429'
 const END_BEFORE_START = '끝 시각이 시작 시각보다 빠릅니다'
 
-export function createEditRow(draft, { tracks, onSubmitEdit, onCancelEdit }) {
+export function createEditRow(draft, view) {
+  const { tracks, onSubmitEdit, onCancelEdit } = view
   const wrapper = document.createElement('div')
   wrapper.className = 'timeline-skip-edit'
 
@@ -19,8 +19,11 @@ export function createEditRow(draft, { tracks, onSubmitEdit, onCancelEdit }) {
   const error = document.createElement('div')
   error.className = 'timeline-skip-error'
 
-  const inputs = [createTimeInput(draft), createEndInput(draft), createTitleInput(draft)]
-  const [timeInput, endInput] = inputs
+  // 시작·끝 칸은 조정 버튼과 한 줄에 산다. 저장할 때 읽어야 해서 칸을 건네받는다.
+  const stepper = createTimeStepper(draft, view)
+  const { startInput, endInput } = stepper
+  const titleInput = createTitleInput(draft)
+  const inputs = [startInput, endInput, titleInput]
 
   const submit = () => {
     const result = readEntry(inputs, draft, tracks)
@@ -35,40 +38,16 @@ export function createEditRow(draft, { tracks, onSubmitEdit, onCancelEdit }) {
     onSubmitEdit(draft.previousStartSeconds, result.entry)
   }
 
-  for (const input of [timeInput, endInput]) {
-    input.addEventListener('input', () => clearError(error, timeInput, endInput))
+  for (const input of [startInput, endInput]) {
+    input.addEventListener('input', () => clearError(error, startInput, endInput))
   }
 
-  row.addEventListener('keydown', (event) => handleKey(event, submit, onCancelEdit))
-  row.append(...inputs, createEditButton('✓', '저장', submit), createEditButton('✕', '취소', onCancelEdit))
-  wrapper.append(row, error)
+  // 칸이 여러 줄로 나뉘었다. 어느 줄에 포커스가 있든 Enter와 Esc는 같은 뜻이다.
+  wrapper.addEventListener('keydown', (event) => handleKey(event, submit, onCancelEdit))
+  row.append(titleInput, createEditButton('✓', '저장', submit), createEditButton('✕', '취소', onCancelEdit))
+  wrapper.append(row, stepper.element, error)
 
   return wrapper
-}
-
-function createTimeInput(draft) {
-  const input = createInput({
-    className: 'timeline-skip-time-input',
-    value: formatTimestamp(draft.startSeconds)
-  })
-  input.title = TIME_HINT
-  input.setAttribute('aria-label', '시작 시각')
-
-  return input
-}
-
-// 파생된 끝(다음 트랙까지)은 비워둔 채로 연다. 미리 채우면 제목만 고쳐 저장해도 그때의
-// 파생값이 끝으로 굳어, 나중에 이웃 트랙을 옮겼을 때 없던 빈 구간이 생긴다.
-function createEndInput(draft) {
-  const input = createInput({
-    className: 'timeline-skip-end-input',
-    value: Number.isFinite(draft.trimmedEndSeconds) ? formatTimestamp(draft.trimmedEndSeconds) : ''
-  })
-  input.placeholder = '끝 시각'
-  input.title = END_HINT
-  input.setAttribute('aria-label', '끝 시각')
-
-  return input
 }
 
 function createTitleInput(draft) {

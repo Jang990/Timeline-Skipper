@@ -65,6 +65,7 @@ function toView(modules, state, actions, commitSettings) {
     floatingHidden: state.floatingHidden,
     floatingExpanded: state.floatingExpanded,
     getCurrentTimeSeconds: player.getCurrentTimeSeconds,
+    getDurationSeconds: player.getDurationSeconds,
     onSeek: player.seekTo,
     onTogglePlay: player.togglePlay,
     onToggle: actions.toggleTrack,
