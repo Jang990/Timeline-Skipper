@@ -7,7 +7,7 @@ const PANEL = '#timeline-skip-panel'
 const ROW_TIME = `${PANEL} .timeline-skip-time`
 const START_INPUT = `${PANEL} .timeline-skip-time-input`
 const END_INPUT = `${PANEL} .timeline-skip-end-input`
-const STEP_LABELS = ['1분 당기기', '10초 당기기', '1초 당기기', '1초 늦추기', '10초 늦추기', '1분 늦추기']
+const STEP_LABELS = ['10초 당기기', '1초 당기기', '1초 늦추기', '10초 늦추기']
 
 test.describe('시각 조정 버튼', () => {
   test('편집 행을 열면 시작과 끝을 조정하는 버튼이 보인다', async ({ openWatchPage }) => {
@@ -33,11 +33,20 @@ test.describe('시각 조정 버튼', () => {
     await expect(page.locator(START_INPUT)).toHaveValue('05:10')
   })
 
-  test('시작의 −1m을 여러 번 누르면 앞 트랙 시작 1초 뒤에서 멈춘다', async ({ openWatchPage }) => {
+  test('조정 버튼에 1분 단위는 없다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage)
+
     await openEditRow(page, '둘째 곡')
 
-    await clickRepeatedly(button(page, '시작 1분 당기기'), 6)
+    await expect(page.locator(`${PANEL} button[aria-label*="1분"]`)).toHaveCount(0)
+  })
+
+  test('시작의 −10s를 여러 번 누르면 앞 트랙 시작 1초 뒤에서 멈춘다', async ({ openWatchPage }) => {
+    const page = await openTimeline(openWatchPage)
+    await openEditRow(page, '둘째 곡')
+    await page.locator(START_INPUT).fill('0:15')
+
+    await clickRepeatedly(button(page, '시작 10초 당기기'), 2)
 
     await expect(page.locator(START_INPUT)).toHaveValue('00:01')
   })
