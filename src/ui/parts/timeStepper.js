@@ -18,7 +18,7 @@ const STEPS = [
 // 시작·끝 칸과 그 옆의 조정 버튼. 마우스만으로 편집을 끝낼 수 있게 하려는 것이라 직접 입력도 그대로 받는다.
 // 칸 값은 저장할 때 편집 폼이 읽으므로 칸도 함께 돌려준다.
 export function createTimeStepper(draft, view) {
-  const context = { draft, view, startInput: createStartInput(draft), endInput: createEndInput(draft) }
+  const context = { draft, view, startInput: createStartInput(draft), endInput: createEndInput(draft, view) }
 
   const element = document.createElement('div')
   element.className = 'timeline-skip-stepper'
@@ -116,14 +116,20 @@ function createStartInput(draft) {
 
 // 파생된 끝(다음 트랙까지)은 비워둔 채로 연다. 미리 채우면 제목만 고쳐 저장해도 그때의
 // 파생값이 끝으로 굳어, 나중에 이웃 트랙을 옮겼을 때 없던 빈 구간이 생긴다.
-function createEndInput(draft) {
+// 대신 그 시각을 안내 글씨로 보여준다. 안내 글씨는 값이 아니라서 저장되지 않는다.
+function createEndInput(draft, view) {
   const input = createInput({
     className: 'timeline-skip-end-input',
     value: Number.isFinite(draft.trimmedEndSeconds) ? formatTimestamp(draft.trimmedEndSeconds) : ''
   })
-  input.placeholder = '다음 트랙까지'
+  input.placeholder = toEndHint(findRange({ draft, view }, draft.startSeconds).toSeconds)
   input.title = END_HINT
   input.setAttribute('aria-label', '끝 시각')
 
   return input
+}
+
+// 영상 길이를 모르는 마지막 트랙은 끝나는 시각이 없다. 영상이 끝날 때까지 재생된다.
+function toEndHint(toSeconds) {
+  return toSeconds === null ? '끝까지' : formatTimestamp(toSeconds)
 }
