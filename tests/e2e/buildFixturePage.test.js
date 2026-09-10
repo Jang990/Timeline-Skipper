@@ -58,4 +58,28 @@ describe('buildFixturePage', () => {
 
     expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;인용&quot;')
   })
+
+  it('대댓글을 넘기면 원댓글 thread 안에 대댓글 thread를 중첩해 넣는다', () => {
+    const html = buildFixturePage({ commentTexts: [{ text: '원댓글', replyTexts: ['대댓글'] }] })
+
+    expect(countOccurrences(html, '<ytd-comment-thread-renderer>')).toBe(2)
+    expect(html).toContain('<ytd-comment-replies-renderer>')
+    expect(html).toContain('id="expanded-threads"')
+    expect(html).toContain('<yt-sub-thread>')
+    expect(html.indexOf('원댓글')).toBeLessThan(html.indexOf('대댓글'))
+  })
+
+  it('대댓글이 없으면 대댓글 요소를 만들지 않는다', () => {
+    const html = buildFixturePage({ commentTexts: [{ text: '원댓글', replyTexts: [] }] })
+
+    expect(html).not.toContain('ytd-comment-replies-renderer')
+    expect(countOccurrences(html, '<ytd-comment-thread-renderer>')).toBe(1)
+  })
+
+  it('문자열로 넘긴 댓글은 지금처럼 대댓글 없이 만든다', () => {
+    const html = buildFixturePage({ commentTexts: ['00:01 첫 곡'] })
+
+    expect(html).not.toContain('ytd-comment-replies-renderer')
+    expect(countOccurrences(html, 'id="content-text"')).toBe(1)
+  })
 })
