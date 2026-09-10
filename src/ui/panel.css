@@ -192,16 +192,55 @@
   font-size: inherit;
 }
 
+/* 조정 버튼 여섯 개, ⏱와 한 줄에 서야 한다. "1:02:33"이 들어가는 만큼만 준다. */
 .timeline-skip-time-input,
 .timeline-skip-end-input {
   flex: none;
-  width: 72px;
+  width: 56px;
   font-variant-numeric: tabular-nums;
 }
 
 .timeline-skip-title-input {
   flex: 1;
   min-width: 0;
+}
+
+.timeline-skip-stepper {
+  padding: 0 8px 2px;
+}
+
+/* 사이드바가 좁아지면 넘치지 않고 다음 줄로 흐른다. */
+.timeline-skip-step-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.timeline-skip-step-label {
+  flex: none;
+  width: 24px;
+  color: var(--yt-spec-text-secondary, #909090);
+  font-size: 12px;
+}
+
+.timeline-skip-step {
+  flex: none;
+  padding: 2px 4px;
+  border: 1px solid var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.3));
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.timeline-skip-step:hover {
+  background: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15));
 }
 
 /* 저장되지 않은 이유가 어느 칸에 있는지 그 자리에서 보여준다. */
@@ -251,9 +290,9 @@
   display: none;
 }
 
-/* 8px(행 패딩) + 72px(시각 칸) + 6px(편집 행 gap). 제목 입력칸 왼쪽에 맞춘다. */
+/* 8px(조정 줄 패딩) + 24px(이름표) + 4px(gap). 시각 칸 왼쪽에 맞춘다. */
 .timeline-skip-error {
-  padding: 2px 0 4px 86px;
+  padding: 2px 0 4px 36px;
   color: #f28b82;
   font-size: 11px;
 }
