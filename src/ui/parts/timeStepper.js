@@ -9,12 +9,10 @@ const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다
 
 // 글자는 짧게, 읽어주는 이름은 뜻으로 쓴다. "앞/뒤"는 시간 방향이 헷갈려 당기기/늦추기로 부른다.
 const STEPS = [
-  { label: '−1m', deltaSeconds: -60, spokenName: '1분 당기기' },
   { label: '−10s', deltaSeconds: -10, spokenName: '10초 당기기' },
   { label: '−1s', deltaSeconds: -1, spokenName: '1초 당기기' },
   { label: '+1s', deltaSeconds: 1, spokenName: '1초 늦추기' },
-  { label: '+10s', deltaSeconds: 10, spokenName: '10초 늦추기' },
-  { label: '+1m', deltaSeconds: 60, spokenName: '1분 늦추기' }
+  { label: '+10s', deltaSeconds: 10, spokenName: '10초 늦추기' }
 ]
 
 // 시작·끝 칸과 그 옆의 조정 버튼. 마우스만으로 편집을 끝낼 수 있게 하려는 것이라 직접 입력도 그대로 받는다.

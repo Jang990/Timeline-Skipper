@@ -192,7 +192,7 @@
   font-size: inherit;
 }
 
-/* 조정 버튼 여섯 개, ⏱와 한 줄에 서야 한다. "1:02:33"이 들어가는 만큼만 준다. */
+/* 조정 버튼 네 개, ⏱와 한 줄에 서야 한다. "1:02:33"이 들어가는 만큼만 준다. */
 .timeline-skip-time-input,
 .timeline-skip-end-input {
   flex: none;
