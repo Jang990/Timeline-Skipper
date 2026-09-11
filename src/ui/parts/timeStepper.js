@@ -3,6 +3,7 @@ import { nudgeEndSeconds, nudgeStartSeconds } from '../../core/editing/nudgeTime
 import { parseEndSeconds, parseTrackInput } from '../../core/parse/parseTrackInput.js'
 import { createButton, createInput } from '../elements.js'
 import { formatTimestamp } from '../formatTimestamp.js'
+import { createFollowButton } from './followButton.js'
 
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
 const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다'
@@ -19,24 +20,39 @@ const STEPS = [
 // 칸 값은 저장할 때 편집 폼이 읽으므로 칸도 함께 돌려준다.
 export function createTimeStepper(draft, view) {
   const context = { draft, view, startInput: createStartInput(draft), endInput: createEndInput(draft, view) }
+  const follow = createFollowButton({
+    following: view.following,
+    getCurrentTimeSeconds: view.getCurrentTimeSeconds,
+    onFollow: (currentTimeSeconds) => moveToTime(context, moveEnd, currentTimeSeconds)
+  })
+
+  // 끝을 손으로 고치면 따라가기는 끝난다. 사람이 고친 값을 다음 재생 위치가 덮어쓰지 않게 한다.
+  const endHandlers = {
+    onStep: (deltaSeconds) => {
+      follow.stop()
+      moveEnd(context, deltaSeconds)
+    },
+    onCapture: () => {
+      follow.stop()
+      moveToTime(context, moveEnd, view.getCurrentTimeSeconds())
+    }
+  }
 
   const element = document.createElement('div')
   element.className = 'timeline-skip-stepper'
   element.append(
     createStepRow('시작', context.startInput, {
       onStep: (deltaSeconds) => moveStart(context, deltaSeconds),
-      onCapture: () => captureCurrentTime(context, moveStart)
+      onCapture: () => moveToTime(context, moveStart, view.getCurrentTimeSeconds())
     }),
-    createStepRow('끝', context.endInput, {
-      onStep: (deltaSeconds) => moveEnd(context, deltaSeconds),
-      onCapture: () => captureCurrentTime(context, moveEnd)
-    })
+    createStepRow('끝', context.endInput, endHandlers, follow.button),
+    follow.hint
   )
 
   return { element, startInput: context.startInput, endInput: context.endInput }
 }
 
-function createStepRow(fieldName, input, { onStep, onCapture }) {
+function createStepRow(fieldName, input, { onStep, onCapture }, ...extraButtons) {
   const row = document.createElement('div')
   row.className = 'timeline-skip-step-row'
 
@@ -50,7 +66,8 @@ function createStepRow(fieldName, input, { onStep, onCapture }) {
     ...STEPS.map((step) =>
       createStepButton(step.label, `${fieldName} ${step.spokenName}`, () => onStep(step.deltaSeconds))
     ),
-    createStepButton('⏱', `${fieldName}을 지금 위치로`, onCapture)
+    createStepButton('⏱', `${fieldName}을 지금 위치로`, onCapture),
+    ...extraButtons
   )
 
   return row
@@ -72,9 +89,7 @@ function moveEnd(context, deltaSeconds, fromSeconds) {
 }
 
 // 재생 준비 전에는 재생 위치가 NaN이다. 칸을 망가뜨리느니 아무것도 하지 않는다.
-function captureCurrentTime(context, move) {
-  const currentTimeSeconds = context.view.getCurrentTimeSeconds()
-
+function moveToTime(context, move, currentTimeSeconds) {
   if (Number.isFinite(currentTimeSeconds)) {
     move(context, 0, currentTimeSeconds)
   }
