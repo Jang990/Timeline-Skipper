@@ -1,4 +1,5 @@
 import { findBarRange } from '../../../core/editing/findBarRange.js'
+import { findNeighborSegments } from '../../../core/editing/findNeighborSegments.js'
 import { toBarRatio } from '../../../core/editing/toBarRatio.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
 
@@ -15,14 +16,11 @@ export function createRangeBar(draft, view, inputs, readSeconds) {
     return null
   }
 
-  const fill = createPart('timeline-skip-range-fill')
-  const bar = createPart('timeline-skip-range-bar')
-  bar.append(fill)
-
+  const parts = createParts()
   const element = createPart('timeline-skip-range')
-  element.append(createLabel('from', range.fromSeconds), bar, createLabel('to', range.toSeconds))
+  element.append(createLabel('from', range.fromSeconds), parts.bar, createLabel('to', range.toSeconds))
 
-  const show = () => showSeconds(fill, range, readSeconds())
+  const show = () => showBar(parts, { range, draft, view }, readSeconds())
 
   for (const input of inputs) {
     input.addEventListener('input', show)
@@ -33,7 +31,19 @@ export function createRangeBar(draft, view, inputs, readSeconds) {
   return element
 }
 
-function showSeconds(fill, range, { startSeconds, endSeconds }) {
+function createParts() {
+  const neighbors = createPart('timeline-skip-range-neighbors')
+  const fill = createPart('timeline-skip-range-fill')
+  const bar = createPart('timeline-skip-range-bar')
+
+  // 이웃을 먼저 깔고 이 트랙을 그 위에 얹는다. 겹치는 자리에서는 고치는 중인 쪽이 보여야 한다.
+  bar.append(neighbors, fill)
+
+  return { bar, neighbors, fill }
+}
+
+function showBar(parts, context, { startSeconds, endSeconds }) {
+  const { range, draft, view } = context
   const leftRatio = toBarRatio(startSeconds, range)
   const rightRatio = toBarRatio(endSeconds, range)
 
@@ -42,8 +52,39 @@ function showSeconds(fill, range, { startSeconds, endSeconds }) {
     return
   }
 
-  fill.style.left = toPercent(leftRatio)
-  fill.style.width = toPercent(Math.max(rightRatio - leftRatio, 0))
+  placePart(parts.fill, leftRatio, rightRatio)
+
+  // 물려서 가장자리에 붙은 것과 실제로 거기가 끝인 것은 화면에서 같아 보인다. 잘렸다고 알린다.
+  parts.bar.classList.toggle('is-overflow-start', startSeconds < range.fromSeconds)
+  parts.bar.classList.toggle('is-overflow-end', endSeconds > range.toSeconds)
+
+  showNeighbors(parts.neighbors, range, findNeighborSegments(view.tracks, draft.previousStartSeconds, startSeconds))
+}
+
+// 끝을 정해 두지 않은 앞 트랙은 이 트랙의 시작을 따라 늘고 준다. 매번 다시 그려야 그것이 보인다.
+function showNeighbors(container, range, segments) {
+  const parts = segments.map((segment) => toNeighborPart(range, segment)).filter((part) => part !== null)
+
+  container.replaceChildren(...parts)
+}
+
+// 바 밖으로 온전히 벗어난 이웃은 그리지 않는다. 폭이 0인 자국만 남는다.
+function toNeighborPart(range, { fromSeconds, toSeconds }) {
+  const leftRatio = toBarRatio(fromSeconds, range)
+  const rightRatio = toBarRatio(toSeconds, range)
+
+  if (rightRatio <= leftRatio) {
+    return null
+  }
+
+  return placePart(createPart('timeline-skip-range-neighbor'), leftRatio, rightRatio)
+}
+
+function placePart(part, leftRatio, rightRatio) {
+  part.style.left = toPercent(leftRatio)
+  part.style.width = toPercent(Math.max(rightRatio - leftRatio, 0))
+
+  return part
 }
 
 function toPercent(ratio) {

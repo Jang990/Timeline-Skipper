@@ -248,6 +248,40 @@
   background: var(--yt-spec-call-to-action, #3ea6ff);
 }
 
+.timeline-skip-range-neighbors {
+  position: absolute;
+  inset: 0;
+}
+
+/* 이웃이 차지한 자리. 바 바탕과 같은 변수를 쓰면 유튜브에서 둘이 같은 색이 되어 구별되지 않는다. */
+.timeline-skip-range-neighbor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(128, 128, 128, 0.55);
+}
+
+/* 물려서 가장자리에 붙은 것과 실제로 거기가 끝인 것은 화면에서 같아 보인다.
+   바보다 높은 눈금으로 잘렸다는 것을 알린다. */
+.timeline-skip-range-bar.is-overflow-start::before,
+.timeline-skip-range-bar.is-overflow-end::after {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  z-index: 1;
+  width: 3px;
+  background: var(--yt-spec-call-to-action, #3ea6ff);
+  content: '';
+}
+
+.timeline-skip-range-bar.is-overflow-start::before {
+  left: 0;
+}
+
+.timeline-skip-range-bar.is-overflow-end::after {
+  right: 0;
+}
+
 /* 사이드바가 좁아지면 넘치지 않고 다음 줄로 흐른다. */
 .timeline-skip-step-row {
   display: flex;
