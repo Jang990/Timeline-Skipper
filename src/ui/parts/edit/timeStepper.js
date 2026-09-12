@@ -1,8 +1,8 @@
-import { findEditRange } from '../../core/editing/findEditRange.js'
-import { nudgeEndSeconds, nudgeStartSeconds } from '../../core/editing/nudgeTime.js'
-import { parseEndSeconds, parseTrackInput } from '../../core/parse/parseTrackInput.js'
-import { createButton, createInput } from '../elements.js'
-import { formatTimestamp } from '../formatTimestamp.js'
+import { findEditRange } from '../../../core/editing/findEditRange.js'
+import { nudgeEndSeconds, nudgeStartSeconds } from '../../../core/editing/nudgeTime.js'
+import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
+import { createButton, createInput } from '../../elements.js'
+import { formatTimestamp } from '../../formatTimestamp.js'
 
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
 const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다'
