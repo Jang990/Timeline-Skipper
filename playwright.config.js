@@ -8,6 +8,9 @@ export default defineConfig({
   // 크롬까지 띄워가며 돌리려 든다. 브라우저가 필요한 것만 *.spec.js로 쓴다.
   testMatch: '**/*.spec.js',
 
+  // tests/live/는 진짜 유튜브에 붙는다. 이 설정으로는 돌리지 않는다 — playwright.live.config.js가 맡는다.
+  testIgnore: '**/live/**',
+
   fullyParallel: false,
   workers: 1,
 

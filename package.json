@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:live": "playwright test --config playwright.live.config.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
