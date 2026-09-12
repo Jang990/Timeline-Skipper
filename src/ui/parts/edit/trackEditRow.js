@@ -1,7 +1,7 @@
-import { parseEndSeconds, parseTrackInput } from '../../core/parse/parseTrackInput.js'
-import { isTimestampTaken } from '../../core/tracks/isTimestampTaken.js'
-import { createButton, createInput } from '../elements.js'
-import { formatTimestamp } from '../formatTimestamp.js'
+import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
+import { isTimestampTaken } from '../../../core/tracks/isTimestampTaken.js'
+import { createButton, createInput } from '../../elements.js'
+import { formatTimestamp } from '../../formatTimestamp.js'
 import { createTimeStepper } from './timeStepper.js'
 
 const INVALID_CLASS = 'is-invalid'

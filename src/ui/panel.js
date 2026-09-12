@@ -1,7 +1,7 @@
 import { SELECTORS } from '../adapters/selectors.js'
 import { createEditingState } from './editingState.js'
 import { createList, createAddRow } from './parts/trackList.js'
-import { createEditRow } from './parts/trackEditRow.js'
+import { createEditRow } from './parts/edit/trackEditRow.js'
 import { createControls } from './parts/playbackControls.js'
 import { createHeader } from './parts/panelHeader.js'
 
