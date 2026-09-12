@@ -3,6 +3,7 @@ import { nudgeEndSeconds, nudgeStartSeconds } from '../../../core/editing/nudgeT
 import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
 import { createButton, createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
+import { createRangeBar } from './rangeBar.js'
 
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
 const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다'
@@ -20,9 +21,14 @@ const STEPS = [
 export function createTimeStepper(draft, view) {
   const context = { draft, view, startInput: createStartInput(draft), endInput: createEndInput(draft, view) }
 
+  const rangeBar = createRangeBar(draft, view, [context.startInput, context.endInput], () =>
+    readShownSeconds(context)
+  )
+
   const element = document.createElement('div')
   element.className = 'timeline-skip-stepper'
   element.append(
+    ...(rangeBar === null ? [] : [rangeBar]),
     createStepRow('시작', context.startInput, {
       onStep: (deltaSeconds) => moveStart(context, deltaSeconds),
       onCapture: () => captureCurrentTime(context, moveStart)
@@ -78,6 +84,13 @@ function captureCurrentTime(context, move) {
   if (Number.isFinite(currentTimeSeconds)) {
     move(context, 0, currentTimeSeconds)
   }
+}
+
+// 빈 끝은 "다음 트랙까지"라는 뜻이다. 바에는 그 뜻대로 다음 트랙이 시작하는 곳까지 칠한다.
+function readShownSeconds(context) {
+  const { startSeconds, endSeconds } = readSeconds(context)
+
+  return { startSeconds, endSeconds: endSeconds ?? findRange(context, startSeconds).toSeconds }
 }
 
 // 영상 길이는 누를 때마다 다시 묻는다. 편집을 연 뒤에야 길이가 정해지기도 한다.

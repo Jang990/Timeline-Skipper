@@ -214,6 +214,40 @@
   padding: 0 8px 2px;
 }
 
+/* 이웃 사이에서 이 트랙이 차지하는 자리. 양 끝의 글씨가 바가 덮는 시간이다. */
+.timeline-skip-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0 8px;
+}
+
+.timeline-skip-range-from,
+.timeline-skip-range-to {
+  flex: none;
+  color: var(--yt-spec-text-secondary, #909090);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 칠해진 자리를 바에 대한 비율로 읽는다. 테두리나 안쪽 여백을 주면 그 비율이 어긋난다. */
+.timeline-skip-range-bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.25));
+}
+
+.timeline-skip-range-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 5px;
+  background: var(--yt-spec-call-to-action, #3ea6ff);
+}
+
 /* 사이드바가 좁아지면 넘치지 않고 다음 줄로 흐른다. */
 .timeline-skip-step-row {
   display: flex;
