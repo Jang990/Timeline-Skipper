@@ -53,6 +53,11 @@ export function resetEditing() {
   lastRenderedEditKey = null
 }
 
+// 편집 중에는 건너뛰기와 반복이 재생 위치를 옮기지 않는다. 그 판단에 쓰도록 내보낸다.
+export function isEditing() {
+  return editing.isEditing()
+}
+
 function drawInto(target, view) {
   // 목록을 통째로 갈아끼우면 스크롤이 맨 위로 돌아간다.
   // 아래쪽 트랙을 체크 해제한 사람이 위치를 잃지 않도록 되돌려 놓는다.
