@@ -29,7 +29,9 @@ export function render(view) {
   const panel = document.getElementById(PANEL_ID)
 
   // 편집 중에 다시 그리면 입력하던 글자가 사라진다. 편집 대상이 바뀔 때만 그린다.
+  // 그리지 않는 동안에도 바 위의 재생 위치는 움직여야 하므로 위치만 넘긴다.
   if (panel !== null && editing.isEditing() && editing.toKey() === lastRenderedEditKey) {
+    editing.notifyPlayback(view.getCurrentTimeSeconds())
     return
   }
 
@@ -82,6 +84,7 @@ function toListView(view) {
   return {
     ...view,
     editingStartSeconds: editing.getEditingStartSeconds(),
+    watchPlayback: editing.watchPlayback,
     onStartEdit: startEditing,
     onCancelEdit: cancelEdit,
     onSubmitEdit: submitEdit
@@ -98,7 +101,7 @@ function createAddArea(view) {
 
   return createEditRow(
     { startSeconds: addingDraftSeconds, trimmedEndSeconds: null, title: '', previousStartSeconds: null },
-    { ...view, onSubmitEdit: (previousStartSeconds, entry) => submitAdd(entry), onCancelEdit: cancelEdit }
+    { ...toListView(view), onSubmitEdit: (previousStartSeconds, entry) => submitAdd(entry) }
   )
 }
 

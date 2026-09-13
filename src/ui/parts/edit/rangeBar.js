@@ -28,18 +28,24 @@ export function createRangeBar(draft, view, inputs, readSeconds) {
 
   show()
 
+  // 편집 중에는 패널이 다시 그려지지 않는다. 재생 위치는 편집 상태를 거쳐 따로 받는다.
+  const showPlayhead = (currentTimeSeconds) => placePlayhead(parts.playhead, range, currentTimeSeconds)
+  showPlayhead(view.getCurrentTimeSeconds())
+  view.watchPlayback(showPlayhead)
+
   return element
 }
 
 function createParts() {
   const neighbors = createPart('timeline-skip-range-neighbors')
   const fill = createPart('timeline-skip-range-fill')
+  const playhead = createPart('timeline-skip-range-playhead')
   const bar = createPart('timeline-skip-range-bar')
 
   // 이웃을 먼저 깔고 이 트랙을 그 위에 얹는다. 겹치는 자리에서는 고치는 중인 쪽이 보여야 한다.
-  bar.append(neighbors, fill)
+  bar.append(neighbors, fill, playhead)
 
-  return { bar, neighbors, fill }
+  return { bar, neighbors, fill, playhead }
 }
 
 function showBar(parts, context, { startSeconds, endSeconds }) {
@@ -59,6 +65,22 @@ function showBar(parts, context, { startSeconds, endSeconds }) {
   parts.bar.classList.toggle('is-overflow-end', endSeconds > range.toSeconds)
 
   showNeighbors(parts.neighbors, range, findNeighborSegments(view.tracks, draft.previousStartSeconds, startSeconds))
+}
+
+// 재생 준비 전에는 재생 위치가 NaN이다. 엉뚱한 자리에 세우느니 숨긴다.
+function placePlayhead(playhead, range, currentTimeSeconds) {
+  const ratio = toBarRatio(currentTimeSeconds, range)
+  playhead.hidden = ratio === null
+
+  if (ratio === null) {
+    return
+  }
+
+  playhead.style.left = toPercent(ratio)
+  playhead.classList.toggle(
+    'is-outside',
+    currentTimeSeconds < range.fromSeconds || currentTimeSeconds > range.toSeconds
+  )
 }
 
 // 끝을 정해 두지 않은 앞 트랙은 이 트랙의 시작을 따라 늘고 준다. 매번 다시 그려야 그것이 보인다.
