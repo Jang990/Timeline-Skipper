@@ -192,7 +192,7 @@
   font-size: inherit;
 }
 
-/* 조정 버튼 네 개, ⏱와 한 줄에 서야 한다. "1:02:33"이 들어가는 만큼만 준다. */
+/* [지금으로]와 한 줄에 서야 한다. "1:02:33"이 들어가는 만큼만 준다. */
 .timeline-skip-time-input,
 .timeline-skip-end-input {
   flex: none;
@@ -212,6 +212,24 @@
 
 .timeline-skip-stepper {
   padding: 0 8px 2px;
+}
+
+/* 바 바로 아래에서 바 위의 재생 위치와 짝을 이룬다. 가운데 글씨 폭이 흔들리면 버튼이 들썩인다. */
+.timeline-skip-playback-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 0 0 4px;
+}
+
+.timeline-skip-playback-position {
+  flex: none;
+  min-width: 56px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 /* 이웃 사이에서 이 트랙이 차지하는 자리. 양 끝의 글씨가 바가 덮는 시간이다. */

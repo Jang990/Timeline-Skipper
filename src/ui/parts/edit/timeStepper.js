@@ -3,46 +3,45 @@ import { nudgeEndSeconds, nudgeStartSeconds } from '../../../core/editing/nudgeT
 import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
 import { createButton, createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
+import { createPlaybackStepRow } from './playbackStepRow.js'
 import { createRangeBar } from './rangeBar.js'
 
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
 const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다'
 
-// 글자는 짧게, 읽어주는 이름은 뜻으로 쓴다. "앞/뒤"는 시간 방향이 헷갈려 당기기/늦추기로 부른다.
-const STEPS = [
-  { label: '−10s', deltaSeconds: -10, spokenName: '10초 당기기' },
-  { label: '−1s', deltaSeconds: -1, spokenName: '1초 당기기' },
-  { label: '+1s', deltaSeconds: 1, spokenName: '1초 늦추기' },
-  { label: '+10s', deltaSeconds: 10, spokenName: '10초 늦추기' }
-]
-
-// 시작·끝 칸과 그 옆의 조정 버튼. 마우스만으로 편집을 끝낼 수 있게 하려는 것이라 직접 입력도 그대로 받는다.
-// 칸 값은 저장할 때 편집 폼이 읽으므로 칸도 함께 돌려준다.
+// 구간 바, 재생 위치를 옮기는 ± 줄, 시작·끝 칸. 마우스만으로 편집을 끝낼 수 있게 하려는 것이라
+// 직접 입력도 그대로 받는다. 칸 값은 저장할 때 편집 폼이 읽으므로 칸도 함께 돌려준다.
 export function createTimeStepper(draft, view) {
   const context = { draft, view, startInput: createStartInput(draft), endInput: createEndInput(draft, view) }
+  const playbackRow = createPlaybackStepRow(view)
 
-  const rangeBar = createRangeBar(draft, view, [context.startInput, context.endInput], () =>
+  // 편집 상태는 재생 위치를 한 곳에만 보낸다. 바와 ± 줄이 함께 받도록 여기서 나눠 준다.
+  const playbackListeners = [playbackRow.showPosition]
+  const sharedView = { ...view, watchPlayback: (listener) => playbackListeners.push(listener) }
+
+  const rangeBar = createRangeBar(draft, sharedView, [context.startInput, context.endInput], () =>
     readShownSeconds(context)
   )
+
+  view.watchPlayback((currentTimeSeconds) => {
+    for (const listener of playbackListeners) {
+      listener(currentTimeSeconds)
+    }
+  })
 
   const element = document.createElement('div')
   element.className = 'timeline-skip-stepper'
   element.append(
     ...(rangeBar === null ? [] : [rangeBar]),
-    createStepRow('시작', context.startInput, {
-      onStep: (deltaSeconds) => moveStart(context, deltaSeconds),
-      onCapture: () => captureCurrentTime(context, moveStart)
-    }),
-    createStepRow('끝', context.endInput, {
-      onStep: (deltaSeconds) => moveEnd(context, deltaSeconds),
-      onCapture: () => captureCurrentTime(context, moveEnd)
-    })
+    playbackRow.element,
+    createStepRow('시작', context.startInput, () => captureCurrentTime(context, moveStart)),
+    createStepRow('끝', context.endInput, () => captureCurrentTime(context, moveEnd))
   )
 
   return { element, startInput: context.startInput, endInput: context.endInput }
 }
 
-function createStepRow(fieldName, input, { onStep, onCapture }) {
+function createStepRow(fieldName, input, onCapture) {
   const row = document.createElement('div')
   row.className = 'timeline-skip-step-row'
 
@@ -53,28 +52,31 @@ function createStepRow(fieldName, input, { onStep, onCapture }) {
   row.append(
     label,
     input,
-    ...STEPS.map((step) =>
-      createStepButton(step.label, `${fieldName} ${step.spokenName}`, () => onStep(step.deltaSeconds))
-    ),
-    createStepButton('⏱', `${fieldName}을 지금 위치로`, onCapture)
+    createButton({
+      label: '지금으로',
+      className: 'timeline-skip-step',
+      title: `${fieldName}을 지금 재생 위치로`,
+      ariaLabel: `${fieldName}을 지금 위치로`,
+      onClick: onCapture
+    })
   )
 
   return row
 }
 
-// 누를 때마다 칸의 지금 값에서 출발한다. 사람이 칸에 직접 고쳐 둔 값도 이어받는다.
-function moveStart(context, deltaSeconds, fromSeconds) {
+// 찍는 값은 이웃 경계 안으로 맞춘다. 반대쪽 칸은 사람이 직접 고쳐 둔 값도 이어받는다.
+function moveStart(context, fromSeconds) {
   const { startSeconds, endSeconds } = readSeconds(context)
   const range = findRange(context, startSeconds)
 
-  writeSeconds(context.startInput, nudgeStartSeconds(fromSeconds ?? startSeconds, deltaSeconds, range, endSeconds))
+  writeSeconds(context.startInput, nudgeStartSeconds(fromSeconds, 0, range, endSeconds))
 }
 
-function moveEnd(context, deltaSeconds, fromSeconds) {
-  const { startSeconds, endSeconds } = readSeconds(context)
+function moveEnd(context, fromSeconds) {
+  const { startSeconds } = readSeconds(context)
   const range = findRange(context, startSeconds)
 
-  writeSeconds(context.endInput, nudgeEndSeconds(fromSeconds ?? endSeconds, deltaSeconds, range, startSeconds))
+  writeSeconds(context.endInput, nudgeEndSeconds(fromSeconds, 0, range, startSeconds))
 }
 
 // 재생 준비 전에는 재생 위치가 NaN이다. 칸을 망가뜨리느니 아무것도 하지 않는다.
@@ -82,7 +84,7 @@ function captureCurrentTime(context, move) {
   const currentTimeSeconds = context.view.getCurrentTimeSeconds()
 
   if (Number.isFinite(currentTimeSeconds)) {
-    move(context, 0, currentTimeSeconds)
+    move(context, currentTimeSeconds)
   }
 }
 
@@ -110,10 +112,6 @@ function readSeconds({ draft, startInput, endInput }) {
 function writeSeconds(input, seconds) {
   input.value = seconds === null ? '' : formatTimestamp(seconds)
   input.dispatchEvent(new Event('input', { bubbles: true }))
-}
-
-function createStepButton(label, ariaLabel, onClick) {
-  return createButton({ label, className: 'timeline-skip-step', title: ariaLabel, ariaLabel, onClick })
 }
 
 function createStartInput(draft) {
