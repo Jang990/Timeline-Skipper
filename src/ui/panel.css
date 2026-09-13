@@ -369,3 +369,19 @@
   color: #f28b82;
   font-size: 11px;
 }
+
+/* 편집 중의 재생 위치. 칠과 이웃 위에 올라와야 해서 바보다 길게 세운다. */
+.timeline-skip-range-playhead {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  z-index: 2;
+  width: 2px;
+  background: var(--yt-spec-text-primary, #0f0f0f);
+  transform: translateX(-50%);
+}
+
+/* 범위 밖이면 가장자리에 물려 있을 뿐 실제 자리가 아니다. 흐리게 해서 가른다. */
+.timeline-skip-range-playhead.is-outside {
+  opacity: 0.35;
+}
