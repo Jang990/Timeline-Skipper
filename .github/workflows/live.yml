@@ -1,0 +1,53 @@
+name: Live
+
+# 실제 유튜브에 붙는 테스트다. 실패는 "이 PR이 뭘 깨뜨렸나"가 아니라 "유튜브가 바뀌었나"를
+# 뜻하므로 pull_request에는 걸지 않는다. PR 체크에 뜨지 않고 병합도 막지 않는다.
+on:
+  schedule:
+    # UTC 기준이다. 한국 시간으로 09:00.
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+
+    # 타임아웃 기본 제한은 6시간이기 때문에 15분으로 변경한다.
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      # 브라우저 설치는 ci.yml의 e2e 잡과 같다. 캐시를 이렇게 나눈 이유는 거기 적혀 있다.
+      - name: Playwright 버전 읽기
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: 크로미움 캐시
+        id: browser-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - run: npm run test:live
+
+      # 화면을 볼 수 없는 곳에서 깨진다. 봇 확인 화면이었는지는 trace로만 알 수 있다.
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-trace
+          path: test-results/
