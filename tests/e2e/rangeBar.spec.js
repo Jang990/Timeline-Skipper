@@ -53,11 +53,12 @@ test.describe('구간 바', () => {
     expect(fill.width).toBeCloseTo(0.6667, 2)
   })
 
-  test('조정 버튼으로 끝을 옮겨도 칠해진 구간이 따라 움직인다', async ({ openWatchPage }) => {
+  test('[지금으로]로 끝을 옮겨도 칠해진 구간이 따라 움직인다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage)
     await openEditRow(page, '둘째 곡')
+    await pauseAt(page, 590)
 
-    await page.locator(`${PANEL} button[aria-label="끝 10초 당기기"]`).click()
+    await page.locator(`${PANEL} button[aria-label="끝을 지금 위치로"]`).click()
 
     const fill = await readFillRatios(page)
 
