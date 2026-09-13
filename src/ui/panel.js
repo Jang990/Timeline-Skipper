@@ -4,19 +4,17 @@ import { createList, createAddRow } from './parts/trackList.js'
 import { createEditRow } from './parts/edit/trackEditRow.js'
 import { createControls } from './parts/playbackControls.js'
 import { createHeader } from './parts/panelHeader.js'
+import { createRenderGate } from './renderGate.js'
 
 // panelReveal이 같은 패널을 찾아야 한다. 이 id를 아는 곳은 여기 하나로 둔다.
 export const PANEL_ID = 'timeline-skip-panel'
 const LIST_SELECTOR = '.timeline-skip-list'
 const TITLE_INPUT_SELECTOR = '.timeline-skip-title-input'
 
-// 페이지가 조금만 바뀌어도 다시 그리라는 요청이 온다.
-// 내용이 그대로면 건너뛰어야 체크박스가 깜빡이지 않는다.
-let lastSignature = null
-let lastRenderedEditKey = null
 let lastView = null
 
 const editing = createEditingState()
+const gate = createRenderGate()
 
 export function render(view) {
   lastView = view
@@ -27,30 +25,25 @@ export function render(view) {
   }
 
   const panel = document.getElementById(PANEL_ID)
+  const decision = gate.decide({
+    hasPanel: panel !== null,
+    view,
+    editKey: editing.toKey(),
+    isEditing: editing.isEditing()
+  })
 
-  // 편집 중에 다시 그리면 입력하던 글자가 사라진다. 편집 대상이 바뀔 때만 그린다.
-  // 그리지 않는 동안에도 바 위의 재생 위치는 움직여야 하므로 위치만 넘긴다.
-  if (panel !== null && editing.isEditing() && editing.toKey() === lastRenderedEditKey) {
+  if (decision === 'playback') {
     editing.notifyPlayback(view.getCurrentTimeSeconds())
-    return
+  } else if (decision === 'draw') {
+    drawInto(panel ?? createPanel(container), view)
   }
-
-  const signature = `${toSignature(view)}#${editing.toKey()}`
-
-  if (panel !== null && signature === lastSignature) {
-    return
-  }
-
-  lastSignature = signature
-  lastRenderedEditKey = editing.toKey()
-  drawInto(panel ?? createPanel(container), view)
 }
 
 // 영상이 바뀌면 편집하던 행은 더 이상 없다. 열려 있던 편집을 닫지 않으면
 // 다른 영상의 목록에 그 수정이 적용된다.
 export function resetEditing() {
   editing.reset()
-  lastRenderedEditKey = null
+  gate.forgetEditKey()
 }
 
 // 편집 중에는 건너뛰기와 반복이 재생 위치를 옮기지 않는다. 그 판단에 쓰도록 내보낸다.
@@ -137,12 +130,6 @@ function submitEdit(previousStartSeconds, entry) {
 function submitAdd(entry) {
   editing.finishAdd()
   lastView.onAdd(entry)
-}
-
-function toSignature({ tracks, disabledStartSeconds, isPaused, loopEnabled, playingStartSeconds, floatingHidden }) {
-  const trackPart = tracks.map((track) => `${track.startSeconds}:${track.trimmedEndSeconds}:${track.title}`).join('|')
-
-  return `${trackPart}#${[...disabledStartSeconds].join(',')}#${isPaused}#${loopEnabled}#${playingStartSeconds}#${floatingHidden}`
 }
 
 function createPanel(container) {
