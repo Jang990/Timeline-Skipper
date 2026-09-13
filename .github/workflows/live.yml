@@ -12,7 +12,7 @@ jobs:
   live:
     runs-on: ubuntu-latest
 
-    # 유튜브가 응답하지 않으면 러너가 기본 제한(6시간)까지 붙잡혀 있는다.
+    # 타임아웃 기본 제한은 6시간이기 때문에 15분으로 변경한다.
     timeout-minutes: 15
 
     steps:
