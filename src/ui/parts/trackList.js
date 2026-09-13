@@ -1,5 +1,4 @@
 import { createButton } from '../elements.js'
-import { createEditRow } from './edit/trackEditRow.js'
 import { formatTimestamp } from '../formatTimestamp.js'
 
 // 원본 댓글은 그대로 남아 언제든 다시 불러올 수 있다. 그래서 "삭제"가 아니라 "빼기"다.
@@ -7,24 +6,21 @@ import { formatTimestamp } from '../formatTimestamp.js'
 const REMOVE_HINT = '목록에서 빼기 — 이 구간은 앞 트랙에 합쳐집니다'
 const REMOVE_HINT_FIRST = '목록에서 빼기 — 영상 시작 구간은 트랙 없이 재생됩니다'
 
+// 고치는 트랙의 행은 편집 폼이 열려도 목록에 남겨 강조한다. 앞뒤 트랙과 함께 보여야 어디를 고치는지 안다.
 export function createList(view) {
   const list = document.createElement('div')
   list.className = 'timeline-skip-list'
-  list.append(
-    ...view.tracks.map((track, index) =>
-      track.startSeconds === view.editingStartSeconds
-        ? createEditRow({ ...track, previousStartSeconds: track.startSeconds }, view)
-        : createRow(track, view, index === 0)
-    )
-  )
+  list.append(...view.tracks.map((track, index) => createRow(track, view, index === 0)))
 
   return list
 }
 
 function createRow(track, view, isFirstTrack) {
-  const { disabledStartSeconds, playingStartSeconds, onToggle, onSeek, onDelete, onStartEdit } = view
+  const { disabledStartSeconds, playingStartSeconds, editingStartSeconds, onToggle, onSeek, onDelete, onStartEdit } =
+    view
   const isDisabled = disabledStartSeconds.has(track.startSeconds)
   const row = createRowShell(isDisabled, track.startSeconds === playingStartSeconds)
+  row.classList.toggle('is-edit-target', track.startSeconds === editingStartSeconds)
 
   const checkbox = document.createElement('input')
   checkbox.type = 'checkbox'
