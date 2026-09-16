@@ -1,0 +1,124 @@
+/* 이웃 사이에서 이 트랙이 차지하는 자리. 양 끝의 글씨가 바가 덮는 시간이다. */
+.timeline-skip-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0 8px;
+}
+
+.timeline-skip-range-from,
+.timeline-skip-range-to {
+  flex: none;
+  color: var(--yt-spec-text-secondary, #909090);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 칠해진 자리를 바에 대한 비율로 읽는다. 테두리나 안쪽 여백을 주면 그 비율이 어긋난다. */
+.timeline-skip-range-bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.25));
+}
+
+.timeline-skip-range-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 5px;
+  background: var(--yt-spec-call-to-action, #3ea6ff);
+}
+
+.timeline-skip-range-neighbors {
+  position: absolute;
+  inset: 0;
+}
+
+/* 이웃이 차지한 자리. 바 바탕과 같은 변수를 쓰면 유튜브에서 둘이 같은 색이 되어 구별되지 않는다. */
+.timeline-skip-range-neighbor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(128, 128, 128, 0.55);
+}
+
+/* 물려서 가장자리에 붙은 것과 실제로 거기가 끝인 것은 화면에서 같아 보인다.
+   바보다 높은 눈금으로 잘렸다는 것을 알린다. */
+.timeline-skip-range-bar.is-overflow-start::before,
+.timeline-skip-range-bar.is-overflow-end::after {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  z-index: 1;
+  width: 3px;
+  background: var(--yt-spec-call-to-action, #3ea6ff);
+  content: '';
+}
+
+.timeline-skip-range-bar.is-overflow-start::before {
+  left: 0;
+}
+
+.timeline-skip-range-bar.is-overflow-end::after {
+  right: 0;
+}
+
+/* 편집 중의 재생 위치. 칠과 이웃 위에 올라와야 해서 바보다 길게 세운다. */
+.timeline-skip-range-playhead {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  z-index: 2;
+  width: 2px;
+  background: var(--yt-spec-text-primary, #0f0f0f);
+  transform: translateX(-50%);
+}
+
+/* 범위 밖이면 가장자리에 물려 있을 뿐 실제 자리가 아니다. 흐리게 해서 가른다. */
+.timeline-skip-range-playhead.is-outside {
+  opacity: 0.35;
+}
+
+/* 바를 누르면 그 시각으로 옮겨진다. 대충 짚는 것은 바로, 경계를 정확히 짚는 것은 표시로 한다. */
+.timeline-skip-range-bar {
+  cursor: pointer;
+}
+
+/* 재생 위치 선이 바를 누르는 것을 가로채지 않는다. 선 위를 눌러도 그 자리로 옮겨진다. */
+.timeline-skip-range-playhead {
+  pointer-events: none;
+}
+
+/* 칠해진 구간의 양 끝에 붙은 손잡이. 칠 안에 붙어 있어 칸을 고치면 칠과 함께 움직인다.
+   바보다 높게 세우고 바탕색 테두리를 둘러 칠 위에서도 짚을 자리가 보이게 한다. */
+.timeline-skip-range-marker {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  z-index: 1;
+  width: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: var(--yt-spec-call-to-action, #3ea6ff);
+  box-shadow: 0 0 0 1px var(--yt-spec-base-background, #fff);
+  cursor: pointer;
+  transform: translateX(-50%);
+}
+
+.timeline-skip-range-marker.is-start {
+  left: 0;
+}
+
+.timeline-skip-range-marker.is-end {
+  left: 100%;
+}
+
+.timeline-skip-range-marker:hover,
+.timeline-skip-range-marker:focus-visible {
+  outline: 2px solid var(--yt-spec-text-primary, #0f0f0f);
+  outline-offset: 1px;
+}
