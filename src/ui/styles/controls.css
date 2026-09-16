@@ -104,3 +104,35 @@
   background: color-mix(in srgb, var(--timeline-skip-color-accent) 16%, transparent);
   color: var(--timeline-skip-color-accent);
 }
+
+.timeline-skip-now-playing-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeline-skip-now-playing-from,
+.timeline-skip-now-playing-to {
+  flex: none;
+  color: var(--timeline-skip-color-text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 채움 폭을 바에 대한 비율로 준다. 안쪽 여백이나 테두리를 주면 그 비율이 어긋난다. */
+.timeline-skip-now-playing-bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--timeline-skip-color-tonal);
+}
+
+.timeline-skip-now-playing-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--timeline-skip-color-accent);
+}
