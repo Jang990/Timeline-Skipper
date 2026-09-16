@@ -4,31 +4,124 @@
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 8px;
-  font-weight: 500;
+  padding-left: 4px;
+}
+
+.timeline-skip-header-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.timeline-skip-header-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.timeline-skip-header-count {
+  color: var(--timeline-skip-color-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 
 .timeline-skip-actions {
   display: flex;
   flex: none;
-  gap: 4px;
+  align-items: center;
+  gap: 2px;
 }
 
+/* 테두리를 두르면 글자보다 틀이 먼저 읽힌다. 마우스를 올렸을 때만 바탕을 깐다. */
 .timeline-skip-action {
-  padding: 2px 8px;
-  border: 1px solid var(--timeline-skip-color-tonal);
-  border-radius: 999px;
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 14px;
   background: none;
   color: inherit;
   cursor: pointer;
+  font-family: inherit;
   font-size: 12px;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.timeline-skip-action:hover:not(:disabled) {
+.timeline-skip-action:hover:not(:disabled),
+.timeline-skip-more:hover,
+.timeline-skip-more[aria-expanded="true"] {
   background: var(--timeline-skip-color-tonal);
 }
 
 .timeline-skip-action:disabled {
   opacity: 0.4;
   cursor: default;
+}
+
+/* 메뉴는 버튼 아래 오른쪽 끝에 맞춰 뜬다. 목록과 카드 위에 올라와야 한다. */
+.timeline-skip-menu-root {
+  position: relative;
+}
+
+.timeline-skip-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--timeline-skip-color-text-secondary);
+  cursor: pointer;
+}
+
+.timeline-skip-more .timeline-skip-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.timeline-skip-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  padding: 8px 0;
+  border-radius: 12px;
+  background: var(--timeline-skip-color-menu-background);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* hidden 속성은 display를 지정한 규칙에 진다. 닫힌 메뉴가 보이지 않게 따로 막는다. */
+.timeline-skip-menu[hidden] {
+  display: none;
+}
+
+.timeline-skip-menu-item {
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  background: none;
+  color: var(--timeline-skip-color-text-primary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.timeline-skip-menu-item:hover,
+.timeline-skip-menu-item:focus-visible {
+  background: var(--timeline-skip-color-tonal);
+  outline: none;
+}
+
+/* 되돌릴 수 없어 보이는 동작은 색으로 한 번 더 경고한다. */
+.timeline-skip-menu-item.is-destructive {
+  color: var(--timeline-skip-color-danger);
 }
