@@ -2,6 +2,7 @@ import { findBarRange } from '../../../core/editing/findBarRange.js'
 import { findNeighborSegments } from '../../../core/editing/findNeighborSegments.js'
 import { toBarRatio } from '../../../core/editing/toBarRatio.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
+import { bindBarSeek } from './rangeBarSeek.js'
 
 // 편집 중인 트랙이 이웃 사이 어디를 차지하는지 보여준다. 칸의 숫자만으로는
 // 앞뒤 트랙과의 거리가 보이지 않는다.
@@ -17,6 +18,7 @@ export function createRangeBar(draft, view, inputs, readSeconds) {
   }
 
   const parts = createParts()
+  bindBarSeek(parts, range, view, readSeconds)
   const element = createPart('timeline-skip-range')
   element.append(createLabel('from', range.fromSeconds), parts.bar, createLabel('to', range.toSeconds))
 
