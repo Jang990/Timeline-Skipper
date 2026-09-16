@@ -14,7 +14,8 @@ export function createEditRow(draft, view) {
   wrapper.className = 'timeline-skip-edit'
 
   const row = document.createElement('div')
-  row.className = 'timeline-skip-row is-editing'
+  // 트랙 행과 같은 클래스를 쓰지 않는다. 폼은 목록 안에 붙어 열리므로 트랙 행을 세는 곳에 함께 잡힌다.
+  row.className = 'timeline-skip-edit-title-row'
 
   const error = document.createElement('div')
   error.className = 'timeline-skip-error'

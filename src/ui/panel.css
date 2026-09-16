@@ -51,6 +51,41 @@
   font-weight: 500;
 }
 
+/* 목록 아래쪽에서 올라와 목록을 덮는 층. 목록 스크롤 영역의 바닥에 달라붙는다.
+   덮은 행이 비치지 않게 불투명한 바탕 위에 옅은 색을 한 겹 얹어 목록과 다른 판으로 보이게 한다.
+   위쪽 그림자는 목록 위에 올라와 있다는 것을, 파란 윗테두리는 강조한 행과 같은 트랙이라는 것을 알린다. */
+.timeline-skip-edit-sheet {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 2px solid var(--yt-spec-call-to-action, #3ea6ff);
+  border-radius: 8px 8px 0 0;
+  background:
+    linear-gradient(rgba(128, 128, 128, 0.08), rgba(128, 128, 128, 0.08)),
+    var(--yt-spec-base-background, #fff);
+  box-shadow: 0 -6px 12px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* 자리는 남기고 모습만 감춘다. 빼면 편집을 여는 순간 패널이 짧아진다. */
+.timeline-skip-list-area.is-editing .timeline-skip-add-row {
+  visibility: hidden;
+}
+
+/* 편집 폼에 열린 트랙. 재생 중 표시(왼쪽 막대)와 겹칠 수 있어 테두리로 두른다. */
+.timeline-skip-row.is-edit-target {
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--yt-spec-call-to-action, #3ea6ff);
+}
+
+/* box-shadow는 하나만 이긴다. 둘이 겹치면 막대와 테두리를 함께 그린다. */
+.timeline-skip-row.is-playing.is-edit-target {
+  box-shadow:
+    inset 3px 0 0 var(--yt-spec-call-to-action, #3ea6ff),
+    inset 0 0 0 1px var(--yt-spec-call-to-action, #3ea6ff);
+}
+
 .timeline-skip-time {
   flex: none;
   padding: 0;
@@ -176,8 +211,12 @@
   border-radius: 4px;
 }
 
-.timeline-skip-row.is-editing {
+/* 편집 폼의 제목 줄. 트랙 행과 같은 자리에 같은 모양으로 선다. */
+.timeline-skip-edit-title-row {
+  display: flex;
+  align-items: center;
   gap: 6px;
+  padding: 4px 8px;
 }
 
 .timeline-skip-time-input,

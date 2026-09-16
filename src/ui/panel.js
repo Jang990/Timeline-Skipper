@@ -1,7 +1,7 @@
 import { SELECTORS } from '../adapters/selectors.js'
 import { createEditingState } from './editingState.js'
-import { createList, createAddRow } from './parts/trackList.js'
-import { createEditRow } from './parts/edit/trackEditRow.js'
+import { keepListPosition } from './listScroll.js'
+import { createListArea } from './parts/listArea.js'
 import { createControls } from './parts/playbackControls.js'
 import { createHeader } from './parts/panelHeader.js'
 import { createRenderGate } from './renderGate.js'
@@ -52,22 +52,11 @@ export function isEditing() {
 }
 
 function drawInto(target, view) {
-  // 목록을 통째로 갈아끼우면 스크롤이 맨 위로 돌아간다.
-  // 아래쪽 트랙을 체크 해제한 사람이 위치를 잃지 않도록 되돌려 놓는다.
   const previousScrollTop = target.querySelector(LIST_SELECTOR)?.scrollTop ?? 0
 
-  target.replaceChildren(
-    createHeader(view),
-    createControls(view),
-    view.tracks.length === 0 ? createEmptyMessage() : createList(toListView(view)),
-    createAddArea(view)
-  )
+  target.replaceChildren(createHeader(view), createControls(view), createListArea(toListView(view)))
 
-  const nextList = target.querySelector(LIST_SELECTOR)
-
-  if (nextList !== null) {
-    nextList.scrollTop = previousScrollTop
-  }
+  keepListPosition(target.querySelector(LIST_SELECTOR), previousScrollTop)
 
   // 고치려는 사람은 제목부터 손댄다. 바로 덮어쓸 수 있게 골라둔 채로 시작한다.
   if (editing.isEditing()) {
@@ -82,25 +71,14 @@ function toListView(view) {
   return {
     ...view,
     editingStartSeconds: editing.getEditingStartSeconds(),
+    addingDraftSeconds: editing.getAddingDraftSeconds(),
     watchPlayback: editing.watchPlayback,
     onStartEdit: startEditing,
+    onStartAdd: startAdding,
     onCancelEdit: cancelEdit,
-    onSubmitEdit: submitEdit
+    onSubmitEdit: submitEdit,
+    onSubmitAdd: submitAdd
   }
-}
-
-// 추가하는 동안에는 "+ 직접 추가" 자리가 그대로 입력 폼이 된다.
-function createAddArea(view) {
-  const addingDraftSeconds = editing.getAddingDraftSeconds()
-
-  if (addingDraftSeconds === null) {
-    return createAddRow(startAdding)
-  }
-
-  return createEditRow(
-    { startSeconds: addingDraftSeconds, trimmedEndSeconds: null, title: '', previousStartSeconds: null },
-    { ...toListView(view), onSubmitEdit: (previousStartSeconds, entry) => submitAdd(entry) }
-  )
 }
 
 // 아래 다섯은 상태를 바꾸고 다시 그리기만 한다. 무엇이 열리고 닫히는지는 editingState가 안다.
@@ -138,12 +116,4 @@ function createPanel(container) {
   container.prepend(panel)
 
   return panel
-}
-
-function createEmptyMessage() {
-  const message = document.createElement('div')
-  message.className = 'timeline-skip-empty'
-  message.textContent = '아래 댓글에서 "타임라인 불러오기" 버튼을 누르면 목록이 만들어집니다. 여러 댓글을 눌러 합칠 수 있습니다.'
-
-  return message
 }
