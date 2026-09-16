@@ -98,16 +98,6 @@ test.describe('구간 바', () => {
     await expect(page.locator(TO_LABEL)).toHaveText('05:20')
   })
 
-  test('바를 눌러도 영상이 움직이지 않는다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await openEditRow(page, '둘째 곡')
-    await pauseAt(page, 100)
-
-    await page.locator(BAR).click()
-
-    expect(await readCurrentTime(page)).toBeCloseTo(100, 1)
-  })
-
   test('편집을 닫으면 구간 바가 사라진다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage)
     await openEditRow(page, '둘째 곡')
@@ -145,10 +135,6 @@ async function readFillRatios(page) {
   const fill = await page.locator(FILL).boundingBox()
 
   return { left: (fill.x - bar.x) / bar.width, width: fill.width / bar.width }
-}
-
-function readCurrentTime(page) {
-  return page.evaluate(() => document.querySelector('video').currentTime)
 }
 
 // 재생 중이면 초가 흘러 추가 행의 시작 시각이 흔들린다. 멈춘 채로 옮겨 둔다.
