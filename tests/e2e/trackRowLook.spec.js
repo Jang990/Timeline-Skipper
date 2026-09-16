@@ -108,6 +108,9 @@ async function loadTimeline(page) {
 
   await page.locator('.timeline-skip-load-button').first().click()
   await expect(page.locator(ROW).first()).toBeVisible()
+
+  // 픽스처에서는 불러오기 버튼과 목록이 같은 높이에 있다. 마우스가 행 위에 남으면 hover가 상태 표시를 치운다.
+  await page.mouse.move(0, 0)
 }
 
 // 체크를 바꾸면 목록이 다시 그려진다. 다시 그려진 행에서 상태를 확인한 뒤 넘어간다.
