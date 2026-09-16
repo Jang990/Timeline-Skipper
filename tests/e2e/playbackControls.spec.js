@@ -13,17 +13,17 @@ const NEXT_BUTTON = `${PANEL} [aria-label="다음 트랙"]`
 const PREVIOUS_BUTTON = `${PANEL} [aria-label="이전 트랙"]`
 
 test.describe('패널 재생 조작', () => {
-  test('▶를 누르면 재생되고 버튼이 ⏸로 바뀐다', async ({ openWatchPage }) => {
+  test('재생 버튼을 누르면 재생되고 버튼이 일시정지 아이콘으로 바뀐다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts })
     await loadTimeline(page)
 
     await page.locator(PLAY_BUTTON).click()
 
-    await expect(page.locator(PAUSE_BUTTON)).toHaveText('⏸')
+    await expect(page.locator(`${PAUSE_BUTTON} svg[data-icon="pause"]`)).toHaveCount(1)
     expect(await isPaused(page)).toBe(false)
   })
 
-  test('⏸를 누르면 멈추고 버튼이 ▶로 돌아온다', async ({ openWatchPage }) => {
+  test('일시정지 버튼을 누르면 멈추고 버튼이 재생 아이콘으로 돌아온다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts })
     await loadTimeline(page)
     await page.locator(PLAY_BUTTON).click()
@@ -31,7 +31,7 @@ test.describe('패널 재생 조작', () => {
 
     await page.locator(PAUSE_BUTTON).click()
 
-    await expect(page.locator(PLAY_BUTTON)).toHaveText('▶')
+    await expect(page.locator(`${PLAY_BUTTON} svg[data-icon="play"]`)).toHaveCount(1)
     expect(await isPaused(page)).toBe(true)
   })
 

@@ -2,7 +2,7 @@ import { SELECTORS } from '../adapters/selectors.js'
 import { createEditingState } from './editingState.js'
 import { keepListPosition } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
-import { createControls } from './parts/playbackControls.js'
+import { createNowPlayingCard } from './parts/nowPlayingCard.js'
 import { createHeader } from './parts/panelHeader.js'
 import { createRenderGate } from './renderGate.js'
 
@@ -54,7 +54,7 @@ export function isEditing() {
 function drawInto(target, view) {
   const previousScrollTop = target.querySelector(LIST_SELECTOR)?.scrollTop ?? 0
 
-  target.replaceChildren(createHeader(view), createControls(view), createListArea(toListView(view)))
+  target.replaceChildren(createHeader(view), createNowPlayingCard(view), createListArea(toListView(view)))
 
   keepListPosition(target.querySelector(LIST_SELECTOR), previousScrollTop)
 

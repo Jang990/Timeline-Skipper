@@ -48,11 +48,6 @@
   margin-bottom: 0;
 }
 
-/* 패널의 버튼 폭 그대로 두면 카드가 제목보다 넓어진다. */
-.timeline-skip-floating-card .timeline-skip-control {
-  padding: 5px 10px;
-}
-
 /* 제목이 얼마나 길지 알 수 없다. 폭을 고정해야 곡이 바뀔 때마다 위젯이 들썩이지 않는다. */
 .timeline-skip-floating-title {
   flex: none;
