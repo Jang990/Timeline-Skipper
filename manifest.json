@@ -8,7 +8,16 @@
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["src/content.js"],
-      "css": ["src/ui/panel.css", "src/ui/floating.css"],
+      "css": [
+        "src/ui/styles/panel.css",
+        "src/ui/styles/header.css",
+        "src/ui/styles/controls.css",
+        "src/ui/styles/trackList.css",
+        "src/ui/styles/editForm.css",
+        "src/ui/styles/rangeBar.css",
+        "src/ui/styles/commentButton.css",
+        "src/ui/styles/floating.css"
+      ],
       "run_at": "document_idle"
     }
   ],

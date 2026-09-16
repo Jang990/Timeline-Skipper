@@ -1,0 +1,143 @@
+/* 목록 아래쪽에서 올라와 목록을 덮는 층. 목록 스크롤 영역의 바닥에 달라붙는다.
+   덮은 행이 비치지 않게 불투명한 바탕 위에 옅은 색을 한 겹 얹어 목록과 다른 판으로 보이게 한다.
+   위쪽 그림자는 목록 위에 올라와 있다는 것을, 파란 윗테두리는 강조한 행과 같은 트랙이라는 것을 알린다. */
+.timeline-skip-edit-sheet {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 2px solid var(--yt-spec-call-to-action, #3ea6ff);
+  border-radius: 8px 8px 0 0;
+  background:
+    linear-gradient(rgba(128, 128, 128, 0.08), rgba(128, 128, 128, 0.08)),
+    var(--yt-spec-base-background, #fff);
+  box-shadow: 0 -6px 12px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* 편집 폼의 제목 줄. 트랙 행과 같은 자리에 같은 모양으로 선다. */
+.timeline-skip-edit-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+}
+
+.timeline-skip-time-input,
+.timeline-skip-end-input,
+.timeline-skip-title-input {
+  padding: 2px 6px;
+  border: 1px solid var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.4));
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* [지금으로]와 한 줄에 서야 한다. "1:02:33"이 들어가는 만큼만 준다. */
+.timeline-skip-time-input,
+.timeline-skip-end-input {
+  flex: none;
+  width: 56px;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline-skip-title-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 흐린 글씨는 정해 둔 값이 아니라, 비워 두면 끝나는 시각이다. 둘은 색으로 갈린다. */
+.timeline-skip-end-input::placeholder {
+  color: var(--yt-spec-text-secondary, #909090);
+}
+
+.timeline-skip-stepper {
+  padding: 0 8px 2px;
+}
+
+/* 바 바로 아래에서 바 위의 재생 위치와 짝을 이룬다. 가운데 글씨 폭이 흔들리면 버튼이 들썩인다. */
+.timeline-skip-playback-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 0 0 4px;
+}
+
+.timeline-skip-playback-position {
+  flex: none;
+  min-width: 56px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* 사이드바가 좁아지면 넘치지 않고 다음 줄로 흐른다. */
+.timeline-skip-step-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.timeline-skip-step-label {
+  flex: none;
+  width: 24px;
+  color: var(--yt-spec-text-secondary, #909090);
+  font-size: 12px;
+}
+
+.timeline-skip-step {
+  flex: none;
+  padding: 2px 4px;
+  border: 1px solid var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.3));
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.timeline-skip-step:hover {
+  background: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.15));
+}
+
+/* 저장되지 않은 이유가 어느 칸에 있는지 그 자리에서 보여준다. */
+.timeline-skip-time-input.is-invalid,
+.timeline-skip-end-input.is-invalid {
+  border-color: #f28b82;
+}
+
+.timeline-skip-edit-action {
+  flex: none;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--yt-spec-text-secondary, #909090);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.timeline-skip-edit-action:hover {
+  color: var(--yt-spec-text-primary, inherit);
+}
+
+/* 저장되지 않은 이유는 입력칸 바로 아래에서 읽혀야 한다. */
+.timeline-skip-error:empty {
+  display: none;
+}
+
+/* 8px(조정 줄 패딩) + 24px(이름표) + 4px(gap). 시각 칸 왼쪽에 맞춘다. */
+.timeline-skip-error {
+  padding: 2px 0 4px 36px;
+  color: #f28b82;
+  font-size: 11px;
+}
