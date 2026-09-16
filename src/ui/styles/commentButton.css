@@ -2,15 +2,15 @@
   display: block;
   margin: 6px 0;
   padding: 4px 10px;
-  border: 1px solid var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.4));
+  border: 1px solid var(--timeline-skip-color-tonal);
   border-radius: 999px;
   background: none;
-  color: var(--yt-spec-call-to-action, #3ea6ff);
+  color: var(--timeline-skip-color-accent);
   cursor: pointer;
   font-size: 12px;
 }
 
 .timeline-skip-load-button:disabled {
-  color: var(--yt-spec-text-secondary, #909090);
+  color: var(--timeline-skip-color-text-secondary);
   cursor: default;
 }

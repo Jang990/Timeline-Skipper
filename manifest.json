@@ -9,6 +9,7 @@
       "matches": ["https://www.youtube.com/*"],
       "js": ["src/content.js"],
       "css": [
+        "src/ui/styles/tokens.css",
         "src/ui/styles/panel.css",
         "src/ui/styles/header.css",
         "src/ui/styles/controls.css",
