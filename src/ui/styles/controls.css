@@ -1,26 +1,106 @@
-.timeline-skip-controls {
+/* 바탕을 옅게 깔아 목록과 다른 판으로 읽히게 한다. 테두리를 두르면 목록 행과 겹쳐 보여 번잡하다. */
+.timeline-skip-now-playing {
   display: flex;
-  justify-content: center;
-  gap: 6px;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 10px;
+  padding: 14px 16px 12px;
+  border-radius: 12px;
+  background: var(--timeline-skip-color-tonal);
 }
 
+.timeline-skip-now-playing-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.timeline-skip-now-playing-label {
+  color: var(--timeline-skip-color-accent);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.timeline-skip-now-playing-title {
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.timeline-skip-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* 반복은 곡을 넘기는 버튼과 성격이 달라 한쪽 끝으로 뺀다. 오른쪽 빈 칸이 가운데 셋을 가운데에 붙든다. */
+.timeline-skip-now-playing .timeline-skip-controls {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto 1fr;
+  gap: 12px;
+}
+
+.timeline-skip-now-playing .timeline-skip-control.is-loop {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+}
+
+/* 떠 있는 위젯도 이 버튼을 쓴다. 크기와 색은 여기서, 배치는 놓이는 곳에서 정한다. */
 .timeline-skip-control {
-  padding: 5px 16px;
-  border: 1px solid var(--timeline-skip-color-tonal);
-  border-radius: 999px;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
   background: none;
   color: inherit;
   cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
+}
+
+.timeline-skip-control .timeline-skip-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .timeline-skip-control:hover {
   background: var(--timeline-skip-color-tonal);
 }
 
-.timeline-skip-control.is-active {
-  border-color: var(--timeline-skip-color-accent);
+/* 가장 자주 누르는 버튼이라 면을 채워 먼저 눈에 띄게 한다. 글자색과 바탕색을 뒤집어 테마마다 대비를 지킨다. */
+.timeline-skip-control.is-primary {
+  width: 48px;
+  height: 48px;
+  background: var(--timeline-skip-color-text-primary);
+  color: var(--timeline-skip-color-base-background);
+}
+
+.timeline-skip-control.is-primary:hover {
+  opacity: 0.85;
+}
+
+.timeline-skip-control.is-loop {
+  width: 36px;
+  height: 36px;
+  color: var(--timeline-skip-color-text-secondary);
+}
+
+.timeline-skip-control.is-loop .timeline-skip-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.timeline-skip-control.is-loop.is-active {
+  background: color-mix(in srgb, var(--timeline-skip-color-accent) 16%, transparent);
   color: var(--timeline-skip-color-accent);
 }
