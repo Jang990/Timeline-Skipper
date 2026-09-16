@@ -15,6 +15,7 @@ const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 
 const HIDE_BUTTON = '#timeline-skip-panel button:has-text("위젯 숨기기")'
 const SHOW_BUTTON = '#timeline-skip-panel button:has-text("위젯 보이기")'
+const MORE_BUTTON = '#timeline-skip-panel button[aria-label="더보기"]'
 
 test.describe('플로팅 위젯', () => {
   test('트랙이 없으면 위젯이 뜨지 않는다', async ({ openWatchPage }) => {
@@ -157,7 +158,7 @@ test.describe('플로팅 위젯', () => {
 
     await expect(page.locator(FLOATING)).toBeAttached()
 
-    await page.locator(HIDE_BUTTON).click()
+    await clickMenuItem(page, HIDE_BUTTON)
 
     await expect(page.locator(FLOATING)).not.toBeAttached()
   })
@@ -165,11 +166,11 @@ test.describe('플로팅 위젯', () => {
   test('숨긴 뒤 보이기 버튼을 누르면 다시 나타난다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
-    await page.locator(HIDE_BUTTON).click()
+    await clickMenuItem(page, HIDE_BUTTON)
 
     await expect(page.locator(FLOATING)).not.toBeAttached()
 
-    await page.locator(SHOW_BUTTON).click()
+    await clickMenuItem(page, SHOW_BUTTON)
 
     await expect(page.locator(ICON)).toBeVisible()
   })
@@ -179,10 +180,10 @@ test.describe('플로팅 위젯', () => {
     await loadTimeline(page)
     await expandWidget(page)
 
-    await page.locator(HIDE_BUTTON).click()
+    await clickMenuItem(page, HIDE_BUTTON)
     await expect(page.locator(FLOATING)).not.toBeAttached()
 
-    await page.locator(SHOW_BUTTON).click()
+    await clickMenuItem(page, SHOW_BUTTON)
 
     await expect(page.locator(CARD)).toBeVisible()
   })
@@ -200,7 +201,7 @@ test.describe('플로팅 위젯', () => {
   test('숨긴 상태는 새로고침한 뒤에도 유지된다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
-    await page.locator(HIDE_BUTTON).click()
+    await clickMenuItem(page, HIDE_BUTTON)
     await expect(page.locator(FLOATING)).not.toBeAttached()
 
     await reloadWatchPage(page)
@@ -231,6 +232,12 @@ async function reloadWatchPage(page) {
 async function loadTimeline(page) {
   await page.locator('.timeline-skip-load-button').first().click()
   await expect(page.locator('.timeline-skip-row').first()).toBeVisible()
+}
+
+// 숨기기·보이기는 패널 헤더의 더보기 메뉴 안에 있다. 메뉴를 먼저 연다.
+async function clickMenuItem(page, itemSelector) {
+  await page.locator(MORE_BUTTON).click()
+  await page.locator(itemSelector).click()
 }
 
 // 조작 버튼은 접힘 상태에 아예 없다. 눌러야 하는 검증은 먼저 펼친다.

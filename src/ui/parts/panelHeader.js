@@ -1,24 +1,45 @@
 import { createButton } from '../elements.js'
+import { createHeaderMenu } from './headerMenu.js'
 
-export function createHeader({ tracks, disabledStartSeconds, floatingHidden, onEnableAll, onDisableAll, onClear, onSetFloatingHidden }) {
+const TITLE_LABEL = '타임라인'
+
+export function createHeader(view) {
+  const { tracks, onEnableAll, onDisableAll } = view
   const header = document.createElement('div')
   header.className = 'timeline-skip-header'
-
-  const title = document.createElement('span')
-  title.textContent = toHeaderLabel(tracks, disabledStartSeconds)
 
   const actions = document.createElement('div')
   actions.className = 'timeline-skip-actions'
   actions.append(
     createActionButton('전체 선택', onEnableAll, tracks.length === 0),
     createActionButton('전체 해제', onDisableAll, tracks.length === 0),
-    createActionButton('비우기', onClear, false),
-    createActionButton(toFloatingLabel(floatingHidden), () => onSetFloatingHidden(!floatingHidden), false)
+    createHeaderMenu(toMenuItems(view))
   )
 
-  header.append(title, actions)
+  header.append(createHeading(view), actions)
 
   return header
+}
+
+// 제목은 늘 같고 수만 바뀐다. 따로 적어야 수가 눈에 먼저 들어온다.
+function createHeading({ tracks, disabledStartSeconds }) {
+  const title = document.createElement('span')
+  title.className = 'timeline-skip-header-title'
+  title.textContent = TITLE_LABEL
+
+  const heading = document.createElement('div')
+  heading.className = 'timeline-skip-header-heading'
+  heading.append(title)
+
+  if (tracks.length > 0) {
+    const enabledCount = tracks.filter((track) => !disabledStartSeconds.has(track.startSeconds)).length
+    const count = document.createElement('span')
+    count.className = 'timeline-skip-header-count'
+    count.textContent = `${enabledCount} / ${tracks.length}`
+    heading.append(count)
+  }
+
+  return heading
 }
 
 // 체크박스 하나로 전부 토글하는 대신 버튼 둘로 나눴다.
@@ -28,18 +49,14 @@ function createActionButton(label, onClick, isDisabled) {
   return createButton({ label, className: 'timeline-skip-action', isDisabled, onClick })
 }
 
-// 숨긴 위젯을 되돌리는 길은 여기 하나뿐이다. 목록이 비어도 눌러둘 수 있어야
-// 다음 영상에서 위젯이 뜬다.
-function toFloatingLabel(floatingHidden) {
-  return floatingHidden ? '위젯 보이기' : '위젯 숨기기'
-}
-
-function toHeaderLabel(tracks, disabledStartSeconds) {
-  if (tracks.length === 0) {
-    return '타임라인'
-  }
-
-  const enabledCount = tracks.filter((track) => !disabledStartSeconds.has(track.startSeconds)).length
-
-  return `타임라인 ${enabledCount}/${tracks.length}`
+// 드물게 쓰는 동작은 메뉴에 넣는다. 숨긴 위젯을 되돌리는 길은 여기 하나뿐이라,
+// 목록이 비어도 메뉴는 늘 열린다. 그래야 다음 영상에서 위젯이 뜬다.
+function toMenuItems({ floatingHidden, onClear, onSetFloatingHidden }) {
+  return [
+    {
+      label: floatingHidden ? '위젯 보이기' : '위젯 숨기기',
+      onSelect: () => onSetFloatingHidden(!floatingHidden)
+    },
+    { label: '목록 비우기', onSelect: onClear, isDestructive: true }
+  ]
 }
