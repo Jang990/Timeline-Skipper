@@ -2,7 +2,7 @@ import { SELECTORS } from '../adapters/selectors.js'
 import { createEditingState } from './editingState.js'
 import { keepListPosition } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
-import { createNowPlayingCard } from './parts/nowPlayingCard.js'
+import { createNowPlayingCard, showNowPlayingProgress } from './parts/nowPlayingCard.js'
 import { createHeader } from './parts/panelHeader.js'
 import { createRenderGate } from './renderGate.js'
 
@@ -32,10 +32,17 @@ export function render(view) {
     isEditing: editing.isEditing()
   })
 
+  if (decision === 'draw') {
+    drawInto(panel ?? createPanel(container), view)
+
+    return
+  }
+
+  // 다시 그리지 않을 때도 진행 바는 재생 위치를 따라가야 한다.
+  showNowPlayingProgress(panel, view.getCurrentTimeSeconds())
+
   if (decision === 'playback') {
     editing.notifyPlayback(view.getCurrentTimeSeconds())
-  } else if (decision === 'draw') {
-    drawInto(panel ?? createPanel(container), view)
   }
 }
 
