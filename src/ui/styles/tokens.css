@@ -8,6 +8,7 @@
   --timeline-skip-color-base-background: var(--yt-sys-color-baseline--base-background, #fff);
   --timeline-skip-color-accent: var(--yt-sys-color-baseline--call-to-action, #065fd4);
   --timeline-skip-color-tonal: var(--yt-sys-color-baseline--tonal-background, rgba(0, 0, 0, 0.1));
+  --timeline-skip-color-raised-background: var(--yt-sys-color-baseline--raised-background, #fff);
   --timeline-skip-color-menu-background: var(--yt-sys-color-baseline--menu-background, #fff);
   --timeline-skip-color-danger: var(--yt-sys-color-baseline--text-error, #990412);
 }

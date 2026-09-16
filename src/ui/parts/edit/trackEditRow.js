@@ -1,7 +1,8 @@
 import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
 import { isTimestampTaken } from '../../../core/tracks/isTimestampTaken.js'
-import { createButton, createInput } from '../../elements.js'
+import { createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
+import { createSheetFooter, createSheetHeader } from './editSheetFrame.js'
 import { createTimeStepper } from './timeStepper.js'
 
 const INVALID_CLASS = 'is-invalid'
@@ -45,10 +46,21 @@ export function createEditRow(draft, view) {
 
   // 칸이 여러 줄로 나뉘었다. 어느 줄에 포커스가 있든 Enter와 Esc는 같은 뜻이다.
   wrapper.addEventListener('keydown', (event) => handleKey(event, submit, onCancelEdit))
-  row.append(titleInput, createEditButton('✓', '저장', submit), createEditButton('✕', '취소', onCancelEdit))
-  wrapper.append(row, stepper.element, error)
+  row.append(titleInput)
+  wrapper.append(
+    createSheetHeader(toHeading(draft), onCancelEdit),
+    row,
+    stepper.element,
+    error,
+    createSheetFooter(onCancelEdit, submit)
+  )
 
   return wrapper
+}
+
+// 새 트랙에는 옮기기 전의 시각이 없다.
+function toHeading(draft) {
+  return draft.previousStartSeconds === null ? '트랙 추가' : '트랙 수정'
 }
 
 function createTitleInput(draft) {
@@ -112,14 +124,4 @@ function handleKey(event, submit, onCancelEdit) {
     event.preventDefault()
     onCancelEdit()
   }
-}
-
-function createEditButton(symbol, label, onClick) {
-  return createButton({
-    label: symbol,
-    className: 'timeline-skip-edit-action',
-    title: label,
-    ariaLabel: label,
-    onClick
-  })
 }
