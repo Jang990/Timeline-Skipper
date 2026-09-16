@@ -17,7 +17,7 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--yt-spec-call-to-action, #3ea6ff);
+  background: var(--timeline-skip-color-accent);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   color: #fff;
   font-size: 18px;
@@ -30,11 +30,11 @@
   flex-direction: column;
   gap: 6px;
   padding: 8px 10px;
-  border: 1px solid var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.3));
+  border: 1px solid var(--timeline-skip-color-tonal);
   border-radius: 12px;
-  background: var(--yt-spec-menu-background, #212121);
+  background: var(--timeline-skip-color-menu-background);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-  color: var(--yt-spec-text-primary, #fff);
+  color: var(--timeline-skip-color-text-primary);
 }
 
 .timeline-skip-floating-line {
@@ -123,5 +123,5 @@
 /* 위젯에서 넘어온 사람이 목록을 눈으로 찾는 동안만 켜진다. 패널이 아니라 위젯이 만드는
    상태라 이 규칙도 여기 둔다. */
 #timeline-skip-panel.is-revealed {
-  box-shadow: 0 0 0 2px var(--yt-spec-call-to-action, #3ea6ff);
+  box-shadow: 0 0 0 2px var(--timeline-skip-color-accent);
 }

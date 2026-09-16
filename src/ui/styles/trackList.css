@@ -17,7 +17,7 @@
 
 /* 유튜브 색 변수는 테마마다 값이 바뀐다. 글자색을 옅게 섞어야 라이트와 다크 모두에서 보인다. */
 .timeline-skip-row:hover {
-  background: color-mix(in srgb, var(--yt-spec-text-primary, #0f0f0f) 6%, transparent);
+  background: color-mix(in srgb, var(--timeline-skip-color-text-primary) 6%, transparent);
 }
 
 /* 흐림과 취소선은 재생 중 표시(배경)와 겹쳐도 함께 읽힌다. */
@@ -33,11 +33,11 @@
 /* hover는 무채색, 재생 중은 강조색이다. 농도가 아니라 색으로 갈려서 둘이 헷갈리지 않는다.
    hover보다 뒤에 두어 재생 중인 행은 마우스를 올려도 강조색을 지킨다. */
 .timeline-skip-row.is-playing {
-  background: color-mix(in srgb, var(--yt-spec-call-to-action, #3ea6ff) 12%, transparent);
+  background: color-mix(in srgb, var(--timeline-skip-color-accent) 12%, transparent);
 }
 
 .timeline-skip-row.is-playing .timeline-skip-time {
-  color: var(--yt-spec-call-to-action, #3ea6ff);
+  color: var(--timeline-skip-color-accent);
   font-weight: 500;
 }
 
@@ -52,7 +52,7 @@
 
 /* 편집 폼에 열린 트랙. 재생 중 표시(배경)와 겹칠 수 있어 테두리로 두른다. */
 .timeline-skip-row.is-edit-target {
-  box-shadow: inset 0 0 0 1.5px var(--yt-spec-call-to-action, #3ea6ff);
+  box-shadow: inset 0 0 0 1.5px var(--timeline-skip-color-accent);
 }
 
 /* 끝을 당겨 둔 트랙은 "00:00 ~ 03:00"으로 길어진다. 폭을 고정하지 않고 최소만 맞춘다. */
@@ -62,7 +62,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--yt-spec-text-secondary, #606060);
+  color: var(--timeline-skip-color-text-secondary);
   cursor: pointer;
   font-family: inherit;
   font-size: 12px;
@@ -71,7 +71,7 @@
 }
 
 .timeline-skip-time:hover {
-  color: var(--yt-spec-call-to-action, #3ea6ff);
+  color: var(--timeline-skip-color-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -87,7 +87,7 @@
 
 .timeline-skip-skipped-badge {
   flex: none;
-  color: var(--yt-spec-text-secondary, #606060);
+  color: var(--timeline-skip-color-text-secondary);
   font-size: 11px;
 }
 
@@ -104,7 +104,7 @@
   width: 3px;
   height: 7px;
   border-radius: 1px;
-  background: var(--yt-spec-call-to-action, #3ea6ff);
+  background: var(--timeline-skip-color-accent);
 }
 
 .timeline-skip-equalizer > span:nth-child(2) {

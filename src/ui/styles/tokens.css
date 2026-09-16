@@ -1,0 +1,12 @@
+/* 유튜브 색 변수의 이름은 이 파일에만 둔다. 유튜브는 이름을 바꾼 적이 있고(--yt-spec-* →
+   --yt-sys-color-baseline--*), 그때 모든 스타일 파일이 빈 변수를 가리키게 됐다.
+   유튜브는 테마를 바꿀 때 html에 이 변수들을 다시 정한다. :root에서 받아야 패널 밖의
+   위젯과 댓글 버튼까지 같은 값을 쓴다. 대체값은 유튜브 라이트 테마의 값이다. */
+:root {
+  --timeline-skip-color-text-primary: var(--yt-sys-color-baseline--text-primary, #0f0f0f);
+  --timeline-skip-color-text-secondary: var(--yt-sys-color-baseline--text-secondary, #606060);
+  --timeline-skip-color-base-background: var(--yt-sys-color-baseline--base-background, #fff);
+  --timeline-skip-color-accent: var(--yt-sys-color-baseline--call-to-action, #065fd4);
+  --timeline-skip-color-tonal: var(--yt-sys-color-baseline--tonal-background, rgba(0, 0, 0, 0.1));
+  --timeline-skip-color-menu-background: var(--yt-sys-color-baseline--menu-background, #fff);
+}
