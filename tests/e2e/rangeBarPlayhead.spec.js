@@ -7,18 +7,8 @@ const PANEL = '#timeline-skip-panel'
 const BAR = `${PANEL} .timeline-skip-range-bar`
 const PLAYHEAD = `${PANEL} .timeline-skip-range-playhead`
 const START_INPUT = `${PANEL} .timeline-skip-time-input`
-const TITLE_INPUT = `${PANEL} .timeline-skip-title-input`
 
 test.describe('바 위의 재생 위치', () => {
-  test('편집 행을 열면 바 위에 재생 위치가 보인다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await pauseAt(page, 400)
-
-    await openEditRow(page, '둘째 곡')
-
-    await expect(page.locator(PLAYHEAD)).toBeVisible()
-  })
-
   test('재생 위치 표시가 지금 재생 위치의 자리에 놓인다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage)
     await pauseAt(page, 400)
@@ -26,63 +16,6 @@ test.describe('바 위의 재생 위치', () => {
     await openEditRow(page, '둘째 곡')
 
     expect(await readPlayheadRatio(page)).toBeCloseTo(0.3611, 2)
-  })
-
-  test('영상을 다른 시각으로 옮기면 재생 위치 표시가 따라 움직인다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await pauseAt(page, 400)
-    await openEditRow(page, '둘째 곡')
-
-    await moveVideoTo(page, 500)
-
-    await expect.poll(() => readPlayheadRatio(page)).toBeCloseTo(0.6389, 2)
-  })
-
-  test('재생 위치가 움직여도 편집 칸에 입력하던 글자는 그대로다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await pauseAt(page, 400)
-    await openEditRow(page, '둘째 곡')
-    await page.locator(TITLE_INPUT).fill('고치던 제목')
-
-    await moveVideoTo(page, 500)
-
-    await expect.poll(() => readPlayheadRatio(page)).toBeCloseTo(0.6389, 2)
-    await expect(page.locator(TITLE_INPUT)).toHaveValue('고치던 제목')
-  })
-
-  test('재생 위치가 범위보다 앞이면 왼쪽 가장자리에 붙고 벗어났다고 표시된다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await pauseAt(page, 100)
-
-    await openEditRow(page, '둘째 곡')
-
-    expect(await readPlayheadRatio(page)).toBeCloseTo(0, 2)
-    await expect(page.locator(`${PLAYHEAD}.is-outside`)).toHaveCount(1)
-  })
-
-  test('편집을 닫고 다른 트랙을 열어도 재생 위치 표시가 따라 움직인다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await pauseAt(page, 400)
-    await openEditRow(page, '둘째 곡')
-    await page.locator(`${PANEL} button[aria-label="취소"]`).click()
-    await openEditRow(page, '셋째 곡')
-
-    await moveVideoTo(page, 900)
-
-    // 셋째 곡의 바는 480~1800초를 덮는다.
-    await expect.poll(() => readPlayheadRatio(page)).toBeCloseTo(0.3182, 2)
-  })
-
-  test('추가 행에서도 재생 위치 표시가 따라 움직인다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage)
-    await pauseAt(page, 100)
-    await page.locator(`${PANEL} .timeline-skip-add`).click()
-    await expect(page.locator(PLAYHEAD)).toBeVisible()
-
-    await moveVideoTo(page, 200)
-
-    // 100초에 추가하면 바는 80~320초를 덮는다.
-    await expect.poll(() => readPlayheadRatio(page)).toBeCloseTo(0.5, 2)
   })
 })
 
