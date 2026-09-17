@@ -1,13 +1,14 @@
 import { findEditRange } from '../../../core/editing/findEditRange.js'
 import { nudgeEndSeconds, nudgeStartSeconds } from '../../../core/editing/nudgeTime.js'
 import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
-import { createButton, createInput } from '../../elements.js'
+import { createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
 import { createPlaybackStepRow } from './playbackStepRow.js'
 import { createRangeBar } from './rangeBar.js'
+import { createTimeFieldCard } from './timeFieldCard.js'
 
 const TIME_HINT = '4:29 · 1:02:33 · 429 · 10423 모두 됩니다'
-const END_HINT = '비우면 다음 트랙이 시작할 때까지 재생합니다'
+const END_HINT = '끝을 비우면 다음 트랙이 시작할 때까지 재생합니다'
 
 // 구간 바, 재생 위치를 옮기는 ± 줄, 시작·끝 칸. 마우스만으로 편집을 끝낼 수 있게 하려는 것이라
 // 직접 입력도 그대로 받는다. 칸 값은 저장할 때 편집 폼이 읽으므로 칸도 함께 돌려준다.
@@ -31,37 +32,28 @@ export function createTimeStepper(draft, view) {
 
   const element = document.createElement('div')
   element.className = 'timeline-skip-stepper'
-  element.append(
-    ...(rangeBar === null ? [] : [rangeBar]),
-    playbackRow.element,
-    createStepRow('시작', context.startInput, () => captureCurrentTime(context, moveStart)),
-    createStepRow('끝', context.endInput, () => captureCurrentTime(context, moveEnd))
-  )
+  element.append(...(rangeBar === null ? [] : [rangeBar]), playbackRow.element, createTimeFields(context))
 
   return { element, startInput: context.startInput, endInput: context.endInput }
 }
 
-function createStepRow(fieldName, input, onCapture) {
-  const row = document.createElement('div')
-  row.className = 'timeline-skip-step-row'
-
-  const label = document.createElement('span')
-  label.className = 'timeline-skip-step-label'
-  label.textContent = fieldName
-
-  row.append(
-    label,
-    input,
-    createButton({
-      label: '지금으로',
-      className: 'timeline-skip-step',
-      title: `${fieldName}을 지금 재생 위치로`,
-      ariaLabel: `${fieldName}을 지금 위치로`,
-      onClick: onCapture
-    })
+// 빈 끝 칸이 무슨 뜻인지는 칸의 title만으로는 마우스를 올려야 보인다. 칸 아래에 글자로 늘 적어 둔다.
+function createTimeFields(context) {
+  const fields = document.createElement('div')
+  fields.className = 'timeline-skip-time-fields'
+  fields.append(
+    createTimeFieldCard('시작', context.startInput, () => captureCurrentTime(context, moveStart)),
+    createTimeFieldCard('끝', context.endInput, () => captureCurrentTime(context, moveEnd))
   )
 
-  return row
+  const hint = document.createElement('div')
+  hint.className = 'timeline-skip-end-hint'
+  hint.textContent = END_HINT
+
+  const fragment = document.createDocumentFragment()
+  fragment.append(fields, hint)
+
+  return fragment
 }
 
 // 찍는 값은 이웃 경계 안으로 맞춘다. 반대쪽 칸은 사람이 직접 고쳐 둔 값도 이어받는다.
