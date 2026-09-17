@@ -65,6 +65,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* 동그라미가 커져도 위아래 줄에 닿지 않게 여유를 둔다. 바의 양 끝은 제목 줄과 맞춘다. */
+.timeline-skip-floating-progress {
+  display: flex;
+  padding: 6px 0;
+}
+
 /* 패널의 카드와 달리 버튼을 왼쪽부터 붙여 세운다. 오른쪽 끝은 목록 보기 버튼의 자리다. */
 .timeline-skip-floating-card .timeline-skip-controls {
   margin-bottom: 0;
