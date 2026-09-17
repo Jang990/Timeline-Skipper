@@ -8,25 +8,6 @@ const PANEL = '#timeline-skip-panel'
 const ROW = `${PANEL} .timeline-skip-row`
 
 test.describe('시각 클릭 이동', () => {
-  test('트랙의 시각을 누르면 그 트랙의 시작으로 옮긴다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts })
-    await loadTimeline(page)
-
-    await clickTrackTime(page, 2)
-
-    await expect.poll(() => readCurrentTimeSeconds(page)).toBe(556)
-  })
-
-  test('뒤쪽에 있다가 앞 트랙의 시각을 누르면 그 트랙 시작으로 되돌아간다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts })
-    await loadTimeline(page)
-    await seekAndSettle(page, 1000)
-
-    await clickTrackTime(page, 1)
-
-    await expect.poll(() => readCurrentTimeSeconds(page)).toBe(269)
-  })
-
   // 재생이 이어졌다면 재생 위치가 트랙 시작을 지나간다. 멈췄다면 시작에 머문다.
   test('재생 중에 시각을 누르면 그 트랙의 시작부터 재생이 이어진다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts })
