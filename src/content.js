@@ -1,31 +1,12 @@
-// content script는 정적 import를 못 쓴다. 이 파일은 모듈을 불러와 넘기는 일만 한다.
-// 조립은 src/wiring.js에 있다.
+// content script는 정적 import를 못 쓴다. 이 파일은 목록대로 모듈을 불러와 넘기는 일만 한다.
+// 목록은 src/modulePaths.js에, 조립은 src/wiring.js에 있다.
 (async () => {
   const load = (path) => import(chrome.runtime.getURL(path))
 
-  const modulePaths = {
-    parser: 'src/core/parse/parseTimelineComment.js',
-    builder: 'src/core/tracks/buildTracks.js',
-    playing: 'src/core/tracks/findPlayingStartSeconds.js',
-    playback: 'src/core/playback/findPlaybackTarget.js',
-    adjacent: 'src/core/playback/findAdjacentTrack.js',
-    bulk: 'src/core/selection/setAllTracksEnabled.js',
-    remover: 'src/core/entries/removeEntriesAt.js',
-    flagMover: 'src/core/selection/moveDisabledFlag.js',
-    upserter: 'src/core/entries/upsertEntry.js',
-    player: 'src/adapters/youtubePlayer.js',
-    comments: 'src/adapters/youtubeComments.js',
-    page: 'src/adapters/youtubePage.js',
-    fullscreen: 'src/adapters/fullscreen.js',
-    storage: 'src/adapters/storage.js',
-    panel: 'src/ui/panel.js',
-    floatingState: 'src/ui/floatingState.js',
-    panelReveal: 'src/ui/panelReveal.js',
-    floating: 'src/ui/floating.js'
-  }
+  const { MODULE_PATHS } = await load('src/modulePaths.js')
 
   const loaded = await Promise.all(
-    Object.entries(modulePaths).map(async ([name, path]) => [name, await load(path)])
+    Object.entries(MODULE_PATHS).map(async ([name, path]) => [name, await load(path)])
   )
 
   const wiring = await load('src/wiring.js')
