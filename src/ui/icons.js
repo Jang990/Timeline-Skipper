@@ -7,6 +7,8 @@ const LINE_ICONS = {
   remove: ['M5 12h14'],
   add: ['M12 5v14', 'M5 12h14'],
   close: ['M18 6L6 18', 'M6 6l12 12'],
+  'chevron-down': ['M6 9l6 6 6-6'],
+  'chevron-up': ['M18 15l-6-6-6 6'],
   repeat: ['M17 2l4 4-4 4', 'M3 11V9a3 3 0 0 1 3-3h15', 'M7 22l-4-4 4-4', 'M21 13v2a3 3 0 0 1-3 3H3']
 }
 
@@ -32,6 +34,8 @@ const LINE_STYLE = {
 
 const FILLED_STYLE = { fill: 'currentColor' }
 
+const EQUALIZER_BAR_COUNT = 3
+
 // 이름은 버튼의 aria-label이 읽힌다. 아이콘까지 읽히면 같은 말이 두 번 나온다.
 // data-icon은 재생과 일시정지처럼 이름표가 아니라 모양으로만 갈리는 상태를 밖에서 읽게 한다.
 export function createIcon(name) {
@@ -53,4 +57,14 @@ export function createIcon(name) {
   }
 
   return svg
+}
+
+// 재생 중이라는 표시다. 모양은 목록 행의 막대 그림과 같은 클래스로 맞춘다.
+export function createEqualizerIcon() {
+  const equalizer = document.createElement('span')
+  equalizer.className = 'timeline-skip-equalizer'
+  equalizer.setAttribute('aria-hidden', 'true')
+  equalizer.append(...Array.from({ length: EQUALIZER_BAR_COUNT }, () => document.createElement('span')))
+
+  return equalizer
 }
