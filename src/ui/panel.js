@@ -2,8 +2,9 @@ import { SELECTORS } from '../adapters/selectors.js'
 import { createEditingState } from './editingState.js'
 import { keepListPosition } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
-import { createNowPlayingCard, showNowPlayingProgress } from './parts/nowPlayingCard.js'
+import { createNowPlayingCard } from './parts/nowPlayingCard.js'
 import { createHeader } from './parts/panelHeader.js'
+import { showTrackProgress } from './parts/trackProgressBar.js'
 import { createRenderGate } from './renderGate.js'
 
 // panelReveal이 같은 패널을 찾아야 한다. 이 id를 아는 곳은 여기 하나로 둔다.
@@ -39,7 +40,7 @@ export function render(view) {
   }
 
   // 다시 그리지 않을 때도 진행 바는 재생 위치를 따라가야 한다.
-  showNowPlayingProgress(panel, view.getCurrentTimeSeconds())
+  showTrackProgress(panel, view.getCurrentTimeSeconds())
 
   if (decision === 'playback') {
     editing.notifyPlayback(view.getCurrentTimeSeconds())
