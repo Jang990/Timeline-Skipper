@@ -1,0 +1,22 @@
+// content.js가 불러와 wiring.start()에 넘길 모듈 목록이다. jsdom 테스트도 이 목록을 그대로 읽고
+// 어댑터 자리만 가짜로 바꿔 끼운다. 목록이 한 곳에 있어야 모듈이 늘 때 테스트가 뒤처지지 않는다.
+export const MODULE_PATHS = {
+  parser: 'src/core/parse/parseTimelineComment.js',
+  builder: 'src/core/tracks/buildTracks.js',
+  playing: 'src/core/tracks/findPlayingStartSeconds.js',
+  playback: 'src/core/playback/findPlaybackTarget.js',
+  adjacent: 'src/core/playback/findAdjacentTrack.js',
+  bulk: 'src/core/selection/setAllTracksEnabled.js',
+  remover: 'src/core/entries/removeEntriesAt.js',
+  flagMover: 'src/core/selection/moveDisabledFlag.js',
+  upserter: 'src/core/entries/upsertEntry.js',
+  player: 'src/adapters/youtubePlayer.js',
+  comments: 'src/adapters/youtubeComments.js',
+  page: 'src/adapters/youtubePage.js',
+  fullscreen: 'src/adapters/fullscreen.js',
+  storage: 'src/adapters/storage.js',
+  panel: 'src/ui/panel.js',
+  floatingState: 'src/ui/floatingState.js',
+  panelReveal: 'src/ui/panelReveal.js',
+  floating: 'src/ui/floating.js'
+}

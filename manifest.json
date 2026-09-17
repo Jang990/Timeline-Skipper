@@ -25,7 +25,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["src/wiring.js", "src/trackActions.js", "src/core/*/*.js", "src/adapters/*.js", "src/ui/*.js", "src/ui/parts/*.js", "src/ui/parts/edit/*.js"],
+      "resources": ["src/modulePaths.js", "src/wiring.js", "src/trackActions.js", "src/core/*/*.js", "src/adapters/*.js", "src/ui/*.js", "src/ui/parts/*.js", "src/ui/parts/edit/*.js"],
       "matches": ["https://www.youtube.com/*"]
     }
   ]

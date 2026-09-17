@@ -15,8 +15,8 @@
 
 - 순수 JavaScript (ESM), Manifest V3
 - 빌드 단계 없음. 소스가 곧 실행되는 코드다.
-- content script는 정적 `import`를 못 쓴다. `src/content.js`는 동적 import로 모듈을 불러오는
-  **로더 역할만** 한다. 불러온 모듈은 `src/wiring.js`의 `start()`에 넘기고, 조립은 거기서 한다.
+- content script는 정적 `import`를 못 쓴다. `src/content.js`는 `src/modulePaths.js`의 목록대로
+  동적 import로 모듈을 불러오는 **로더 역할만** 한다. 불러온 모듈은 `src/wiring.js`의 `start()`에 넘기고, 조립은 거기서 한다.
   불러오는 파일은 `manifest.json`의 `web_accessible_resources`에 등록한다.
 - 테스트: Vitest. npm은 개발 도구용일 뿐, 확장 런타임에는 어떤 npm 패키지도 들어가지 않는다.
 
@@ -26,6 +26,7 @@
 manifest.json
 src/
   content.js          # 로더. 모듈을 불러와 wiring.start()에 넘기는 일만 한다
+  modulePaths.js      # wiring.start()에 넘길 모듈 경로 목록. jsdom 테스트도 이 목록을 쓴다
   wiring.js           # 조립. state를 만들고 core / adapters / ui를 연결한다. 로직 금지
   trackActions.js     # 목록을 바꾸는 동작 모음. state를 고치고 commit으로 끝난다
   core/               # 순수 로직. document / window / chrome 참조 금지
@@ -47,7 +48,7 @@ tests/
 - DOM 셀렉터 문자열은 `adapters/selectors.js`에만 존재한다. 다른 파일에 하드코딩하지 않는다.
   유튜브 마크업이 바뀌면 이 파일 하나만 고치면 되어야 한다.
 - `wiring.js`는 core / adapters / ui를 연결만 한다. 조건 분기와 계산은 여기 두지 않는다.
-  `content.js`에는 모듈 경로 목록 말고 아무것도 두지 않는다.
+  `content.js`에는 불러오는 일 말고 아무것도 두지 않는다. 모듈 경로는 `modulePaths.js` 한 곳에만 둔다.
 
 ## 명령어
 
