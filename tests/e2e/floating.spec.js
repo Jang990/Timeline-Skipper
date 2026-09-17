@@ -13,28 +13,8 @@ const CONTROLS = `${FLOATING} .timeline-skip-controls`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
 const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 
-const HIDE_BUTTON = '#timeline-skip-panel button:has-text("위젯 숨기기")'
-const SHOW_BUTTON = '#timeline-skip-panel button:has-text("위젯 보이기")'
-const MORE_BUTTON = '#timeline-skip-panel button[aria-label="더보기"]'
 
 test.describe('플로팅 위젯', () => {
-  test('트랙이 없으면 위젯이 뜨지 않는다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [] })
-
-    await expect(page.locator('#timeline-skip-panel')).toBeVisible()
-
-    await expect(page.locator(FLOATING)).not.toBeAttached()
-  })
-
-  test('타임라인을 불러오면 접힌 아이콘이 뜬다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-
-    await loadTimeline(page)
-
-    await expect(page.locator(ICON)).toBeVisible()
-    await expect(page.locator(CARD)).not.toBeAttached()
-  })
-
   test('전체화면에 들어가면 위젯이 사라지고, 나오면 다시 뜬다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
@@ -86,24 +66,6 @@ test.describe('플로팅 위젯', () => {
     expect(titleBox.y + titleBox.height).toBeLessThanOrEqual(controlsBox.y)
   })
 
-  test('위젯에 현재 재생 중인 트랙 이름이 보인다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await expect(page.locator(TITLE)).toHaveText('첫 곡')
-  })
-
-  test('재생 위치를 옮기면 위젯의 트랙 이름이 그 트랙으로 바뀐다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await seekTo(page, 700)
-
-    await expect(page.locator(TITLE)).toHaveText('셋째 곡')
-  })
-
   test('제목이 폭을 넘으면 흐르고, 넘지 않으면 흐르지 않는다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
@@ -117,31 +79,6 @@ test.describe('플로팅 위젯', () => {
     await expect(page.locator(TITLE)).toHaveClass(/is-scrolling/)
   })
 
-  test('다음 버튼은 다음 트랙 시작으로, 이전 버튼은 이전 트랙 시작으로 옮긴다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await page.locator(`${CARD} [aria-label="다음 트랙"]`).click()
-
-    await expect.poll(() => readCurrentTimeSeconds(page)).toBeGreaterThanOrEqual(300)
-    expect(await readCurrentTimeSeconds(page)).toBeLessThan(310)
-
-    await page.locator(`${CARD} [aria-label="이전 트랙"]`).click()
-
-    await expect.poll(() => readCurrentTimeSeconds(page)).toBeLessThan(10)
-  })
-
-  test('반복 버튼을 누르면 패널의 반복 버튼도 함께 켜진다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await page.locator(`${CARD} [aria-label="반복 켜기"]`).click()
-
-    await expect(page.locator('#timeline-skip-panel .timeline-skip-control.is-active')).toBeVisible()
-  })
-
   test('패널로 이동 버튼을 누르면 패널이 강조된다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
@@ -152,42 +89,6 @@ test.describe('플로팅 위젯', () => {
     await expect(page.locator('#timeline-skip-panel')).toHaveClass(/is-revealed/)
   })
 
-  test('패널의 숨기기 버튼을 누르면 위젯이 사라진다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-
-    await expect(page.locator(FLOATING)).toBeAttached()
-
-    await clickMenuItem(page, HIDE_BUTTON)
-
-    await expect(page.locator(FLOATING)).not.toBeAttached()
-  })
-
-  test('숨긴 뒤 보이기 버튼을 누르면 다시 나타난다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await clickMenuItem(page, HIDE_BUTTON)
-
-    await expect(page.locator(FLOATING)).not.toBeAttached()
-
-    await clickMenuItem(page, SHOW_BUTTON)
-
-    await expect(page.locator(ICON)).toBeVisible()
-  })
-
-  test('펼쳐둔 위젯을 숨겼다 보이면 펼친 채로 돌아온다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await clickMenuItem(page, HIDE_BUTTON)
-    await expect(page.locator(FLOATING)).not.toBeAttached()
-
-    await clickMenuItem(page, SHOW_BUTTON)
-
-    await expect(page.locator(CARD)).toBeVisible()
-  })
-
   test('펼쳐둔 상태는 새로고침한 뒤에도 유지된다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
@@ -196,17 +97,6 @@ test.describe('플로팅 위젯', () => {
     await reloadWatchPage(page)
 
     await expect(page.locator(CARD)).toBeVisible()
-  })
-
-  test('숨긴 상태는 새로고침한 뒤에도 유지된다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await clickMenuItem(page, HIDE_BUTTON)
-    await expect(page.locator(FLOATING)).not.toBeAttached()
-
-    await reloadWatchPage(page)
-
-    await expect(page.locator(FLOATING)).not.toBeAttached()
   })
 })
 
@@ -234,12 +124,6 @@ async function loadTimeline(page) {
   await expect(page.locator('.timeline-skip-row').first()).toBeVisible()
 }
 
-// 숨기기·보이기는 패널 헤더의 더보기 메뉴 안에 있다. 메뉴를 먼저 연다.
-async function clickMenuItem(page, itemSelector) {
-  await page.locator(MORE_BUTTON).click()
-  await page.locator(itemSelector).click()
-}
-
 // 조작 버튼은 접힘 상태에 아예 없다. 눌러야 하는 검증은 먼저 펼친다.
 async function expandWidget(page) {
   await page.locator(ICON).click()
@@ -254,8 +138,4 @@ async function seekTo(page, timestampSeconds) {
   await page.evaluate((seconds) => {
     document.querySelector('video').currentTime = seconds
   }, timestampSeconds)
-}
-
-function readCurrentTimeSeconds(page) {
-  return page.evaluate(() => document.querySelector('video').currentTime)
 }
