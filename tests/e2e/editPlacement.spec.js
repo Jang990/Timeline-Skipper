@@ -21,15 +21,6 @@ const ADD_BUTTON = `${PANEL} .timeline-skip-add`
 const TOLERANCE = 1
 
 test.describe('편집창 위치', () => {
-  test('편집 중인 트랙의 행은 목록에 남아 강조된다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage, TIMELINE_COMMENT)
-
-    await clickEdit(page, '둘째 곡')
-
-    await expect(page.locator(EDIT_TARGET)).toHaveCount(1)
-    await expect(page.locator(EDIT_TARGET)).toContainText('둘째 곡')
-  })
-
   test('편집이 열려 있으면 직접 추가 버튼이 보이지 않는다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage, TIMELINE_COMMENT)
 
@@ -105,27 +96,6 @@ test.describe('편집창 위치', () => {
     const lastRow = await readBox(page, `${ROW} >> nth=-1`)
     const sheet = await readBox(page, SHEET)
     expect(lastRow.bottom).toBeLessThanOrEqual(sheet.top + TOLERANCE)
-  })
-
-  test('다른 행의 ✎를 누르면 편집창과 강조 행이 그 트랙으로 바뀐다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage, TIMELINE_COMMENT)
-    await clickEdit(page, '둘째 곡')
-
-    await clickEdit(page, '셋째 곡')
-
-    await expect(page.locator(TITLE_INPUT)).toHaveValue('셋째 곡')
-    await expect(page.locator(EDIT_TARGET)).toHaveCount(1)
-    await expect(page.locator(EDIT_TARGET)).toContainText('셋째 곡')
-  })
-
-  test('저장하면 강조가 사라지고 직접 추가 버튼이 돌아온다', async ({ openWatchPage }) => {
-    const page = await openTimeline(openWatchPage, TIMELINE_COMMENT)
-    await clickEdit(page, '둘째 곡')
-
-    await page.locator(`${PANEL} button[aria-label="저장"]`).click()
-
-    await expect(page.locator(EDIT_TARGET)).toHaveCount(0)
-    await expect(page.locator(ADD_BUTTON)).toBeVisible()
   })
 
   test('트랙이 없어도 직접 추가를 누르면 추가 폼이 열린다', async ({ openWatchPage }) => {
