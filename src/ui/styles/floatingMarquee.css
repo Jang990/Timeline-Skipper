@@ -1,0 +1,37 @@
+/* 위젯 제목이 폭을 넘을 때만 흐른다. 넘치는지는 floatingBar.js가 재서 is-scrolling을 붙인다. */
+.timeline-skip-floating-title-text {
+  display: inline-block;
+}
+
+/* 넘칠 때만 붙는다. 넘친 만큼만 흐른다. */
+.timeline-skip-floating-title.is-scrolling .timeline-skip-floating-title-text {
+  animation: timeline-skip-marquee var(--timeline-skip-marquee-duration) linear infinite;
+}
+
+/* 끝까지 흐르고 잠깐 머문 뒤 처음으로 돌아온다. 되돌아오며 읽히는 글자가 없어야
+   눈이 첫 글자만 기다리면 된다. 흐르는 동안은 linear여야 읽는 속도가 일정하다. */
+@keyframes timeline-skip-marquee {
+  0%, 8% {
+    transform: translateX(0);
+  }
+
+  78%, 90% {
+    transform: translateX(var(--timeline-skip-marquee-distance));
+    animation-timing-function: ease-in-out;
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* 움직임을 줄이도록 설정한 사람에게 흐르는 글자는 읽기가 아니라 방해다. */
+@media (prefers-reduced-motion: reduce) {
+  .timeline-skip-floating-title.is-scrolling .timeline-skip-floating-title-text {
+    animation: none;
+  }
+
+  .timeline-skip-floating-title {
+    text-overflow: ellipsis;
+  }
+}

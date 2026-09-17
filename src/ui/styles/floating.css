@@ -10,109 +10,121 @@
   font-size: 13px;
 }
 
+/* 강조색 원은 영상 위의 광고 버튼처럼 눈을 끈다. 유튜브의 메뉴 판처럼 가라앉히고 막대 그림만 파랗게 둔다. */
 .timeline-skip-floating-icon {
-  display: block;
-  width: 44px;
-  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
   padding: 0;
-  border: 0;
+  border: 1px solid var(--timeline-skip-color-tonal);
   border-radius: 50%;
-  background: var(--timeline-skip-color-accent);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-  color: #fff;
-  font-size: 18px;
-  line-height: 1;
+  background: var(--timeline-skip-color-menu-background);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
 
+.timeline-skip-floating-icon .timeline-skip-equalizer {
+  height: 16px;
+  padding-right: 0;
+}
+
+/* 제목이 얼마나 길지 알 수 없다. 폭을 고정해야 곡이 바뀔 때마다 위젯이 들썩이지 않는다. */
 .timeline-skip-floating-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 8px;
+  width: 340px;
+  box-sizing: border-box;
+  padding: 10px 10px 10px 14px;
   border: 1px solid var(--timeline-skip-color-tonal);
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--timeline-skip-color-menu-background);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   color: var(--timeline-skip-color-text-primary);
 }
 
 .timeline-skip-floating-line {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
-/* 패널 안에서는 조작부가 목록 위 한 칸을 차지하지만, 여기서는 줄 간격을 카드가 정한다. */
+.timeline-skip-floating-heading {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.timeline-skip-floating-meta {
+  color: var(--timeline-skip-color-text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 패널의 카드와 달리 버튼을 왼쪽부터 붙여 세운다. 오른쪽 끝은 목록 보기 버튼의 자리다. */
 .timeline-skip-floating-card .timeline-skip-controls {
   margin-bottom: 0;
+  margin-left: -6px;
 }
 
-/* 제목이 얼마나 길지 알 수 없다. 폭을 고정해야 곡이 바뀔 때마다 위젯이 들썩이지 않는다. */
+.timeline-skip-floating-card .timeline-skip-control.is-primary {
+  width: 40px;
+  height: 40px;
+}
+
 .timeline-skip-floating-title {
-  flex: none;
-  width: 200px;
   overflow: hidden;
+  font-size: 14px;
+  font-weight: 500;
   white-space: nowrap;
-}
-
-.timeline-skip-floating-title-text {
-  display: inline-block;
-}
-
-/* 넘칠 때만 붙는다. 넘친 만큼만 흐른다. */
-.timeline-skip-floating-title.is-scrolling .timeline-skip-floating-title-text {
-  animation: timeline-skip-marquee var(--timeline-skip-marquee-duration) linear infinite;
-}
-
-/* 끝까지 흐르고 잠깐 머문 뒤 처음으로 돌아온다. 되돌아오며 읽히는 글자가 없어야
-   눈이 첫 글자만 기다리면 된다. 흐르는 동안은 linear여야 읽는 속도가 일정하다. */
-@keyframes timeline-skip-marquee {
-  0%, 8% {
-    transform: translateX(0);
-  }
-
-  78%, 90% {
-    transform: translateX(var(--timeline-skip-marquee-distance));
-    animation-timing-function: ease-in-out;
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-}
-
-/* 움직임을 줄이도록 설정한 사람에게 흐르는 글자는 읽기가 아니라 방해다. */
-@media (prefers-reduced-motion: reduce) {
-  .timeline-skip-floating-title.is-scrolling .timeline-skip-floating-title-text {
-    animation: none;
-  }
-
-  .timeline-skip-floating-title {
-    text-overflow: ellipsis;
-  }
 }
 
 .timeline-skip-floating-collapse,
 .timeline-skip-floating-jump {
+  display: flex;
   flex: none;
-  padding: 4px 8px;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
   border: 0;
-  border-radius: 4px;
+  border-radius: 16px;
   background: none;
   color: inherit;
-  font-size: 14px;
-  line-height: 1;
   cursor: pointer;
 }
 
+.timeline-skip-floating-collapse {
+  width: 32px;
+  padding: 0;
+  color: var(--timeline-skip-color-text-secondary);
+}
+
 .timeline-skip-floating-jump {
+  gap: 6px;
   margin-left: auto;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.timeline-skip-floating-collapse .timeline-skip-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.timeline-skip-floating-jump .timeline-skip-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .timeline-skip-floating-collapse:hover,
 .timeline-skip-floating-jump:hover {
-  background: rgba(128, 128, 128, 0.2);
+  background: var(--timeline-skip-color-tonal);
 }
 
 /* 위젯에서 넘어온 사람이 목록을 눈으로 찾는 동안만 켜진다. 패널이 아니라 위젯이 만드는

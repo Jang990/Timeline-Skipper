@@ -1,5 +1,7 @@
 import { createCard, startTitleMarquee } from './parts/floatingBar.js'
 import { createButton } from './elements.js'
+import { formatTimestamp } from './formatTimestamp.js'
+import { createEqualizerIcon } from './icons.js'
 
 const FLOATING_ID = 'timeline-skip-floating'
 
@@ -15,8 +17,8 @@ export function render(view) {
     return
   }
 
-  const playingTitle = findPlayingTitle(view)
-  const signature = toSignature(view, playingTitle)
+  const playing = describePlaying(view)
+  const signature = toSignature(view, playing)
   const root = document.getElementById(FLOATING_ID)
 
   if (root !== null && signature === lastSignature) {
@@ -24,16 +26,16 @@ export function render(view) {
   }
 
   lastSignature = signature
-  drawInto(root ?? createRoot(), view, playingTitle)
+  drawInto(root ?? createRoot(), view, playing)
 }
 
 // 아이콘과 카드는 CSS로 숨기는 대신 서로 갈아끼운다.
 // 화면에 있는 것이 곧 상태라야, 눌렀을 때 무엇이 달라졌는지가 눈에 보인다.
-function drawInto(root, view, playingTitle) {
+function drawInto(root, view, playing) {
   root.classList.toggle('is-expanded', view.floatingExpanded)
   root.replaceChildren(
     view.floatingExpanded
-      ? createCard(view, playingTitle, () => view.onSetFloatingExpanded(false))
+      ? createCard(view, playing, () => view.onSetFloatingExpanded(false))
       : createIcon(view)
   )
 
@@ -42,13 +44,16 @@ function drawInto(root, view, playingTitle) {
 }
 
 function createIcon(view) {
-  return createButton({
-    label: '♪',
+  const icon = createButton({
+    label: '',
     className: 'timeline-skip-floating-icon',
     title: '플레이어 펼치기',
     ariaLabel: '플레이어 펼치기',
     onClick: () => view.onSetFloatingExpanded(true)
   })
+  icon.append(createEqualizerIcon())
+
+  return icon
 }
 
 function createRoot() {
@@ -66,11 +71,23 @@ function removeWidget() {
   lastSignature = null
 }
 
-function findPlayingTitle({ tracks, playingStartSeconds }) {
-  return tracks.find((track) => track.startSeconds === playingStartSeconds)?.title ?? null
+// 순번 줄은 "2 / 8 · 05:00 – 10:00". 끝을 모르는 트랙(진행 중인 라이브)은 시작만 적는다.
+function describePlaying({ tracks, playingStartSeconds }) {
+  const trackIndex = tracks.findIndex((track) => track.startSeconds === playingStartSeconds)
+
+  if (trackIndex === -1) {
+    return { title: null, meta: null }
+  }
+
+  const { title, startSeconds, endSeconds } = tracks[trackIndex]
+  const span = Number.isFinite(endSeconds)
+    ? `${formatTimestamp(startSeconds)} – ${formatTimestamp(endSeconds)}`
+    : formatTimestamp(startSeconds)
+
+  return { title, meta: `${trackIndex + 1} / ${tracks.length} · ${span}` }
 }
 
-// 위젯에 보이는 것은 이 넷뿐이다. 목록이 바뀌어도 이 넷이 그대로면 다시 그릴 이유가 없다.
-function toSignature({ isPaused, loopEnabled, floatingExpanded }, playingTitle) {
-  return `${playingTitle}#${isPaused}#${loopEnabled}#${floatingExpanded}`
+// 위젯에 보이는 것은 이것뿐이다. 목록이 바뀌어도 이 값들이 그대로면 다시 그릴 이유가 없다.
+function toSignature({ isPaused, loopEnabled, floatingExpanded }, { title, meta }) {
+  return `${title}#${meta}#${isPaused}#${loopEnabled}#${floatingExpanded}`
 }
