@@ -33,10 +33,11 @@ src/
     selectors.js      # 모든 DOM 셀렉터는 여기에만
   ui/                 # 패널 렌더링 및 이벤트 바인딩
 tests/
-  core/               # core 구조를 그대로 미러링
-  ui/
-  e2e/                # 확장이 실제로 크롬에 얹혀 도는지 보는 테스트
-  fixtures/           # e2e가 딛고 서는 장치 (픽스처 페이지, 브라우저 컨텍스트, mp4)
+  core/               # core 구조를 그대로 미러링. node 환경
+  ui/                 # ui 부품의 기능·구조. jsdom 위 vitest
+  e2e/                # 진짜 브라우저가 있어야 확인되는 것만
+  fixtures/           # 테스트가 딛고 서는 장치 (픽스처 페이지, 브라우저 컨텍스트, mp4)
+    fakes/            # jsdom 테스트에 넘길 가짜 플레이어·저장소
 ```
 
 ### 레이어 규칙 (이 문서에서 가장 중요)
@@ -51,14 +52,18 @@ tests/
 ## 명령어
 
 - `npm install` — 최초 1회
-- `npm test` — 단위 테스트 (vitest)
+- `npm test` — vitest. `tests/core/`와 `tests/ui/`(jsdom 포함)가 함께 돈다
 - `npm run test:e2e` — 크로미움에 확장을 얹고 도는 테스트 (Playwright)
 - `npx vitest run tests/core/parse/parseTimelineComment.test.js` — 단일 파일
+- `npx playwright test tests/e2e/headerMenu.spec.js` — spec 하나
 - 빌드 명령은 없다.
 - 동작 확인: 사람이 `chrome://extensions` → 개발자 모드 → 압축해제된 확장 프로그램 로드 →
   코드 수정 후 새로고침.
 
-**픽스처 위에서의 동작은 에이전트가 `npm run test:e2e`로 확인한다.** 반면 **실제 플랫폼의
+**개발 중에는 `npm test`와 건드린 기능의 spec 파일 하나만 돌린다.** e2e 전체는 테스트마다
+크로미움을 새로 띄워 오래 걸리므로 PR을 만들기 직전에 한 번 돌리고, 나머지는 CI에 맡긴다.
+
+**픽스처 위에서의 동작은 에이전트가 e2e로 확인한다.** 반면 **실제 플랫폼의
 마크업이 오늘도 그 모양인지는 확인할 수 없다.** 픽스처는 지난번에 본 마크업을 재현할 뿐이라,
 유튜브가 마크업을 바꿔도 픽스처 위 테스트는 전부 통과한다.
 따라서 "동작합니다"라고 단정하지 말고, 무엇이 테스트로 검증됐고 무엇이 미확인인지 구분해서 보고한다.
@@ -89,8 +94,23 @@ describe('parseTimelineComment', () => {
 - 준비 / 실행 / 검증 사이는 빈 줄로 구분한다. given-when-then 주석은 쓰지 않는다.
 - 경계 케이스를 반드시 포함한다: 빈 입력, 시각이 역순인 경우, 중복 시각,
   마지막 트랙(끝 시각이 없음), 영상 길이를 넘는 시각.
-- `adapters/`와 `ui/`는 픽스처 페이지 위에서 도는 e2e로 검증한다. 러너는 확장자로 갈린다 —
-  vitest는 `*.test.js`, Playwright는 `*.spec.js`. 브라우저가 필요하면 `*.spec.js`로 쓴다.
+- 러너는 확장자로 갈린다 — vitest는 `*.test.js`, Playwright는 `*.spec.js`.
+- **`ui/`의 기능과 구조는 jsdom 위 vitest로 검증한다.** 누르면 무엇이 바뀌나, 어떤 글자·속성이
+  들어가나. 한 기능의 모든 경우(경계값 포함)는 여기서 다룬다.
+  - 플레이어와 저장소는 `tests/fixtures/fakes/`의 가짜를 `wiring.start(modules)`에 넘긴다.
+  - DOM이 필요한 파일은 맨 위에 `// @vitest-environment jsdom`을 적는다.
+    `tests/core/`는 node 환경 그대로 둔다.
+  - 재생에 따른 동작(스킵, 반복)은 가짜 플레이어로 시각을 흘려 확인한다.
+  - 새로고침 뒤 유지는 같은 가짜 저장소로 `start()`를 다시 불러 확인한다.
+- 색은 CSS 파일을 글자로 읽어 확인한다 (`tests/ui/themeTokens.test.js` 방식).
+- **e2e는 테스트 대상이 브라우저 자체일 때만 쓴다.** 테스트마다 크로미움을 띄우는 비용이 커서,
+  jsdom으로 확인되는 것을 e2e에 두지 않는다.
+  - 위치·크기·겹침 (레이아웃 계산, hover)
+  - 진짜 `<video>` 이벤트, 진짜 `chrome.storage` — `adapters/`의 e2e가 맡는다
+  - 진짜 초점 이동 (예: 메뉴 밖 클릭으로 닫기)
+  - 기능마다 대표 흐름 하나. 같은 기능의 여러 경우는 jsdom에서만 다룬다
+- `adapters/`는 픽스처 페이지 위에서 도는 e2e로 검증한다. 가짜 플레이어·저장소가 진짜와
+  어긋나도 jsdom 테스트는 통과하므로, 이 e2e는 줄이지 않는다.
 - 픽스처로는 셀렉터가 낡은 것을 잡을 수 없다. 그래서 **플랫폼마다 실제 페이지에 붙는 테스트를
   하나씩 둔다** (유튜브 · 치지직 · 숲). `adapters/selectors.js`가 오늘도 유효한지는 이것만이 답한다.
 
