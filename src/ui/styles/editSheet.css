@@ -1,0 +1,96 @@
+/* 목록 아래쪽에서 올라와 목록을 덮는 층. 목록 스크롤 영역의 바닥에 달라붙는다.
+   유튜브가 메뉴·시트에 쓰는 떠 있는 판의 색을 깐다. 라이트 테마에서는 이 색이 목록 바탕과 같아서,
+   목록 위에 올라와 있다는 것은 위쪽 그림자와 둥근 모서리가 알린다. */
+.timeline-skip-edit-sheet {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  margin-top: 6px;
+  padding: 6px 8px 12px;
+  border-radius: 16px 16px 0 0;
+  background: var(--timeline-skip-color-raised-background);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* 끌 수 있다는 뜻이 아니다. 목록과 다른 판이 올라와 있다는 표시일 뿐이다. */
+.timeline-skip-sheet-handle {
+  width: 32px;
+  height: 4px;
+  margin: 0 auto 6px;
+  border-radius: 2px;
+  background: var(--timeline-skip-color-tonal);
+}
+
+.timeline-skip-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 4px 8px;
+}
+
+.timeline-skip-sheet-heading {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.timeline-skip-sheet-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--timeline-skip-color-text-secondary);
+  cursor: pointer;
+}
+
+.timeline-skip-sheet-close:hover {
+  background: var(--timeline-skip-color-tonal);
+  color: var(--timeline-skip-color-text-primary);
+}
+
+.timeline-skip-sheet-close .timeline-skip-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.timeline-skip-sheet-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 8px 0;
+}
+
+.timeline-skip-sheet-cancel,
+.timeline-skip-sheet-save {
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.timeline-skip-sheet-cancel {
+  background: none;
+  color: var(--timeline-skip-color-text-primary);
+}
+
+.timeline-skip-sheet-cancel:hover {
+  background: var(--timeline-skip-color-tonal);
+}
+
+/* 재생 버튼과 같은 반전 색이다. 테마가 바뀌어도 글자와 바탕의 대비가 유지된다. */
+.timeline-skip-sheet-save {
+  background: var(--timeline-skip-color-text-primary);
+  color: var(--timeline-skip-color-base-background);
+}
+
+.timeline-skip-sheet-save:hover {
+  opacity: 0.85;
+}

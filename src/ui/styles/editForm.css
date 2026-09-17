@@ -1,26 +1,7 @@
-/* 목록 아래쪽에서 올라와 목록을 덮는 층. 목록 스크롤 영역의 바닥에 달라붙는다.
-   덮은 행이 비치지 않게 불투명한 바탕 위에 옅은 색을 한 겹 얹어 목록과 다른 판으로 보이게 한다.
-   위쪽 그림자는 목록 위에 올라와 있다는 것을, 파란 윗테두리는 강조한 행과 같은 트랙이라는 것을 알린다. */
-.timeline-skip-edit-sheet {
-  position: sticky;
-  bottom: 0;
-  z-index: 3;
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 2px solid var(--timeline-skip-color-accent);
-  border-radius: 8px 8px 0 0;
-  background:
-    linear-gradient(rgba(128, 128, 128, 0.08), rgba(128, 128, 128, 0.08)),
-    var(--timeline-skip-color-base-background);
-  box-shadow: 0 -6px 12px -6px rgba(0, 0, 0, 0.3);
-}
-
-/* 편집 폼의 제목 줄. 트랙 행과 같은 자리에 같은 모양으로 선다. */
+/* 제목 칸은 한 줄을 혼자 차지한다. 트랙 제목은 길어서 버튼과 나눠 쓰면 잘린다. */
 .timeline-skip-edit-title-row {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
+  padding: 4px 8px 8px;
 }
 
 .timeline-skip-time-input,
@@ -46,6 +27,17 @@
 .timeline-skip-title-input {
   flex: 1;
   min-width: 0;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--timeline-skip-color-base-background);
+  font-size: 14px;
+}
+
+.timeline-skip-title-input:focus {
+  border-color: var(--timeline-skip-color-accent);
+  outline: none;
 }
 
 /* 흐린 글씨는 정해 둔 값이 아니라, 비워 두면 끝나는 시각이다. 둘은 색으로 갈린다. */
@@ -113,21 +105,6 @@
 .timeline-skip-time-input.is-invalid,
 .timeline-skip-end-input.is-invalid {
   border-color: #f28b82;
-}
-
-.timeline-skip-edit-action {
-  flex: none;
-  padding: 0 2px;
-  border: 0;
-  background: none;
-  color: var(--timeline-skip-color-text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
-}
-
-.timeline-skip-edit-action:hover {
-  color: var(--timeline-skip-color-text-primary);
 }
 
 /* 저장되지 않은 이유는 입력칸 바로 아래에서 읽혀야 한다. */
