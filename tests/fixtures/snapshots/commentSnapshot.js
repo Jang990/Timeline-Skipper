@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 // 스냅샷은 실제 유튜브 댓글 원문이다. 파서가 좋아하는 모양으로 손질하면 픽스처가 실측이
@@ -8,7 +9,8 @@ import { fileURLToPath } from 'node:url'
 const REQUIRED_FIELDS = ['videoId', 'durationSeconds', 'commentTexts']
 
 export function readCommentSnapshot(videoId) {
-  const snapshotPath = fileURLToPath(new URL(`./${videoId}.json`, import.meta.url))
+  // jsdom 환경의 전역 URL은 node의 URL 도구와 섞이지 않는다. 파일 경로로만 계산한다.
+  const snapshotPath = resolve(dirname(fileURLToPath(import.meta.url)), `${videoId}.json`)
   const snapshot = parseSnapshot(readSnapshotFile(snapshotPath), snapshotPath)
 
   return {
