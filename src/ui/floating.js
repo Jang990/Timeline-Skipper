@@ -2,6 +2,7 @@ import { createCard, startTitleMarquee } from './parts/floatingBar.js'
 import { createButton } from './elements.js'
 import { formatTimestamp } from './formatTimestamp.js'
 import { createEqualizerIcon } from './icons.js'
+import { showTrackProgress } from './parts/trackProgressBar.js'
 
 const FLOATING_ID = 'timeline-skip-floating'
 
@@ -19,14 +20,16 @@ export function render(view) {
 
   const playing = describePlaying(view)
   const signature = toSignature(view, playing)
-  const root = document.getElementById(FLOATING_ID)
+  const existingRoot = document.getElementById(FLOATING_ID)
+  const root = existingRoot ?? createRoot()
 
-  if (root !== null && signature === lastSignature) {
-    return
+  if (existingRoot === null || signature !== lastSignature) {
+    lastSignature = signature
+    drawInto(root, view, playing)
   }
 
-  lastSignature = signature
-  drawInto(root ?? createRoot(), view, playing)
+  // 다시 그리지 않아도 진행 바의 자리는 재생 위치를 따라가야 한다.
+  showTrackProgress(root, view.getCurrentTimeSeconds())
 }
 
 // 아이콘과 카드는 CSS로 숨기는 대신 서로 갈아끼운다.
@@ -76,18 +79,20 @@ function describePlaying({ tracks, playingStartSeconds }) {
   const trackIndex = tracks.findIndex((track) => track.startSeconds === playingStartSeconds)
 
   if (trackIndex === -1) {
-    return { title: null, meta: null }
+    return { title: null, meta: null, track: null }
   }
 
-  const { title, startSeconds, endSeconds } = tracks[trackIndex]
+  const track = tracks[trackIndex]
+  const { title, startSeconds, endSeconds } = track
   const span = Number.isFinite(endSeconds)
     ? `${formatTimestamp(startSeconds)} – ${formatTimestamp(endSeconds)}`
     : formatTimestamp(startSeconds)
 
-  return { title, meta: `${trackIndex + 1} / ${tracks.length} · ${span}` }
+  return { title, meta: `${trackIndex + 1} / ${tracks.length} · ${span}`, track }
 }
 
 // 위젯에 보이는 것은 이것뿐이다. 목록이 바뀌어도 이 값들이 그대로면 다시 그릴 이유가 없다.
+// 진행 바의 범위는 순번 줄의 시각과 같아서 따로 적지 않는다.
 function toSignature({ isPaused, loopEnabled, floatingExpanded }, { title, meta }) {
   return `${title}#${meta}#${isPaused}#${loopEnabled}#${floatingExpanded}`
 }

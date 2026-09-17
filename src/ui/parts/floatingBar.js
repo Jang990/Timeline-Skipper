@@ -1,6 +1,7 @@
 import { createButton } from '../elements.js'
 import { createEqualizerIcon, createIcon } from '../icons.js'
 import { createControls } from './playbackControls.js'
+import { createTrackProgressBar } from './trackProgressBar.js'
 
 // 첫 트랙 앞은 어느 트랙에도 속하지 않는다. 그때도 제목 자리가 비지 않게 채운다.
 const NO_TRACK_LABEL = '트랙 밖 구간'
@@ -16,15 +17,32 @@ const MARQUEE_MINIMUM_SECONDS = 5
 // 나머지는 양 끝에서 멈춰 있는 시간과 처음으로 돌아오는 시간이라 속도 계산에서 빼야 한다.
 const MARQUEE_SCROLL_RATIO = 0.7
 
-// 제목 줄과 버튼 줄로 나눈다. 조작부는 패널이 쓰던 것을 그대로 쓴다.
-// playing은 재생 중인 트랙의 제목과 순번 줄 글자다. 첫 트랙 앞이면 둘 다 null이다.
+// 제목 줄, 진행 바, 버튼 줄로 나눈다. 조작부와 진행 바는 패널이 쓰던 것을 그대로 쓴다.
+// playing은 재생 중인 트랙과 그 제목·순번 줄 글자다. 첫 트랙 앞이면 모두 null이다.
 export function createCard(view, playing, onCollapse) {
   const card = document.createElement('div')
   card.className = 'timeline-skip-floating-card'
 
-  card.append(createTitleLine(playing, onCollapse), createButtonLine(view))
+  card.append(
+    createTitleLine(playing, onCollapse),
+    ...createProgress(playing.track, view.onSeek),
+    createButtonLine(view)
+  )
 
   return card
+}
+
+// 끝을 모르는 트랙(진행 중인 라이브)은 비율을 낼 수 없다.
+function createProgress(track, onSeek) {
+  if (track === null || !Number.isFinite(track.endSeconds)) {
+    return []
+  }
+
+  const progress = document.createElement('div')
+  progress.className = 'timeline-skip-floating-progress'
+  progress.append(createTrackProgressBar(track, onSeek))
+
+  return [progress]
 }
 
 // 넘치는지는 화면에 붙여놓고 재봐야 안다. 짧은 제목까지 흔들리면 읽기만 힘들어진다.
