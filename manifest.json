@@ -13,6 +13,7 @@
         "src/ui/styles/panel.css",
         "src/ui/styles/header.css",
         "src/ui/styles/controls.css",
+        "src/ui/styles/progressBar.css",
         "src/ui/styles/trackList.css",
         "src/ui/styles/trackListControls.css",
         "src/ui/styles/editSheet.css",

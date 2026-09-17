@@ -1,12 +1,10 @@
-import { toBarRatio } from '../../core/editing/toBarRatio.js'
 import { formatTimestamp } from '../formatTimestamp.js'
 import { createControls } from './playbackControls.js'
+import { createTrackProgressBar, showTrackProgress } from './trackProgressBar.js'
 
 // 첫 트랙 앞은 어느 트랙에도 속하지 않는다. 떠 있는 위젯과 같은 말을 쓴다.
 const NO_TRACK_LABEL = '트랙 밖 구간'
 const PLAYING_LABEL = '지금 재생 중'
-const BAR_SELECTOR = '.timeline-skip-now-playing-bar'
-const FILL_SELECTOR = '.timeline-skip-now-playing-fill'
 
 // 목록이 길면 재생 중인 행이 스크롤 밖에 있다. 무엇이 나오는지는 목록을 뒤지지 않고 여기서 읽는다.
 // 트랙이 없으면 보여줄 제목도 없다. 조작 버튼만 남긴다.
@@ -22,31 +20,14 @@ export function createNowPlayingCard(view) {
 
     // 끝을 모르는 트랙(진행 중인 라이브)은 비율을 낼 수 없다.
     if (track !== undefined && Number.isFinite(track.endSeconds)) {
-      card.append(createProgress(track))
+      card.append(createProgress(track, view.onSeek))
     }
   }
 
   card.append(createControls(view))
-  showNowPlayingProgress(card, view.getCurrentTimeSeconds())
+  showTrackProgress(card, view.getCurrentTimeSeconds())
 
   return card
-}
-
-// 패널은 그릴 내용이 같으면 다시 그리지 않는다. 채움 폭만은 재생 위치가 바뀔 때마다 여기서 고친다.
-// 범위는 바에 적어 두었다. 그래야 view 전체 없이 재생 위치만으로 고칠 수 있다.
-export function showNowPlayingProgress(root, currentTimeSeconds) {
-  const bar = root.querySelector(BAR_SELECTOR)
-
-  if (bar === null) {
-    return
-  }
-
-  const range = { fromSeconds: Number(bar.dataset.fromSeconds), toSeconds: Number(bar.dataset.toSeconds) }
-  const ratio = toBarRatio(currentTimeSeconds, range)
-
-  if (ratio !== null) {
-    bar.querySelector(FILL_SELECTOR).style.width = `${ratio * 100}%`
-  }
 }
 
 function createHeading(trackIndex, track) {
@@ -67,19 +48,15 @@ function createHeading(trackIndex, track) {
   return heading
 }
 
-function createProgress({ startSeconds, endSeconds }) {
-  const fill = document.createElement('div')
-  fill.className = 'timeline-skip-now-playing-fill'
-
-  const bar = document.createElement('div')
-  bar.className = 'timeline-skip-now-playing-bar'
-  bar.dataset.fromSeconds = String(startSeconds)
-  bar.dataset.toSeconds = String(endSeconds)
-  bar.append(fill)
-
+function createProgress(track, onSeek) {
+  const { startSeconds, endSeconds } = track
   const progress = document.createElement('div')
   progress.className = 'timeline-skip-now-playing-progress'
-  progress.append(createTimeLabel('from', startSeconds), bar, createTimeLabel('to', endSeconds))
+  progress.append(
+    createTimeLabel('from', startSeconds),
+    createTrackProgressBar(track, onSeek),
+    createTimeLabel('to', endSeconds)
+  )
 
   return progress
 }

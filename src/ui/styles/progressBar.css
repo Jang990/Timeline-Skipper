@@ -1,0 +1,52 @@
+/* 재생 중인 트랙 안에서의 자리. 채움 폭과 동그라미 자리를 바에 대한 비율로 준다.
+   안쪽 여백이나 테두리를 주면 그 비율이 어긋난다.
+   동그라미가 바 밖으로 나와야 하므로 넘친 것을 자르지 않는다. */
+.timeline-skip-now-playing-bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--timeline-skip-color-tonal);
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* 4px 막대는 짚기 어렵다. 보이지 않는 위아래 여유까지 바로 친다. */
+.timeline-skip-now-playing-bar::before {
+  position: absolute;
+  inset: -8px 0;
+  content: '';
+}
+
+.timeline-skip-now-playing-bar:focus-visible {
+  outline: 2px solid var(--timeline-skip-color-accent);
+  outline-offset: 6px;
+}
+
+.timeline-skip-now-playing-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--timeline-skip-color-accent);
+}
+
+/* 지금 재생 위치. 가운데가 채움 끝에 오도록 제 폭의 절반만큼 물린다. */
+.timeline-skip-now-playing-knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--timeline-skip-color-accent);
+  transform: translate(-50%, -50%);
+  transition: width 0.1s, height 0.1s;
+}
+
+/* 잡을 수 있다는 것을 크기로 알린다. */
+.timeline-skip-now-playing-bar:hover .timeline-skip-now-playing-knob,
+.timeline-skip-now-playing-bar.is-dragging .timeline-skip-now-playing-knob {
+  width: 16px;
+  height: 16px;
+}
