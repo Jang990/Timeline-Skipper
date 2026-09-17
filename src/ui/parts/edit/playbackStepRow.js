@@ -20,11 +20,20 @@ export function createPlaybackStepRow(view) {
   const position = document.createElement('span')
   position.className = 'timeline-skip-playback-position'
 
+  // 이름표는 시각 글자와 따로 둔다. 글자를 고칠 때 이름표까지 지워지지 않는다.
+  const caption = document.createElement('span')
+  caption.className = 'timeline-skip-playback-caption'
+  caption.textContent = '재생 위치'
+
+  const now = document.createElement('div')
+  now.className = 'timeline-skip-playback-now'
+  now.append(position, caption)
+
   const row = document.createElement('div')
   row.className = 'timeline-skip-playback-row'
   row.append(
     ...BACKWARD_STEPS.map((step) => createStepButton(view, step)),
-    position,
+    now,
     ...FORWARD_STEPS.map((step) => createStepButton(view, step))
   )
 
