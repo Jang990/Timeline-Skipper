@@ -50,8 +50,10 @@ export function showTrackProgress(root, currentTimeSeconds) {
 }
 
 // 읽어 주는 값은 초 단위로 내린다. 방향키로 옮길 때도 이 값에서 출발한다.
+// 읽어 주는 글자는 바 양옆에 보이는 트랙 안의 시간과 같아야 듣는 사람과 보는 사람이 같은 시간을 받는다.
 function placeProgress(bar, seconds) {
-  const ratio = toBarRatio(seconds, readRange(bar))
+  const range = readRange(bar)
+  const ratio = toBarRatio(seconds, range)
 
   if (ratio === null) {
     return
@@ -61,8 +63,12 @@ function placeProgress(bar, seconds) {
   bar.querySelector(FILL_SELECTOR).style.width = percent
   bar.querySelector(KNOB_SELECTOR).style.left = percent
   bar.setAttribute('aria-valuenow', String(Math.floor(seconds)))
-  bar.setAttribute('aria-valuetext', formatTimestamp(seconds))
+  bar.setAttribute('aria-valuetext', toSpokenTime(seconds, range))
   bar.dispatchEvent(new CustomEvent(PROGRESS_PLACED_EVENT, { detail: { seconds } }))
+}
+
+function toSpokenTime(seconds, { fromSeconds, toSeconds }) {
+  return `${formatTimestamp(seconds - fromSeconds)} / ${formatTimestamp(toSeconds - fromSeconds)}`
 }
 
 function readRange(bar) {
