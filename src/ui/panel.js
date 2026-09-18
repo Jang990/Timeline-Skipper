@@ -1,4 +1,4 @@
-import { SELECTORS } from '../adapters/selectors.js'
+import { findPanelContainer } from '../adapters/panelContainer.js'
 import { createEditingState } from './editingState.js'
 import { keepListPosition } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
@@ -19,13 +19,15 @@ const gate = createRenderGate()
 
 export function render(view) {
   lastView = view
-  const container = document.querySelector(SELECTORS.panelContainer)
+  const container = findPanelContainer()
 
   if (container === null) {
     return
   }
 
   const panel = document.getElementById(PANEL_ID)
+  keepPanelIn(container, panel)
+
   const decision = gate.decide({
     hasPanel: panel !== null,
     view,
@@ -116,6 +118,14 @@ function submitEdit(previousStartSeconds, entry) {
 function submitAdd(entry) {
   editing.finishAdd()
   lastView.onAdd(entry)
+}
+
+// 창 너비가 바뀌면 유튜브가 칸을 바꾼다. 다시 그릴 내용이 없어도 패널은 새 칸으로 가야 한다.
+// 칸 안의 순서는 건드리지 않는다. 유튜브 부품과 서로 맨 위를 다투면 DOM 감시가 끝없이 돈다.
+function keepPanelIn(container, panel) {
+  if (panel !== null && panel.parentElement !== container) {
+    container.prepend(panel)
+  }
 }
 
 function createPanel(container) {
