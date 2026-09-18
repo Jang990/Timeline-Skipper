@@ -1,7 +1,7 @@
 import { createEqualizerIcon } from '../icons.js'
 import { createJumpButton } from './floatingButtons.js'
 import { createControls } from './playbackControls.js'
-import { createTrackProgressBar } from './trackProgressBar.js'
+import { createTimedTrackProgress } from './timedTrackProgress.js'
 
 // 첫 트랙 앞은 어느 트랙에도 속하지 않는다. 그때도 제목 자리가 비지 않게 채운다.
 const NO_TRACK_LABEL = '트랙 밖 구간'
@@ -41,7 +41,7 @@ function createProgress(track, onSeek) {
 
   const progress = document.createElement('div')
   progress.className = 'timeline-skip-floating-progress'
-  progress.append(createTrackProgressBar(track, onSeek))
+  progress.append(...createTimedTrackProgress(track, onSeek))
 
   return [progress]
 }

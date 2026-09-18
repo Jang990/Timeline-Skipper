@@ -111,8 +111,8 @@
   gap: 10px;
 }
 
-.timeline-skip-now-playing-from,
-.timeline-skip-now-playing-to {
+.timeline-skip-now-playing-elapsed,
+.timeline-skip-now-playing-length {
   flex: none;
   color: var(--timeline-skip-color-text-secondary);
   font-size: 11px;

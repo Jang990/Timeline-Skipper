@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { startWithFakes } from '../fixtures/fakes/startWithFakes.js'
-import { clickButton, fillInput, find, loadTimeline } from '../fixtures/fakes/panelHelpers.js'
+import { clickButton, fillInput, find, loadTimeline, openEditRow } from '../fixtures/fakes/panelHelpers.js'
 
 // 첫 곡이 01:00에 시작해서 0초는 어느 트랙에도 속하지 않는다.
 const TIMELINE_COMMENT = ['01:00 첫 곡', '05:00 둘째 곡', '10:00 셋째 곡'].join('\n')
@@ -15,6 +15,7 @@ const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
 const META = `${FLOATING} .timeline-skip-floating-meta`
+const LENGTH = `${FLOATING} .timeline-skip-now-playing-length`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
 const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 const EQUALIZER = '.timeline-skip-equalizer'
@@ -44,23 +45,36 @@ describe('떠 있는 위젯의 모양', () => {
     expect(equalizer.compareDocumentPosition(query(TITLE)) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('제목 아래에 "순번 / 트랙 수 · 시작 – 끝"이 적혀 있다', async () => {
+  it('제목 아래에 "순번 / 트랙 수"가 적혀 있다', async () => {
     const extension = await startWithTimeline()
     extension.player.playTo(400)
 
     query(ICON).click()
 
     expect(query(TITLE).textContent).toBe('둘째 곡')
-    expect(query(META).textContent).toBe('2 / 3 · 05:00 – 10:00')
+    expect(query(META).textContent).toBe('2 / 3')
   })
 
-  it('영상 길이를 모르면 마지막 트랙의 순번 줄에는 시작 시각만 적힌다', async () => {
+  it('재생 중인 트랙의 끝 시각을 고치면 위젯의 트랙 길이도 바뀐다', async () => {
+    const extension = await startWithTimeline()
+    extension.player.playTo(400)
+    query(ICON).click()
+    expect(query(LENGTH).textContent).toBe('05:00')
+
+    openEditRow(extension, '둘째 곡')
+    fillInput(extension, '.timeline-skip-end-input', '8:00')
+    clickButton(extension, '저장')
+
+    expect(query(LENGTH).textContent).toBe('03:00')
+  })
+
+  it('영상 길이를 모르면 마지막 트랙의 순번 줄에는 순번만 적힌다', async () => {
     const extension = await startWithTimeline({ durationSeconds: Number.NaN })
     extension.player.playTo(700)
 
     query(ICON).click()
 
-    expect(query(META).textContent).toBe('3 / 3 · 10:00')
+    expect(query(META).textContent).toBe('3 / 3')
   })
 
   it('첫 트랙 앞에서는 순번 줄이 없다', async () => {
@@ -82,7 +96,7 @@ describe('떠 있는 위젯의 모양', () => {
     clickButton(extension, '저장')
 
     expect(query(TITLE).textContent).toBe('끼운 곡')
-    expect(query(META).textContent).toBe('3 / 4 · 06:40 – 10:00')
+    expect(query(META).textContent).toBe('3 / 4')
   })
 
   it('접기 버튼은 글자 대신 아래 화살표 아이콘을 그린다', async () => {

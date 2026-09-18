@@ -1,6 +1,6 @@
-import { formatTimestamp } from '../formatTimestamp.js'
 import { createControls } from './playbackControls.js'
-import { createTrackProgressBar, showTrackProgress } from './trackProgressBar.js'
+import { createTimedTrackProgress } from './timedTrackProgress.js'
+import { showTrackProgress } from './trackProgressBar.js'
 
 // 첫 트랙 앞은 어느 트랙에도 속하지 않는다. 떠 있는 위젯과 같은 말을 쓴다.
 const NO_TRACK_LABEL = '트랙 밖 구간'
@@ -49,22 +49,9 @@ function createHeading(trackIndex, track) {
 }
 
 function createProgress(track, onSeek) {
-  const { startSeconds, endSeconds } = track
   const progress = document.createElement('div')
   progress.className = 'timeline-skip-now-playing-progress'
-  progress.append(
-    createTimeLabel('from', startSeconds),
-    createTrackProgressBar(track, onSeek),
-    createTimeLabel('to', endSeconds)
-  )
+  progress.append(...createTimedTrackProgress(track, onSeek))
 
   return progress
-}
-
-function createTimeLabel(side, seconds) {
-  const label = document.createElement('span')
-  label.className = `timeline-skip-now-playing-${side}`
-  label.textContent = formatTimestamp(seconds)
-
-  return label
 }

@@ -68,6 +68,8 @@
 /* 동그라미가 커져도 위아래 줄에 닿지 않게 여유를 둔다. 바의 양 끝은 제목 줄과 맞춘다. */
 .timeline-skip-floating-progress {
   display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 6px 0;
 }
 

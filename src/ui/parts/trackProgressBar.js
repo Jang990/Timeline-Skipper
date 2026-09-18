@@ -7,6 +7,9 @@ const FILL_SELECTOR = '.timeline-skip-now-playing-fill'
 const KNOB_SELECTOR = '.timeline-skip-now-playing-knob'
 const DRAGGING_CLASS = 'is-dragging'
 
+// 재생을 따라갈 때와 끌 때 모두 자리를 여기서 정한다. 옆에 시간을 적는 쪽은 이 신호 하나만 들으면 된다.
+export const PROGRESS_PLACED_EVENT = 'timeline-skip-progress-placed'
+
 // 재생 중인 트랙 안에서의 자리를 보여 주고, 누르거나 끌어 그 트랙 안으로 옮긴다.
 // 지금 재생 중 카드와 떠 있는 위젯이 함께 쓸 수 있게 view가 아니라 트랙과 옮기는 손만 받는다.
 // 범위는 바에 적어 둔다. 그래야 다시 그리지 않고도 재생 위치만으로 자리를 고칠 수 있다.
@@ -59,6 +62,7 @@ function placeProgress(bar, seconds) {
   bar.querySelector(KNOB_SELECTOR).style.left = percent
   bar.setAttribute('aria-valuenow', String(Math.floor(seconds)))
   bar.setAttribute('aria-valuetext', formatTimestamp(seconds))
+  bar.dispatchEvent(new CustomEvent(PROGRESS_PLACED_EVENT, { detail: { seconds } }))
 }
 
 function readRange(bar) {
