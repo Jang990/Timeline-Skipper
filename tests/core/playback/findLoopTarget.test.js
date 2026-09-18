@@ -16,6 +16,31 @@ describe('findLoopTarget', () => {
     expect(result).toBe(10)
   })
 
+  // 유튜브는 영상 길이까지 가지 않고 조금 앞에서 스스로 멈춘다(9942.221초 영상이 9942.046초에서 멈췄다).
+  it('마지막 트랙 끝을 1초 안쪽으로 남기고 멈춰도 첫 트랙의 시작으로 돌아간다', () => {
+    const result = findLoopTarget(tracks, new Set(), 419.2)
+
+    expect(result).toBe(10)
+  })
+
+  it('마지막 트랙 끝 1초 전 정각부터 끝난 것으로 본다', () => {
+    const result = findLoopTarget(tracks, new Set(), 419)
+
+    expect(result).toBe(10)
+  })
+
+  it('마지막 트랙 끝 1초 전보다 앞이면 돌아가지 않는다', () => {
+    const result = findLoopTarget(tracks, new Set(), 418.9)
+
+    expect(result).toBe(null)
+  })
+
+  it('마지막 트랙이 해제돼 있으면 그 앞 켜진 트랙의 끝 1초 전부터 돌아간다', () => {
+    const result = findLoopTarget(tracks, new Set([300]), 299.5)
+
+    expect(result).toBe(10)
+  })
+
   it('마지막 트랙을 재생하는 중에는 돌아가지 않는다', () => {
     const result = findLoopTarget(tracks, new Set(), 350)
 
