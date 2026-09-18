@@ -1,0 +1,68 @@
+/* 경고는 메뉴가 떴던 자리, 더보기 버튼 아래 오른쪽 끝에 뜬다. 메뉴와 같은 바탕을 쓴다. */
+.timeline-skip-menu-confirm {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 5;
+  box-sizing: border-box;
+  width: 280px;
+  padding: 16px 16px 12px;
+  border-radius: 12px;
+  background: var(--timeline-skip-color-menu-background);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+  color: var(--timeline-skip-color-text-primary);
+}
+
+.timeline-skip-menu-confirm-title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.timeline-skip-menu-confirm-detail {
+  margin: 0 0 16px;
+  color: var(--timeline-skip-color-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.timeline-skip-menu-confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.timeline-skip-menu-confirm-cancel,
+.timeline-skip-menu-confirm-accept {
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.timeline-skip-menu-confirm-cancel {
+  background: none;
+  color: var(--timeline-skip-color-text-primary);
+}
+
+.timeline-skip-menu-confirm-cancel:hover,
+.timeline-skip-menu-confirm-cancel:focus-visible {
+  background: var(--timeline-skip-color-tonal);
+  outline: none;
+}
+
+/* 지우는 쪽은 메뉴 항목과 같은 경고색을 칠한다. 글자만 빨가면 취소와 무게가 같아 보인다. */
+.timeline-skip-menu-confirm-accept {
+  background: var(--timeline-skip-color-danger);
+  color: #fff;
+}
+
+.timeline-skip-menu-confirm-accept:hover,
+.timeline-skip-menu-confirm-accept:focus-visible {
+  opacity: 0.85;
+  outline: none;
+}

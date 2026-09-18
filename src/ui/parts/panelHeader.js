@@ -3,6 +3,13 @@ import { createHeaderMenu } from './headerMenu.js'
 
 const TITLE_LABEL = '타임라인'
 
+// 불러온 목록과 고친 내용은 어디에도 따로 남지 않는다. 한 번 누른 것으로 지우지 않는다.
+const CLEAR_CONFIRMATION = {
+  title: '목록을 비울까요?',
+  detail: '불러온 타임라인과 체크 상태가 모두 지워지고 되돌릴 수 없습니다.',
+  confirmLabel: '비우기'
+}
+
 export function createHeader(view) {
   const { tracks, onEnableAll, onDisableAll } = view
   const header = document.createElement('div')
@@ -57,6 +64,6 @@ function toMenuItems({ floatingHidden, onClear, onSetFloatingHidden }) {
       label: floatingHidden ? '위젯 보이기' : '위젯 숨기기',
       onSelect: () => onSetFloatingHidden(!floatingHidden)
     },
-    { label: '목록 비우기', onSelect: onClear, isDestructive: true }
+    { label: '목록 비우기', onSelect: onClear, isDestructive: true, confirmation: CLEAR_CONFIRMATION }
   ]
 }
