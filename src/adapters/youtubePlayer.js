@@ -1,4 +1,4 @@
-import { SELECTORS } from './selectors.js'
+import { PLAYER_STATE_CLASSES, SELECTORS } from './selectors.js'
 
 function findVideoElement() {
   return document.querySelector(SELECTORS.video)
@@ -21,22 +21,16 @@ export function seekTo(timestampSeconds) {
   }
 }
 
-// 브라우저는 영상이 끝나는 순간 멈춰 두고, 그 뒤 위치를 옮겨도 멈춤을 풀지 않는다.
-// 재생 중 자동으로 옮길 때는 끝까지 재생되던 흐름을 이어야 하므로 다시 재생한다.
-// 사람이 멈춰 둔 영상은 끝난 상태가 아니라서 그대로 멈춰 있다.
-export function seekAndKeepPlaying(timestampSeconds) {
+// 끝나서 멈춘 영상은 위치만 옮겨서는 멈춤이 풀리지 않는다. 되감으면서 재생까지 건다.
+export function seekAndPlay(timestampSeconds) {
   const video = findVideoElement()
 
   if (video === null) {
     return
   }
 
-  const wasEnded = video.ended
   video.currentTime = timestampSeconds
-
-  if (wasEnded) {
-    video.play()
-  }
+  video.play()
 }
 
 export function isPaused() {
@@ -71,4 +65,37 @@ export function onTimeUpdate(handler) {
 
 export function onPlayStateChanged(handler) {
   listenInCapturePhase(['play', 'pause'], () => handler())
+}
+
+// 유튜브는 끝 너머로 옮기거나 끝까지 재생해도 video의 ended를 켜지 않는다. 그 자리에서 멈추고
+// 플레이어에 종료 표시만 붙인다. 재생 시각으로는 알 수 없어서 이 표시가 붙는 순간을 듣는다.
+// 플레이어는 영상이 바뀌어도 그대로라, 처음 재생될 때 한 번만 지켜보기 시작하면 된다.
+export function onEnded(handler) {
+  const watchedPlayers = new WeakSet()
+
+  listenInCapturePhase(['play'], (event) => {
+    const playerElement = event.target.closest(SELECTORS.player)
+
+    if (playerElement === null || watchedPlayers.has(playerElement)) {
+      return
+    }
+
+    watchedPlayers.add(playerElement)
+    watchEndedMark(playerElement, handler)
+  })
+}
+
+// 표시가 없다가 생길 때만 알린다. 클래스는 종료와 무관한 이유로도 수시로 바뀐다.
+function watchEndedMark(playerElement, handler) {
+  let wasEnded = playerElement.classList.contains(PLAYER_STATE_CLASSES.ended)
+
+  new MutationObserver(() => {
+    const isEnded = playerElement.classList.contains(PLAYER_STATE_CLASSES.ended)
+
+    if (isEnded && !wasEnded) {
+      handler()
+    }
+
+    wasEnded = isEnded
+  }).observe(playerElement, { attributes: true, attributeFilter: ['class'] })
 }

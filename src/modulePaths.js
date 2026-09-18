@@ -5,6 +5,7 @@ export const MODULE_PATHS = {
   builder: 'src/core/tracks/buildTracks.js',
   playing: 'src/core/tracks/findPlayingStartSeconds.js',
   playback: 'src/core/playback/findPlaybackTarget.js',
+  ended: 'src/core/playback/findEndedTarget.js',
   adjacent: 'src/core/playback/findAdjacentTrack.js',
   bulk: 'src/core/selection/setAllTracksEnabled.js',
   remover: 'src/core/entries/removeEntriesAt.js',
