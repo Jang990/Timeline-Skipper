@@ -7,3 +7,8 @@
   font-family: "Roboto", "Noto Sans KR", sans-serif;
   font-size: 13px;
 }
+
+/* 유튜브가 영상과 제목 사이에 두는 간격과 같게 한다. */
+#timeline-skip-panel.is-below-video {
+  margin-top: 12px;
+}

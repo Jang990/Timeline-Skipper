@@ -25,6 +25,15 @@ test.describe('실제 유튜브 시청 페이지', () => {
     await expect(page.locator(`${SELECTORS.panelContainer} > ${PANEL}`)).toBeVisible()
   })
 
+  // 2026-09-18 실측으로 800px 이하는 모두 한 줄 배치였다. 추천 영상 칸이 숨겨지는 너비다.
+  test('창이 좁으면 패널이 영상 아래 칸에 보인다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage()
+
+    await page.setViewportSize({ width: 800, height: 900 })
+
+    await expect(page.locator(`${SELECTORS.narrowPanelContainer} > ${PANEL}`)).toBeVisible()
+  })
+
   test('타임라인 댓글에 불러오기 버튼이 달린다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage()
 
