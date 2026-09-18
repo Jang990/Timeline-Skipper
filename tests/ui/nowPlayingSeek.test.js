@@ -126,7 +126,7 @@ describe('지금 재생 중 진행 바로 옮기기', () => {
     expect(bar.getAttribute('aria-valuemin')).toBe(String(TRACK_START_SECONDS))
     expect(bar.getAttribute('aria-valuemax')).toBe(String(TRACK_END_SECONDS))
     expect(bar.getAttribute('aria-valuenow')).toBe(String(secondsAt(50)))
-    expect(bar.getAttribute('aria-valuetext')).toBe('17:56')
+    expect(bar.getAttribute('aria-valuetext')).toBe('00:50 / 03:47')
   })
 
   it('오른쪽 방향키는 5초 뒤로, 왼쪽 방향키는 5초 앞으로 옮긴다', async () => {
