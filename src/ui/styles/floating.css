@@ -90,6 +90,7 @@
 }
 
 .timeline-skip-floating-collapse,
+.timeline-skip-floating-pip,
 .timeline-skip-floating-jump {
   display: flex;
   flex: none;
@@ -103,7 +104,8 @@
   cursor: pointer;
 }
 
-.timeline-skip-floating-collapse {
+.timeline-skip-floating-collapse,
+.timeline-skip-floating-pip {
   width: 32px;
   padding: 0;
   color: var(--timeline-skip-color-text-secondary);
@@ -118,7 +120,8 @@
   font-weight: 500;
 }
 
-.timeline-skip-floating-collapse .timeline-skip-icon {
+.timeline-skip-floating-collapse .timeline-skip-icon,
+.timeline-skip-floating-pip .timeline-skip-icon {
   width: 18px;
   height: 18px;
 }
@@ -129,6 +132,7 @@
 }
 
 .timeline-skip-floating-collapse:hover,
+.timeline-skip-floating-pip:hover,
 .timeline-skip-floating-jump:hover {
   background: var(--timeline-skip-color-tonal);
 }

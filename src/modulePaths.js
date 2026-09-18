@@ -16,6 +16,8 @@ export const MODULE_PATHS = {
   page: 'src/adapters/youtubePage.js',
   fullscreen: 'src/adapters/fullscreen.js',
   storage: 'src/adapters/storage.js',
+  pictureInPicture: 'src/adapters/pictureInPicture.js',
+  tabFocus: 'src/adapters/tabFocus.js',
   panel: 'src/ui/panel.js',
   floatingState: 'src/ui/floatingState.js',
   panelReveal: 'src/ui/panelReveal.js',

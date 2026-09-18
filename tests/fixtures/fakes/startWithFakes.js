@@ -5,7 +5,7 @@ import { buildFixturePage } from '../buildFixturePage.js'
 import { FIXTURE_VIDEO_SECONDS } from '../media/fixtureVideo.js'
 import { createFakePlayer } from './fakePlayer.js'
 import { createFakeStorage } from './fakeStorage.js'
-import { createFakeComments, createFakeFullscreen, createFakePage } from './fakePlatform.js'
+import { createFakeComments, createFakeFullscreen, createFakePage, createFakePictureInPicture, createFakeTabFocus } from './fakePlatform.js'
 import { MODULE_PATHS } from '../../../src/modulePaths.js'
 
 const PANEL_ID = 'timeline-skip-panel'
@@ -17,7 +17,12 @@ const EXTENSION_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../.
 // 영상 길이는 e2e의 픽스처 영상과 맞춘다. 짧으면 그 뒤의 트랙이 목록에서 잘려 나간다.
 // 진짜 core·ui에 가짜 플레이어·저장소·플랫폼을 붙여 확장을 띄운다.
 // 같은 storage를 넘겨 다시 부르면 새로고침과 같다. restart가 그 일을 한다.
-export async function startWithFakes({ videoId = 'fixture-video', durationSeconds = FIXTURE_VIDEO_SECONDS, storage = createFakeStorage() } = {}) {
+export async function startWithFakes({
+  videoId = 'fixture-video',
+  durationSeconds = FIXTURE_VIDEO_SECONDS,
+  storage = createFakeStorage(),
+  pictureInPicture = createFakePictureInPicture()
+} = {}) {
   // panel과 floating은 모듈 안에 상태를 들고 있다. 새로 불러오지 않으면 앞 테스트의 상태가 남는다.
   vi.resetModules()
   document.body.innerHTML = new DOMParser().parseFromString(buildFixturePage(), 'text/html').body.innerHTML
@@ -27,7 +32,9 @@ export async function startWithFakes({ videoId = 'fixture-video', durationSecond
     storage,
     page: createFakePage({ videoId }),
     comments: createFakeComments(),
-    fullscreen: createFakeFullscreen()
+    fullscreen: createFakeFullscreen(),
+    pictureInPicture,
+    tabFocus: createFakeTabFocus()
   }
   const wiring = await import('../../../src/wiring.js')
 

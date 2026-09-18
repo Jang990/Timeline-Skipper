@@ -2,7 +2,7 @@ import { createTrackActions } from './trackActions.js'
 
 // core / adapters / ui를 연결한다. 계산은 core에, DOM은 adapters와 ui에 있다.
 export function start(modules) {
-  const { builder, player, storage, panel, floating, fullscreen, floatingState } = modules
+  const { builder, player, storage, panel, floating, fullscreen, floatingState, pictureInPicture } = modules
 
   const state = {
     videoId: null,
@@ -43,6 +43,7 @@ export function start(modules) {
   bindPage(modules, state, actions, draw)
   bindPlayback(modules, state, draw)
   fullscreen.onFullscreenChanged(draw)
+  pictureInPicture.onChanged(draw)
   loadSettings(modules, state, draw)
 }
 
@@ -53,7 +54,7 @@ async function loadSettings({ storage, floatingState }, state, draw) {
 }
 
 function toView(modules, state, actions, commitSettings) {
-  const { player, playing, panelReveal, fullscreen } = modules
+  const { player, playing, panelReveal, fullscreen, pictureInPicture, tabFocus } = modules
 
   return {
     tracks: state.tracks,
@@ -64,6 +65,8 @@ function toView(modules, state, actions, commitSettings) {
     isFullscreen: fullscreen.isFullscreen(),
     floatingHidden: state.floatingHidden,
     floatingExpanded: state.floatingExpanded,
+    pictureInPictureDocument: pictureInPicture.getDocument(),
+    canOpenPictureInPicture: pictureInPicture.isSupported(),
     getCurrentTimeSeconds: player.getCurrentTimeSeconds,
     getDurationSeconds: player.getDurationSeconds,
     onSeek: player.seekTo,
@@ -78,9 +81,12 @@ function toView(modules, state, actions, commitSettings) {
     onDisableAll: () => actions.setAllTracks(false),
     onPrevious: () => goToAdjacentTrack(modules, state, 'previous'),
     onNext: () => goToAdjacentTrack(modules, state, 'next'),
-    onRevealPanel: panelReveal.reveal,
+    // PiP 창에서 누르면 탭은 가려져 있다. 탭이 앞으로 온 뒤에 옮겨야 목록 표시가 눈에 띈다.
+    onRevealPanel: () => tabFocus.focusTab().then(panelReveal.reveal),
     onSetFloatingHidden: (floatingHidden) => commitSettings({ floatingHidden }),
-    onSetFloatingExpanded: (floatingExpanded) => commitSettings({ floatingExpanded })
+    onSetFloatingExpanded: (floatingExpanded) => commitSettings({ floatingExpanded }),
+    onOpenPictureInPicture: pictureInPicture.open,
+    onClosePictureInPicture: pictureInPicture.close
   }
 }
 

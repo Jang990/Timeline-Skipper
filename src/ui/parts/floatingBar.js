@@ -1,5 +1,5 @@
-import { createButton } from '../elements.js'
-import { createEqualizerIcon, createIcon } from '../icons.js'
+import { createEqualizerIcon } from '../icons.js'
+import { createJumpButton } from './floatingButtons.js'
 import { createControls } from './playbackControls.js'
 import { createTrackProgressBar } from './trackProgressBar.js'
 
@@ -19,12 +19,13 @@ const MARQUEE_SCROLL_RATIO = 0.7
 
 // 제목 줄, 진행 바, 버튼 줄로 나눈다. 조작부와 진행 바는 패널이 쓰던 것을 그대로 쓴다.
 // playing은 재생 중인 트랙과 그 제목·순번 줄 글자다. 첫 트랙 앞이면 모두 null이다.
-export function createCard(view, playing, onCollapse) {
+// 제목 줄 오른쪽 버튼은 위젯이 탭에 있느냐 PiP 창에 있느냐에 따라 달라서 부르는 쪽이 골라 넘긴다.
+export function createCard(view, playing, headingButtons) {
   const card = document.createElement('div')
   card.className = 'timeline-skip-floating-card'
 
   card.append(
-    createTitleLine(playing, onCollapse),
+    createTitleLine(playing, headingButtons),
     ...createProgress(playing.track, view.onSeek),
     createButtonLine(view)
   )
@@ -70,14 +71,14 @@ function toMarqueeSeconds(overflowPixels) {
   return Math.max(MARQUEE_MINIMUM_SECONDS, Math.round(scrollSeconds / MARQUEE_SCROLL_RATIO))
 }
 
-function createTitleLine({ title, meta }, onCollapse) {
+function createTitleLine({ title, meta }, headingButtons) {
   const heading = document.createElement('div')
   heading.className = 'timeline-skip-floating-heading'
   heading.append(createTitle(title), ...(meta === null ? [] : [createMeta(meta)]))
 
   const line = document.createElement('div')
   line.className = 'timeline-skip-floating-line'
-  line.append(createEqualizerIcon(), heading, createCollapseButton(onCollapse))
+  line.append(createEqualizerIcon(), heading, ...headingButtons)
 
   return line
 }
@@ -114,31 +115,4 @@ function createButtonLine(view) {
   line.append(createControls(view), createJumpButton(view.onRevealPanel))
 
   return line
-}
-
-function createCollapseButton(onCollapse) {
-  const button = createButton({
-    label: '',
-    className: 'timeline-skip-floating-collapse',
-    title: '접기',
-    ariaLabel: '플레이어 접기',
-    onClick: onCollapse
-  })
-  button.append(createIcon('chevron-down'))
-
-  return button
-}
-
-// 기호만으로는 무엇을 하는지 몰라 글자를 적는다. 위 화살표는 위젯에서 패널로 올라간다는 뜻이다.
-function createJumpButton(onRevealPanel) {
-  const button = createButton({
-    label: '목록 보기',
-    className: 'timeline-skip-floating-jump',
-    title: '타임라인 목록으로 이동',
-    ariaLabel: '타임라인 목록으로 이동',
-    onClick: onRevealPanel
-  })
-  button.append(createIcon('chevron-up'))
-
-  return button
 }
