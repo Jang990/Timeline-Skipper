@@ -9,6 +9,7 @@ const { commentTexts } = readCommentSnapshot('3yG8GXdnEFQ')
 
 const ROW = '.timeline-skip-row'
 const CHECKBOX = 'input[type="checkbox"]'
+const ACTION = '.timeline-skip-action'
 
 describe('자동 스킵', () => {
   it('체크를 해제한 트랙 안으로 재생 위치를 옮기면 다음 체크된 트랙 시작으로 넘어간다', async () => {
@@ -50,6 +51,16 @@ describe('자동 스킵', () => {
     expect(extension.player.getCurrentTimeSeconds()).toBe(300)
     expect(extension.player.seekHistory).toEqual([])
   })
+
+  it('전체 해제를 누르면 재생 위치를 옮겨도 그 자리에서 계속 재생된다', async () => {
+    const extension = await startWithTimeline()
+    clickAction(extension, '전체 해제')
+
+    extension.player.playTo(300)
+
+    expect(extension.player.getCurrentTimeSeconds()).toBe(300)
+    expect(extension.player.seekHistory).toEqual([])
+  })
 })
 
 async function startWithTimeline() {
@@ -62,4 +73,9 @@ async function startWithTimeline() {
 // 패널은 다시 그릴 때마다 통째로 바뀐다. 행을 붙들지 말고 매번 새로 찾는다.
 function toggleTrack(extension, trackIndex) {
   extension.findPanel().querySelectorAll(ROW)[trackIndex].querySelector(CHECKBOX).click()
+}
+
+function clickAction(extension, label) {
+  const buttons = [...extension.findPanel().querySelectorAll(ACTION)]
+  buttons.find((button) => button.textContent === label).click()
 }

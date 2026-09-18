@@ -45,6 +45,24 @@ describe('findSkipTarget', () => {
     expect(result).toBe(null)
   })
 
+  // 전체 해제는 몇 곡만 다시 고르기 직전의 중간 단계다. 끝으로 보내면 자동재생이 다음 영상으로 넘긴다.
+  it('모든 트랙이 해제돼 있으면 해제된 트랙 안에서도 건너뛰지 않는다', () => {
+    const result = findSkipTarget(tracks, new Set([10, 100, 200, 300]), 50)
+
+    expect(result).toBe(null)
+  })
+
+  it('모든 트랙이 해제돼 있으면 트랙 사이 빈 구간에서도 건너뛰지 않는다', () => {
+    const trimmedTracks = [
+      { startSeconds: 10, endSeconds: 50, title: '짧게 자른 곡' },
+      { startSeconds: 100, endSeconds: 200, title: '다음 곡' }
+    ]
+
+    const result = findSkipTarget(trimmedTracks, new Set([10, 100]), 60)
+
+    expect(result).toBe(null)
+  })
+
   it('첫 트랙 시작 전에는 건너뛰지 않는다', () => {
     const result = findSkipTarget(tracks, new Set([10]), 5)
 
