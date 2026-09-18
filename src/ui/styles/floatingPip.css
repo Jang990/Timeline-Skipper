@@ -1,0 +1,14 @@
+/* PiP 창은 위젯만 담으려고 연 창이다. 카드가 창을 꽉 채우고, 창의 테두리가 카드의 테두리를 대신한다.
+   창의 크기는 사람이 바꿀 수 있어 폭을 고정하지 않는다. */
+#timeline-skip-floating.is-picture-in-picture {
+  inset: 0;
+}
+
+#timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-card {
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
