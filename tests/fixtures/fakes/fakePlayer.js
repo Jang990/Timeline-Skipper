@@ -6,6 +6,7 @@ export function createFakePlayer({ durationSeconds = 600 } = {}) {
   let paused = true
   const timeHandlers = []
   const playStateHandlers = []
+  const endedHandlers = []
   const seekHistory = []
 
   // 옮기기만 하고 알리지 않는다. 시간이 흐르는 순간은 테스트가 playTo로 직접 정한다.
@@ -26,13 +27,20 @@ export function createFakePlayer({ durationSeconds = 600 } = {}) {
     togglePlay,
     onTimeUpdate: (handler) => timeHandlers.push(handler),
     onPlayStateChanged: (handler) => playStateHandlers.push(handler),
+    onEnded: (handler) => endedHandlers.push(handler),
 
     seekTo,
-
-    // 이 가짜에는 "영상이 끝나서 멈춤" 상태가 없어서 seekTo와 같다. 멈춤을 푸는 쪽은 loop.spec.js가 본다.
-    seekAndKeepPlaying: seekTo,
+    seekAndPlay: (timestampSeconds) => {
+      seekTo(timestampSeconds)
+      paused = false
+    },
 
     // 아래부터는 테스트가 쥐는 손잡이다.
+    // 진짜 플레이어가 영상을 끝낸 순간. 끝난 영상은 멈춰 있다.
+    endVideo: () => {
+      paused = true
+      endedHandlers.forEach((handler) => handler())
+    },
     playTo: (timestampSeconds) => {
       currentTimeSeconds = timestampSeconds
       timeHandlers.forEach((handler) => handler(timestampSeconds))

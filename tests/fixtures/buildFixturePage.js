@@ -28,12 +28,11 @@ export function buildFixturePage({ commentTexts = [], videoSourceUrl = null } = 
   ].join('\n')
 }
 
+// 유튜브는 영상이 끝나면 video를 감싼 플레이어에 종료 표시를 붙인다. 그 표시를 붙일 자리가 있어야 한다.
 function buildVideo(videoSourceUrl) {
-  if (videoSourceUrl === null) {
-    return '<video class="html5-main-video"></video>'
-  }
+  const source = videoSourceUrl === null ? '' : ` src="${escapeHtml(videoSourceUrl)}"`
 
-  return `<video class="html5-main-video" src="${escapeHtml(videoSourceUrl)}"></video>`
+  return `<div id="movie_player" class="html5-video-player"><video class="html5-main-video"${source}></video></div>`
 }
 
 function buildCommentThread(comment) {

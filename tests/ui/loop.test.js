@@ -30,6 +30,17 @@ describe('반복 재생', () => {
     expect(extension.player.getCurrentTimeSeconds()).toBe(1)
   })
 
+  // 유튜브는 끝 너머로 옮기면 재생 시각이 끝에 닿지 않은 채 영상을 끝낸다. 시각이 아니라 종료 알림으로 되감는다.
+  it('반복을 켜고 플레이어가 영상 종료를 알리면 첫 트랙 시작으로 옮기고 재생한다', async () => {
+    const extension = await startWithTimeline()
+    find(extension, LOOP_ON_BUTTON).click()
+
+    extension.player.endVideo()
+
+    expect(extension.player.getCurrentTimeSeconds()).toBe(1)
+    expect(extension.player.isPaused()).toBe(false)
+  })
+
   // 반복이 없으면 같은 자리에서 영상 끝으로 간다(autoSkip.test.js). 반복이 스킵보다 먼저라는 것을
   // 이 차이가 보여준다.
   it('마지막 트랙을 해제하고 반복을 켜면 그 앞 트랙이 끝날 때 첫 트랙 시작으로 돌아간다', async () => {
