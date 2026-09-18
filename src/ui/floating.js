@@ -1,7 +1,6 @@
 import { createCard, startTitleMarquee } from './parts/floatingBar.js'
 import { createCollapseButton, createPictureInPictureButton } from './parts/floatingButtons.js'
 import { createButton } from './elements.js'
-import { formatTimestamp } from './formatTimestamp.js'
 import { createEqualizerIcon } from './icons.js'
 import { showTrackProgress } from './parts/trackProgressBar.js'
 
@@ -111,7 +110,7 @@ function removeWidget() {
   lastSignature = null
 }
 
-// 순번 줄은 "2 / 8 · 05:00 – 10:00". 끝을 모르는 트랙(진행 중인 라이브)은 시작만 적는다.
+// 순번 줄은 "2 / 8". 트랙 안의 시간은 진행 바 양옆이 맡는다.
 function describePlaying({ tracks, playingStartSeconds }) {
   const trackIndex = tracks.findIndex((track) => track.startSeconds === playingStartSeconds)
 
@@ -120,16 +119,12 @@ function describePlaying({ tracks, playingStartSeconds }) {
   }
 
   const track = tracks[trackIndex]
-  const { title, startSeconds, endSeconds } = track
-  const span = Number.isFinite(endSeconds)
-    ? `${formatTimestamp(startSeconds)} – ${formatTimestamp(endSeconds)}`
-    : formatTimestamp(startSeconds)
 
-  return { title, meta: `${trackIndex + 1} / ${tracks.length} · ${span}`, track }
+  return { title: track.title, meta: `${trackIndex + 1} / ${tracks.length}`, track }
 }
 
 // 위젯에 보이는 것은 이것뿐이다. 목록이 바뀌어도 이 값들이 그대로면 다시 그릴 이유가 없다.
-// 진행 바의 범위는 순번 줄의 시각과 같아서 따로 적지 않는다.
-function toSignature({ isPaused, loopEnabled, floatingExpanded }, { title, meta }) {
-  return `${title}#${meta}#${isPaused}#${loopEnabled}#${floatingExpanded}`
+// 트랙 길이는 다시 그려야만 바뀌므로 트랙의 범위도 함께 본다.
+function toSignature({ isPaused, loopEnabled, floatingExpanded }, { title, meta, track }) {
+  return `${title}#${meta}#${track?.startSeconds}#${track?.endSeconds}#${isPaused}#${loopEnabled}#${floatingExpanded}`
 }
