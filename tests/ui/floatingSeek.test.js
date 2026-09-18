@@ -14,6 +14,8 @@ const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
 const BAR = `${FLOATING} .timeline-skip-now-playing-bar`
 const KNOB = `${BAR} .timeline-skip-now-playing-knob`
+const ELAPSED = `${FLOATING} .timeline-skip-now-playing-elapsed`
+const LENGTH = `${FLOATING} .timeline-skip-now-playing-length`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
 const CONTROLS = `${FLOATING} .timeline-skip-controls`
 const TRACK_START_SECONDS = 1026
@@ -61,6 +63,30 @@ describe('떠 있는 위젯의 진행 바', () => {
 
     expect(query(BAR).getAttribute('aria-valuemin')).toBe(String(TRACK_END_SECONDS))
     expect(query(BAR).getAttribute('aria-valuemax')).toBe(String(NEXT_TRACK_END_SECONDS))
+  })
+
+  it('위젯 진행 바 왼쪽에 트랙 시작부터 흐른 시간이, 오른쪽에 트랙 길이가 보인다', async () => {
+    await startExpandedAt(1100)
+
+    expect(query(ELAPSED).textContent).toBe('01:14')
+    expect(query(LENGTH).textContent).toBe('03:47')
+  })
+
+  it('위젯의 흐른 시간은 재생 위치를 따라 바뀐다', async () => {
+    const extension = await startExpandedAt(1100)
+
+    extension.player.playTo(1200)
+
+    expect(query(ELAPSED).textContent).toBe('02:54')
+  })
+
+  it('다음 트랙으로 넘어가면 위젯의 흐른 시간을 그 트랙의 시작부터 다시 센다', async () => {
+    const extension = await startExpandedAt(1100)
+
+    extension.player.playTo(TRACK_END_SECONDS + 10)
+
+    expect(query(ELAPSED).textContent).toBe('00:10')
+    expect(query(LENGTH).textContent).toBe('04:15')
   })
 
   it('첫 트랙 앞에서는 위젯에 진행 바가 없다', async () => {

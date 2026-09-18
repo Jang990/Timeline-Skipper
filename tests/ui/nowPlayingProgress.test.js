@@ -6,21 +6,60 @@ import { find, findRow, loadTimeline, readText } from '../fixtures/fakes/panelHe
 
 // 트랙 시작은 1, 269, 556, 810, 1026, 1253, 1508, 1795초다.
 // 다섯 번째 트랙은 1026초(17:06)부터 1253초(20:53)까지 227초다. 0.5초는 첫 트랙 앞이다.
+// 여섯 번째 트랙은 1253초부터 1508초까지 255초다.
 const { commentTexts } = readCommentSnapshot('3yG8GXdnEFQ')
 
 const PROGRESS = '.timeline-skip-now-playing .timeline-skip-now-playing-progress'
 const FILL = `${PROGRESS} .timeline-skip-now-playing-bar .timeline-skip-now-playing-fill`
+const ELAPSED = `${PROGRESS} .timeline-skip-now-playing-elapsed`
+const LENGTH = `${PROGRESS} .timeline-skip-now-playing-length`
 const TRACK_START_SECONDS = 1026
 const TRACK_LENGTH_SECONDS = 227
+const NEXT_TRACK_START_SECONDS = 1253
 
 describe('지금 재생 중 진행 바', () => {
-  it('재생 중인 트랙의 시작과 끝 시각이 진행 바 양옆에 보인다', async () => {
+  it('진행 바 왼쪽에 트랙 시작부터 흐른 시간이, 오른쪽에 트랙 길이가 보인다', async () => {
     const extension = await startWithTimeline()
 
     extension.player.playTo(1100)
 
-    expect(readText(extension, `${PROGRESS} .timeline-skip-now-playing-from`)).toBe('17:06')
-    expect(readText(extension, `${PROGRESS} .timeline-skip-now-playing-to`)).toBe('20:53')
+    expect(readText(extension, ELAPSED)).toBe('01:14')
+    expect(readText(extension, LENGTH)).toBe('03:47')
+  })
+
+  it('재생 위치가 초 단위 사이에 있으면 흐른 시간은 초 아래를 버린다', async () => {
+    const extension = await startWithTimeline()
+
+    extension.player.playTo(1100.9)
+
+    expect(readText(extension, ELAPSED)).toBe('01:14')
+  })
+
+  it('트랙 시작 지점에서는 흐른 시간이 00:00이다', async () => {
+    const extension = await startWithTimeline()
+
+    extension.player.playTo(TRACK_START_SECONDS)
+
+    expect(readText(extension, ELAPSED)).toBe('00:00')
+  })
+
+  it('같은 트랙 안에서 재생 위치가 옮겨지면 흐른 시간도 따라 바뀐다', async () => {
+    const extension = await startWithTimeline()
+    extension.player.playTo(1100)
+
+    extension.player.playTo(1200)
+
+    expect(readText(extension, ELAPSED)).toBe('02:54')
+  })
+
+  it('다음 트랙으로 넘어가면 흐른 시간을 그 트랙의 시작부터 다시 센다', async () => {
+    const extension = await startWithTimeline()
+    extension.player.playTo(1100)
+
+    extension.player.playTo(NEXT_TRACK_START_SECONDS + 10)
+
+    expect(readText(extension, ELAPSED)).toBe('00:10')
+    expect(readText(extension, LENGTH)).toBe('04:15')
   })
 
   it('진행 바는 트랙 안에서 흐른 비율만큼 채워진다', async () => {

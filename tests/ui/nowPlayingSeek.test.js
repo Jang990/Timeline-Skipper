@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { readCommentSnapshot } from '../fixtures/snapshots/commentSnapshot.js'
 import { startWithFakes } from '../fixtures/fakes/startWithFakes.js'
-import { find, loadTimeline } from '../fixtures/fakes/panelHelpers.js'
+import { find, loadTimeline, readText } from '../fixtures/fakes/panelHelpers.js'
 
 // 다섯 번째 트랙은 1026초(17:06)부터 1253초(20:53)까지 227초다.
 // 바의 폭을 227px로 정해 두면 바 왼쪽에서 몇 px인지가 곧 트랙 시작에서 몇 초인지다.
@@ -11,6 +11,7 @@ const { commentTexts } = readCommentSnapshot('3yG8GXdnEFQ')
 const BAR = '.timeline-skip-now-playing .timeline-skip-now-playing-bar'
 const FILL = `${BAR} .timeline-skip-now-playing-fill`
 const KNOB = `${BAR} .timeline-skip-now-playing-knob`
+const ELAPSED = '.timeline-skip-now-playing .timeline-skip-now-playing-elapsed'
 const TRACK_START_SECONDS = 1026
 const TRACK_END_SECONDS = 1253
 const BAR_WIDTH_PIXELS = TRACK_END_SECONDS - TRACK_START_SECONDS
@@ -59,6 +60,18 @@ describe('지금 재생 중 진행 바로 옮기기', () => {
     pointer(bar, 'pointerup', 180)
 
     expect(extension.player.seekHistory).toEqual([secondsAt(180)])
+  })
+
+  it('진행 바를 끄는 동안에는 흐른 시간이 손이 가리키는 자리의 시간을 보여 준다', async () => {
+    const extension = await startWithTimeline()
+    extension.player.playTo(secondsAt(50))
+    const bar = findSizedBar(extension)
+
+    pointer(bar, 'pointerdown', 50)
+    pointer(bar, 'pointermove', 180)
+    extension.player.playTo(secondsAt(60))
+
+    expect(readText(extension, ELAPSED)).toBe('03:00')
   })
 
   it('끄는 동안에는 재생 위치가 바뀌어도 동그라미가 손을 따라간다', async () => {
