@@ -111,7 +111,7 @@ async function syncVideo({ page, storage, panel }, state) {
 }
 
 function bindPlayback(modules, state, draw) {
-  const { player, playback, panel } = modules
+  const { player, playback, ended, panel } = modules
 
   // 재생/일시정지 아이콘이 실제 상태를 따라가야 한다.
   player.onPlayStateChanged(draw)
@@ -120,12 +120,19 @@ function bindPlayback(modules, state, draw) {
     const targetSeconds = playback.findPlaybackTarget({ ...state, isEditing: panel.isEditing() }, currentTimeSeconds)
 
     if (targetSeconds !== null) {
-      player.seekAndKeepPlaying(targetSeconds)
+      player.seekTo(targetSeconds)
     }
 
     // 재생 중인 트랙 표시가 따라오려면 시간이 흐를 때도 그려야 한다.
     // 실제 DOM 교체는 panel이 막는다(그릴 내용이 같으면 건너뛴다).
     draw()
+  })
+
+  player.onEnded(() => {
+    const targetSeconds = ended.findEndedTarget({ ...state, isEditing: panel.isEditing() })
+    if (targetSeconds !== null) {
+      player.seekAndPlay(targetSeconds)
+    }
   })
 }
 

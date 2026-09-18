@@ -23,18 +23,23 @@ test.describe('반복 재생', () => {
     await expect.poll(() => readCurrentTimeSeconds(page), { timeout: 10_000 }).toBeLessThan(10)
   })
 
-  // 브라우저는 영상이 끝나는 순간 멈춰 두고, 그 뒤 위치를 옮겨도 멈춤을 풀지 않는다.
-  // 돌아간 것만 보면 첫 트랙 시작에 멈춰 선 것도 통과하므로, 시각이 그 뒤로 흘러가는지까지 본다.
-  test('반복을 켜고 영상 끝까지 재생하면 첫 트랙으로 돌아간 뒤 멈추지 않고 이어서 재생한다', async ({ openWatchPage }) => {
+  // 유튜브는 영상을 끝낼 때 재생 시각이 끝에 닿지 않은 채 멈추고 플레이어에 종료 표시만 붙인다.
+  // 그 모습을 그대로 흉내 낸다. 돌아간 것만 보면 멈춰 선 것도 통과하므로 시각이 흘러가는지까지 본다.
+  test('플레이어에 종료 표시가 붙으면 첫 트랙 시작으로 돌아가 이어서 재생한다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts })
     await loadTimeline(page)
     await turnOnLoop(page)
-    await seekAndSettle(page, 1797)
-
+    await seekAndSettle(page, 1000)
     await page.evaluate(() => document.querySelector('video').play())
+    await expect.poll(() => readCurrentTimeSeconds(page)).toBeGreaterThan(1000.3)
+
+    await page.evaluate(() => {
+      document.querySelector('video').pause()
+      document.querySelector('#movie_player').classList.add('ended-mode')
+    })
 
     await expect.poll(() => readCurrentTimeSeconds(page), { timeout: 10_000 }).toBeLessThan(10)
-    await expect.poll(() => readCurrentTimeSeconds(page), { timeout: 10_000 }).toBeGreaterThan(2)
+    await expect.poll(() => readCurrentTimeSeconds(page), { timeout: 10_000 }).toBeGreaterThan(1.5)
     expect(await page.evaluate(() => document.querySelector('video').paused)).toBe(false)
   })
 
