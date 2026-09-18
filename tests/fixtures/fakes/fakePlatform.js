@@ -56,3 +56,41 @@ export function createFakeFullscreen() {
     }
   }
 }
+
+// 진짜는 크롬이 띄운 창의 문서를 돌려준다. jsdom은 창을 띄우지 못해서 빈 문서로 창을 대신한다.
+// 사람이 창의 X를 눌러 닫는 것도 진짜에서는 close()와 같은 알림으로 이어진다.
+export function createFakePictureInPicture({ isSupported = true } = {}) {
+  let pictureInPictureDocument = null
+  const handlers = []
+
+  const setDocument = (nextDocument) => {
+    pictureInPictureDocument = nextDocument
+    handlers.forEach((handler) => handler())
+  }
+
+  return {
+    isSupported: () => isSupported,
+    getDocument: () => pictureInPictureDocument,
+    onChanged: (handler) => handlers.push(handler),
+    open: () => setDocument(document.implementation.createHTMLDocument('PiP')),
+
+    close: () => {
+      if (pictureInPictureDocument !== null) {
+        setDocument(null)
+      }
+    }
+  }
+}
+
+// 진짜는 백그라운드에 메시지를 보내 탭을 앞으로 올린다. jsdom에는 탭이 하나뿐이라 불린 횟수만 센다.
+export function createFakeTabFocus() {
+  let focusCount = 0
+
+  return {
+    focusTab: async () => {
+      focusCount += 1
+    },
+
+    getFocusCount: () => focusCount
+  }
+}
