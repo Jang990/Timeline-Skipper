@@ -21,6 +21,24 @@ export function seekTo(timestampSeconds) {
   }
 }
 
+// 브라우저는 영상이 끝나는 순간 멈춰 두고, 그 뒤 위치를 옮겨도 멈춤을 풀지 않는다.
+// 재생 중 자동으로 옮길 때는 끝까지 재생되던 흐름을 이어야 하므로 다시 재생한다.
+// 사람이 멈춰 둔 영상은 끝난 상태가 아니라서 그대로 멈춰 있다.
+export function seekAndKeepPlaying(timestampSeconds) {
+  const video = findVideoElement()
+
+  if (video === null) {
+    return
+  }
+
+  const wasEnded = video.ended
+  video.currentTime = timestampSeconds
+
+  if (wasEnded) {
+    video.play()
+  }
+}
+
 export function isPaused() {
   return findVideoElement()?.paused ?? true
 }

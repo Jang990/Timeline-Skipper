@@ -120,7 +120,7 @@ function bindPlayback(modules, state, draw) {
     const targetSeconds = playback.findPlaybackTarget({ ...state, isEditing: panel.isEditing() }, currentTimeSeconds)
 
     if (targetSeconds !== null) {
-      player.seekTo(targetSeconds)
+      player.seekAndKeepPlaying(targetSeconds)
     }
 
     // 재생 중인 트랙 표시가 따라오려면 시간이 흐를 때도 그려야 한다.
