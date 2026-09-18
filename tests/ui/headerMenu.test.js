@@ -12,6 +12,7 @@ const HEADER = '.timeline-skip-header'
 const MORE_BUTTON = `${HEADER} button[aria-label="더보기"]`
 const MENU = `${HEADER} [role="menu"]`
 const MENU_ITEM = `${MENU} [role="menuitem"]`
+const CONFIRM = `${HEADER} [role="alertdialog"]`
 
 describe('헤더 더보기 메뉴', () => {
   it('헤더에 제목과 켠 트랙 수가 따로 보인다', async () => {
@@ -51,14 +52,58 @@ describe('헤더 더보기 메뉴', () => {
     expect(find(extension, MENU).hidden).toBe(true)
   })
 
-  it('메뉴에서 목록 비우기를 누르면 목록이 비고 메뉴가 닫힌다', async () => {
+  it('메뉴에서 목록 비우기를 누르면 목록은 그대로 두고 되돌릴 수 없다는 경고를 띄운다', async () => {
     const extension = await startWithTimeline()
-    find(extension, MORE_BUTTON).click()
 
-    findMenuItem(extension, '목록 비우기').click()
+    openClearConfirm(extension)
+
+    expect(findAll(extension, ROW)).toHaveLength(8)
+    expect(find(extension, MENU).hidden).toBe(true)
+    expect(isConfirmOpen(extension)).toBe(true)
+    expect(find(extension, CONFIRM).textContent).toContain('되돌릴 수 없습니다')
+    expect(readConfirmButtonLabels(extension)).toEqual(['취소', '비우기'])
+  })
+
+  it('경고에서 비우기를 누르면 목록이 비고 경고가 닫힌다', async () => {
+    const extension = await startWithTimeline()
+    openClearConfirm(extension)
+
+    findConfirmButton(extension, '비우기').click()
 
     expect(findAll(extension, ROW)).toHaveLength(0)
-    expect(find(extension, MENU).hidden).toBe(true)
+    expect(isConfirmOpen(extension)).toBe(false)
+  })
+
+  it('경고에서 취소를 누르면 목록이 그대로 남고 경고가 닫힌다', async () => {
+    const extension = await startWithTimeline()
+    openClearConfirm(extension)
+
+    findConfirmButton(extension, '취소').click()
+
+    expect(findAll(extension, ROW)).toHaveLength(8)
+    expect(isConfirmOpen(extension)).toBe(false)
+  })
+
+  it('경고가 떠 있을 때 Esc를 누르면 목록이 그대로 남고 경고가 닫힌다', async () => {
+    const extension = await startWithTimeline()
+    openClearConfirm(extension)
+
+    find(extension, CONFIRM).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+
+    expect(findAll(extension, ROW)).toHaveLength(8)
+    expect(isConfirmOpen(extension)).toBe(false)
+  })
+
+  it('경고를 닫은 뒤 더보기를 다시 누르면 경고가 아니라 메뉴 항목이 보인다', async () => {
+    const extension = await startWithTimeline()
+    openClearConfirm(extension)
+    findConfirmButton(extension, '취소').click()
+
+    find(extension, MORE_BUTTON).click()
+
+    expect(find(extension, MENU).hidden).toBe(false)
+    expect(readMenuLabels(extension)).toEqual(['위젯 숨기기', '목록 비우기'])
+    expect(isConfirmOpen(extension)).toBe(false)
   })
 
   it('트랙이 없어도 더보기 메뉴에서 위젯 숨기기를 누를 수 있다', async () => {
@@ -94,4 +139,23 @@ function findMenuItem(extension, label) {
 
 function readMenuLabels(extension) {
   return findAll(extension, MENU_ITEM).map((item) => item.textContent)
+}
+
+function openClearConfirm(extension) {
+  find(extension, MORE_BUTTON).click()
+  findMenuItem(extension, '목록 비우기').click()
+}
+
+function isConfirmOpen(extension) {
+  const confirm = find(extension, CONFIRM)
+
+  return confirm !== null && !confirm.hidden
+}
+
+function findConfirmButton(extension, label) {
+  return findAll(extension, `${CONFIRM} button`).find((button) => button.textContent === label)
+}
+
+function readConfirmButtonLabels(extension) {
+  return findAll(extension, `${CONFIRM} button`).map((button) => button.textContent)
 }
