@@ -1,4 +1,4 @@
-import { findPanelContainer } from '../adapters/panelContainer.js'
+import { findPanelContainer, isBelowVideo } from '../adapters/panelContainer.js'
 import { createEditingState } from './editingState.js'
 import { keepListPosition } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
@@ -11,6 +11,7 @@ import { createRenderGate } from './renderGate.js'
 export const PANEL_ID = 'timeline-skip-panel'
 const LIST_SELECTOR = '.timeline-skip-list'
 const TITLE_INPUT_SELECTOR = '.timeline-skip-title-input'
+const BELOW_VIDEO_CLASS = 'is-below-video'
 
 let lastView = null
 
@@ -25,18 +26,19 @@ export function render(view) {
     return
   }
 
-  const panel = document.getElementById(PANEL_ID)
+  const existingPanel = document.getElementById(PANEL_ID)
+  const panel = existingPanel ?? createPanel()
   keepPanelIn(container, panel)
 
   const decision = gate.decide({
-    hasPanel: panel !== null,
+    hasPanel: existingPanel !== null,
     view,
     editKey: editing.toKey(),
     isEditing: editing.isEditing()
   })
 
   if (decision === 'draw') {
-    drawInto(panel ?? createPanel(container), view)
+    drawInto(panel, view)
 
     return
   }
@@ -123,15 +125,17 @@ function submitAdd(entry) {
 // 창 너비가 바뀌면 유튜브가 칸을 바꾼다. 다시 그릴 내용이 없어도 패널은 새 칸으로 가야 한다.
 // 칸 안의 순서는 건드리지 않는다. 유튜브 부품과 서로 맨 위를 다투면 DOM 감시가 끝없이 돈다.
 function keepPanelIn(container, panel) {
-  if (panel !== null && panel.parentElement !== container) {
+  if (panel.parentElement !== container) {
     container.prepend(panel)
   }
+
+  // 추천 영상 칸은 유튜브가 위를 띄워 두지만, 영상 아래 칸에서는 패널이 영상에 붙어 버린다.
+  panel.classList.toggle(BELOW_VIDEO_CLASS, isBelowVideo())
 }
 
-function createPanel(container) {
+function createPanel() {
   const panel = document.createElement('div')
   panel.id = PANEL_ID
-  container.prepend(panel)
 
   return panel
 }
