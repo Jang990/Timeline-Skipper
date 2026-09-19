@@ -1,6 +1,7 @@
 // 탭을 떠나도 보이는 창은 Document Picture-in-Picture로만 만들 수 있다. 영상 PiP는 영상밖에 못 담는다.
 // 창의 위치는 크롬이 정하고 사람이 끌어 옮긴다. 여기서 정할 수 있는 것은 처음 크기뿐이다.
-const WINDOW_SIZE = { width: 360, height: 150 }
+// 높이는 floatingPip.css가 간소화 모양으로 바꾸는 높이(100px)보다 낮게 잡아 작은 모양으로 열리게 한다.
+const WINDOW_SIZE = { width: 300, height: 64 }
 
 const TOKEN_PREFIX = '--timeline-skip-'
 
