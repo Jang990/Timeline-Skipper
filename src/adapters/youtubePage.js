@@ -5,9 +5,18 @@ const PAGE_SETTLE_MILLISECONDS = 300
 // handler는 몇 번 불려도 같은 결과가 되도록(멱등) 만들어서 넘겨야 한다.
 export function onPageChanged(handler) {
   let settleTimerId = null
+  let lastHref = location.href
 
   const observer = new MutationObserver(() => {
     clearTimeout(settleTimerId)
+
+    // 옮긴 직후엔 유튜브가 몇 초간 DOM을 계속 붙여 조용해지길 기다리면 이전 영상의 트랙이 남는다.
+    // 주소가 바뀐 것만은 바로 알린다. 뒤늦게 붙는 댓글은 아래 타이머가 이어서 잡는다.
+    if (location.href !== lastHref) {
+      lastHref = location.href
+      handler()
+    }
+
     settleTimerId = setTimeout(handler, PAGE_SETTLE_MILLISECONDS)
   })
 
