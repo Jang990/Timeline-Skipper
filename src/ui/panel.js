@@ -1,4 +1,5 @@
 import { findPanelContainer, isBelowVideo } from '../adapters/panelContainer.js'
+import { createEditingHandlers } from './editingHandlers.js'
 import { createEditingState } from './editingState.js'
 import { keepListPosition, scrollToPlayingRow } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
@@ -11,12 +12,16 @@ import { createRenderGate } from './renderGate.js'
 export const PANEL_ID = 'timeline-skip-panel'
 const LIST_SELECTOR = '.timeline-skip-list'
 const TITLE_INPUT_SELECTOR = '.timeline-skip-title-input'
+const QUICK_INPUT_SELECTOR = '.timeline-skip-quick-input'
+const ADD_ROW_SELECTOR = '.timeline-skip-add-row'
+const ADD_ROW_HEIGHT_VARIABLE = '--timeline-skip-add-row-height'
 const BELOW_VIDEO_CLASS = 'is-below-video'
 
 let lastView = null
 
 const editing = createEditingState()
 const gate = createRenderGate()
+const handlers = createEditingHandlers(editing, { getView: () => lastView, redraw: () => render(lastView) })
 
 export function render(view) {
   lastView = view
@@ -65,6 +70,8 @@ export function isEditing() {
 
 function drawInto(target, view) {
   const previousScrollTop = target.querySelector(LIST_SELECTOR)?.scrollTop ?? 0
+  const wasTypingQuick = target.querySelector(QUICK_INPUT_SELECTOR) === document.activeElement
+  rememberAddRowHeight(target)
 
   target.replaceChildren(
     createHeader(view),
@@ -80,50 +87,40 @@ function drawInto(target, view) {
 
     titleInput?.focus()
     titleInput?.select()
+
+    return
+  }
+
+  // 재생 중에는 트랙이 바뀔 때마다 다시 그린다. 치던 칸의 초점을 되돌려야 이어서 칠 수 있다.
+  if (wasTypingQuick) {
+    const quickInput = target.querySelector(QUICK_INPUT_SELECTOR)
+
+    quickInput.focus()
+    quickInput.setSelectionRange(quickInput.value.length, quickInput.value.length)
+  }
+}
+
+// 시트가 열리면 추가 칸이 빠지고 목록이 그만큼 늘어난다(trackList.css). 칸 높이는 안내 글씨가
+// 몇 줄로 접히느냐에 따라 달라서 CSS가 알 수 없다. 칸이 보이는 동안에 재 둔다.
+// 시트가 열린 뒤에는 칸이 빠져 0이 나온다. 그 값으로 덮으면 목록이 도로 줄어든다.
+function rememberAddRowHeight(target) {
+  const height = target.querySelector(ADD_ROW_SELECTOR)?.offsetHeight ?? 0
+
+  if (height > 0) {
+    target.style.setProperty(ADD_ROW_HEIGHT_VARIABLE, `${height}px`)
   }
 }
 
 function toListView(view) {
   return {
     ...view,
+    ...handlers,
     editingStartSeconds: editing.getEditingStartSeconds(),
     addingDraftSeconds: editing.getAddingDraftSeconds(),
-    watchPlayback: editing.watchPlayback,
-    onStartEdit: startEditing,
-    onStartAdd: startAdding,
-    onCancelEdit: cancelEdit,
-    onSubmitEdit: submitEdit,
-    onSubmitAdd: submitAdd
+    addingDraftTitle: editing.getAddingDraftTitle(),
+    quickAddText: editing.getQuickAddText(),
+    watchPlayback: editing.watchPlayback
   }
-}
-
-// 아래 다섯은 상태를 바꾸고 다시 그리기만 한다. 무엇이 열리고 닫히는지는 editingState가 안다.
-function startEditing(startSeconds) {
-  editing.startEditing(startSeconds)
-  render(lastView)
-}
-
-// 듣다가 "여기부터 새 곡"이 되는 흐름이라 지금 재생 위치를 기본값으로 넣는다.
-function startAdding() {
-  editing.startAdding(lastView.getCurrentTimeSeconds())
-  render(lastView)
-}
-
-// 편집이든 추가든 취소는 하나다. 열려 있던 입력을 닫고 원래 목록으로 돌아간다.
-function cancelEdit() {
-  editing.cancel()
-  render(lastView)
-}
-
-// 편집을 먼저 닫아야 이어지는 그리기가 억제되지 않는다.
-function submitEdit(previousStartSeconds, entry) {
-  editing.finishEdit()
-  lastView.onEdit(previousStartSeconds, entry)
-}
-
-function submitAdd(entry) {
-  editing.finishAdd()
-  lastView.onAdd(entry)
 }
 
 // 창 너비가 바뀌면 유튜브가 칸을 바꾼다. 다시 그릴 내용이 없어도 패널은 새 칸으로 가야 한다.

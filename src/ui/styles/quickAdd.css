@@ -1,0 +1,148 @@
+/* 목록 아래 한 줄 추가. 평소에 늘 보이는 입력칸이라 테두리는 옅게 두고 초점이 오면 강조색으로 두른다. */
+.timeline-skip-quick {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--timeline-skip-color-tonal);
+  border-radius: 12px;
+  background: var(--timeline-skip-color-base-background);
+}
+
+.timeline-skip-quick:focus-within {
+  border-color: var(--timeline-skip-color-accent);
+  box-shadow: 0 0 0 1px var(--timeline-skip-color-accent);
+}
+
+.timeline-skip-quick > .timeline-skip-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 9px 4px 0 0;
+  color: var(--timeline-skip-color-text-secondary);
+}
+
+.timeline-skip-quick-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  resize: none;
+}
+
+.timeline-skip-quick-input::placeholder {
+  color: var(--timeline-skip-color-text-secondary);
+}
+
+.timeline-skip-quick-detail,
+.timeline-skip-quick-submit {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.timeline-skip-quick-detail {
+  background: none;
+  color: var(--timeline-skip-color-text-secondary);
+}
+
+.timeline-skip-quick-detail:hover:not(:disabled) {
+  background: var(--timeline-skip-color-tonal);
+  color: var(--timeline-skip-color-text-primary);
+}
+
+/* 저장 버튼과 같은 반전 색이다. */
+.timeline-skip-quick-submit {
+  background: var(--timeline-skip-color-text-primary);
+  color: var(--timeline-skip-color-base-background);
+}
+
+.timeline-skip-quick-detail:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.timeline-skip-quick-submit:disabled {
+  background: var(--timeline-skip-color-tonal);
+  color: var(--timeline-skip-color-text-secondary);
+  cursor: default;
+}
+
+.timeline-skip-quick-detail .timeline-skip-icon,
+.timeline-skip-quick-submit .timeline-skip-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.timeline-skip-quick-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 4px 0;
+}
+
+.timeline-skip-quick-hint {
+  color: var(--timeline-skip-color-text-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.timeline-skip-quick-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  font-size: 13px;
+}
+
+.timeline-skip-quick-arrow {
+  color: var(--timeline-skip-color-text-secondary);
+}
+
+.timeline-skip-quick-time {
+  flex: none;
+  color: var(--timeline-skip-color-accent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.timeline-skip-quick-line.is-taken .timeline-skip-quick-time {
+  color: #f28b82;
+  text-decoration: line-through;
+}
+
+.timeline-skip-quick-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.timeline-skip-quick-tag {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--timeline-skip-color-tonal);
+  color: var(--timeline-skip-color-text-secondary);
+  font-size: 11px;
+}
+
+.timeline-skip-quick-error {
+  color: #f28b82;
+  font-size: 12px;
+}

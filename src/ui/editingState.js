@@ -4,6 +4,10 @@
 export function createEditingState() {
   let editingStartSeconds = null
   let addingDraftSeconds = null
+  let addingDraftTitle = ''
+
+  // 한 줄 입력칸의 글자. 재생 중에 패널이 다시 그려져도 치던 글자가 남아야 한다.
+  let quickAddText = ''
 
   // 열린 편집 행의 바가 재생 위치를 받는 곳. 편집 중에는 panel이 다시 그리지 않아서 이 길로만 위치가 간다.
   let playbackListener = null
@@ -11,9 +15,10 @@ export function createEditingState() {
   const isEditing = () => editingStartSeconds !== null || addingDraftSeconds !== null
 
   // 무엇을 열고 닫든 받는 곳은 지운다. 남겨두면 화면에서 이미 사라진 바에 위치를 계속 쓴다.
-  const open = (nextEditingStartSeconds, nextAddingDraftSeconds) => {
+  const open = (nextEditingStartSeconds, nextAddingDraftSeconds, nextAddingDraftTitle = '') => {
     editingStartSeconds = nextEditingStartSeconds
     addingDraftSeconds = nextAddingDraftSeconds
+    addingDraftTitle = nextAddingDraftTitle
     playbackListener = null
   }
 
@@ -22,13 +27,18 @@ export function createEditingState() {
     toKey: () => `${editingStartSeconds}#${addingDraftSeconds}`,
     getEditingStartSeconds: () => editingStartSeconds,
     getAddingDraftSeconds: () => addingDraftSeconds,
+    getAddingDraftTitle: () => addingDraftTitle,
+    getQuickAddText: () => quickAddText,
+    setQuickAddText: (text) => {
+      quickAddText = text
+    },
 
     // 수정과 추가는 동시에 열리지 않는다. 한쪽을 열면 다른 쪽은 닫힌다.
     startEditing: (startSeconds) => open(startSeconds, null),
 
     // 재생 준비 전이나 라이브에서는 재생 위치가 NaN이다. 그때는 0초에서 시작한다.
-    startAdding: (currentTimeSeconds) =>
-      open(null, Number.isFinite(currentTimeSeconds) ? Math.floor(currentTimeSeconds) : 0),
+    startAdding: (currentTimeSeconds, title = '') =>
+      open(null, Number.isFinite(currentTimeSeconds) ? Math.floor(currentTimeSeconds) : 0, title),
 
     // 사용자가 취소한 경우와 영상이 바뀐 경우는 부르는 쪽의 사정만 다르고 결과는 같다.
     cancel: () => open(null, null),
