@@ -11,7 +11,6 @@ const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
-const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 const PICTURE_IN_PICTURE_BUTTON = `${FLOATING} button[aria-label="PiP로 띄우기"]`
 
 // 진짜 창이 뜨는지, 창에 확장의 스타일이 입혀지는지는 floatingPip.spec.js가 맡는다.
@@ -62,11 +61,11 @@ describe('PiP로 띄운 플로팅 위젯', () => {
   })
 
   // jsdom에는 scrollIntoView가 없다. 스크롤은 floating.spec.js가 진짜 브라우저에서 본다.
-  it('PiP 창에서 목록 보기를 누르면 탭을 앞으로 가져오고 목록을 표시한다', async () => {
+  it('PiP 창에서 제목을 누르면 탭을 앞으로 가져오고 목록을 표시한다', async () => {
     const extension = await startInWindow()
     Element.prototype.scrollIntoView = () => {}
 
-    queryWindow(extension, JUMP).click()
+    queryWindow(extension, TITLE).click()
     await settle()
 
     expect(extension.tabFocus.getFocusCount()).toBe(1)

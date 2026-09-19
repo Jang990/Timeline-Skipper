@@ -11,7 +11,6 @@ const CARD = `${FLOATING} .timeline-skip-floating-card`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
 const CONTROLS = `${FLOATING} .timeline-skip-controls`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
-const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 
 
 test.describe('플로팅 위젯', () => {
@@ -79,12 +78,12 @@ test.describe('플로팅 위젯', () => {
     await expect(page.locator(TITLE)).toHaveClass(/is-scrolling/)
   })
 
-  test('패널로 이동 버튼을 누르면 패널이 강조된다', async ({ openWatchPage }) => {
+  test('제목을 누르면 패널이 강조된다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
     await expandWidget(page)
 
-    await page.locator(JUMP).click()
+    await page.locator(TITLE).click()
 
     await expect(page.locator('#timeline-skip-panel')).toHaveClass(/is-revealed/)
   })
