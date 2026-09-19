@@ -62,7 +62,7 @@ describe('바 위의 이웃 트랙', () => {
     const extension = await startWithTimeline()
     extension.player.playTo(100)
 
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
 
     expect(findAll(extension, NEIGHBOR)).toHaveLength(2)
   })

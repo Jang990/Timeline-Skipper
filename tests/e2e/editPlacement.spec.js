@@ -15,18 +15,19 @@ const ROW = `${LIST} .timeline-skip-row`
 const SHEET = `${PANEL} .timeline-skip-edit-sheet`
 const EDIT_TARGET = `${LIST} .timeline-skip-row.is-edit-target`
 const TITLE_INPUT = `${PANEL} .timeline-skip-title-input`
-const ADD_BUTTON = `${PANEL} .timeline-skip-add`
+const QUICK_ADD = `${PANEL} .timeline-skip-quick`
+const DETAIL_BUTTON = `${PANEL} button[aria-label="자세히 추가"]`
 
 // 픽셀 경계는 소수로 떨어진다. 1px 안의 차이는 같은 자리로 본다.
 const TOLERANCE = 1
 
 test.describe('편집창 위치', () => {
-  test('편집이 열려 있으면 직접 추가 버튼이 보이지 않는다', async ({ openWatchPage }) => {
+  test('편집이 열려 있으면 한 줄 추가 칸이 보이지 않는다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage, TIMELINE_COMMENT)
 
     await clickEdit(page, '둘째 곡')
 
-    await expect(page.locator(ADD_BUTTON)).not.toBeVisible()
+    await expect(page.locator(QUICK_ADD)).not.toBeVisible()
   })
 
   test('목록이 길면 편집창이 목록 아래쪽을 덮는다', async ({ openWatchPage }) => {
@@ -56,7 +57,7 @@ test.describe('편집창 위치', () => {
     const page = await openTimeline(openWatchPage, LONG_TIMELINE_COMMENT)
     const closedHeight = await readHeight(page, PANEL)
 
-    await page.locator(ADD_BUTTON).click()
+    await page.locator(DETAIL_BUTTON).click()
     await expect(page.locator(TITLE_INPUT)).toBeVisible()
 
     expect(Math.abs((await readHeight(page, PANEL)) - closedHeight)).toBeLessThanOrEqual(TOLERANCE)
@@ -96,16 +97,6 @@ test.describe('편집창 위치', () => {
     const lastRow = await readBox(page, `${ROW} >> nth=-1`)
     const sheet = await readBox(page, SHEET)
     expect(lastRow.bottom).toBeLessThanOrEqual(sheet.top + TOLERANCE)
-  })
-
-  test('트랙이 없어도 직접 추가를 누르면 추가 폼이 열린다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [] })
-    await expect(page.locator(`${PANEL} .timeline-skip-empty`)).toBeVisible()
-
-    await page.locator(ADD_BUTTON).click()
-
-    await expect(page.locator(SHEET)).toBeVisible()
-    await expect(page.locator(TITLE_INPUT)).toBeVisible()
   })
 })
 

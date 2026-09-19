@@ -115,23 +115,6 @@ function createRowButton(iconName, ariaLabel, hint, onClick, extraClass = '') {
   return button
 }
 
-// 목록이 비어 있어도 보여야 한다. 댓글 없이 직접 만들어 쓰는 사람도 있다.
-export function createAddRow(onStartAdd) {
-  const row = document.createElement('div')
-  row.className = 'timeline-skip-add-row'
-
-  const button = createButton({
-    label: '지금 위치에 트랙 추가',
-    className: 'timeline-skip-add',
-    title: '지금 재생 위치로 트랙을 추가합니다',
-    onClick: onStartAdd
-  })
-  button.prepend(createIcon('add'))
-  row.append(button)
-
-  return row
-}
-
 // 당겨둔 끝이 있을 때만 구간으로 보여준다. 전부 범위로 쓰면 손대지 않은 트랙까지
 // 끝을 정해둔 것처럼 보이고, 목록을 눈으로 훑기도 어려워진다.
 function toTimeLabel(track) {

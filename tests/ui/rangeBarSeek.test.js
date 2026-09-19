@@ -93,7 +93,7 @@ describe('구간 바로 이동', () => {
   it('추가 행의 바를 눌러도 영상이 옮겨진다', async () => {
     const extension = await startWithTimeline()
     extension.player.playTo(100)
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
     expect(find(extension, BAR)).not.toBeNull()
 
     // 100초에 추가하면 바는 80~320초를 덮는다.

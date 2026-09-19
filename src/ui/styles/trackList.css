@@ -46,9 +46,15 @@
   font-weight: 500;
 }
 
-/* 자리는 남기고 모습만 감춘다. 빼면 편집을 여는 순간 패널이 짧아진다. */
+/* 시트가 열리면 추가 칸을 뺀다. 자리만 남겨 두면 시트 아래가 빈 채로 보인다.
+   빠진 만큼 목록이 늘어나야 긴 목록에서 패널 높이가 그대로다. 칸 높이는 안내 글씨가 몇 줄로
+   접히느냐에 따라 달라서, 열기 직전에 잰 값을 panel이 변수로 넘긴다. */
 .timeline-skip-list-area.is-editing .timeline-skip-add-row {
-  visibility: hidden;
+  display: none;
+}
+
+.timeline-skip-list-area.is-editing .timeline-skip-list {
+  max-height: calc(480px + var(--timeline-skip-add-row-height, 0px));
 }
 
 /* 편집 폼에 열린 트랙. 재생 중 표시(배경)와 겹칠 수 있어 테두리로 두른다. */

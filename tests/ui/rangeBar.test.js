@@ -88,7 +88,7 @@ describe('구간 바', () => {
     const extension = await startWithTimeline()
     extension.player.playTo(100)
 
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
 
     expect(find(extension, BAR)).not.toBeNull()
     expect(readText(extension, FROM_LABEL)).toBe('01:20')

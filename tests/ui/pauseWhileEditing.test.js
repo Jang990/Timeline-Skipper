@@ -47,7 +47,7 @@ describe('편집 중 건너뛰기와 반복 멈춤', () => {
   it('추가 행이 열려 있어도 체크 해제된 트랙 안에 머문다', async () => {
     const extension = await startWithTimeline()
     toggleTrack(extension, 1)
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
     expect(find(extension, '.timeline-skip-time-input')).not.toBeNull()
 
     extension.player.playTo(300)

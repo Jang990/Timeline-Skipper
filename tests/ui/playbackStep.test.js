@@ -85,7 +85,7 @@ describe('재생 위치 이동 버튼', () => {
   it('추가 행에서도 ±로 재생 위치를 옮길 수 있다', async () => {
     const extension = await startWithTimeline()
     extension.player.playTo(120)
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
 
     clickButton(extension, '10초 빨리 감기')
 

@@ -1,13 +1,15 @@
 /* 목록 아래쪽에서 올라와 목록을 덮는 층. 목록 스크롤 영역의 바닥에 달라붙는다.
    유튜브가 메뉴·시트에 쓰는 떠 있는 판의 색을 깐다. 라이트 테마에서는 이 색이 목록 바탕과 같아서,
-   목록 위에 올라와 있다는 것은 위쪽 그림자와 둥근 모서리가 알린다. */
+   목록 위에 올라와 있다는 것은 위쪽 그림자와 둥근 모서리가 알린다.
+   아래도 둥글게 한다. 패널에 안쪽 여백이 있어 시트 바닥이 패널 가장자리에 닿지 않으므로,
+   아래만 각지면 잘린 판이 떠 있는 것처럼 보인다. */
 .timeline-skip-edit-sheet {
   position: sticky;
   bottom: 0;
   z-index: 3;
   margin-top: 6px;
   padding: 6px 8px 12px;
-  border-radius: 16px 16px 0 0;
+  border-radius: 16px;
   background: var(--timeline-skip-color-raised-background);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
 }
