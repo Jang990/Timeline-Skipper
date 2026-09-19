@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { startWithFakes } from '../fixtures/fakes/startWithFakes.js'
-import { find, findAll, loadTimeline, openEditRow, readText } from '../fixtures/fakes/panelHelpers.js'
+import { clickButton, find, findAll, loadTimeline, openEditRow, readText } from '../fixtures/fakes/panelHelpers.js'
 
 const TIMELINE_COMMENT = ['00:00 첫 곡', '05:00 둘째 곡', '10:00 셋째 곡'].join('\n')
 
@@ -80,7 +80,7 @@ describe('편집 시트의 시간 영역', () => {
   it('추가 시트에도 안내 글씨와 재생 위치 이름표가 보인다', async () => {
     const extension = await startWithTimeline()
 
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
 
     expect(readText(extension, END_HINT)).toBe(END_HINT_TEXT)
     expect(readText(extension, PLAYBACK_CAPTION)).toBe('재생 위치')

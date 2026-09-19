@@ -100,7 +100,7 @@ describe('시각 조정 버튼', () => {
   it('직접 추가 행에서도 [지금으로]로 시각을 넣을 수 있다', async () => {
     const extension = await startWithTimeline()
     extension.player.playTo(120)
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
     extension.player.playTo(130)
 
     clickButton(extension, '시작을 지금 위치로')

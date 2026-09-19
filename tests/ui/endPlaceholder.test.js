@@ -50,7 +50,7 @@ describe('끝 칸의 안내 글씨', () => {
     const extension = await startWithTimeline()
     extension.player.playTo(120)
 
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
 
     expect(readPlaceholder(extension)).toBe('05:00')
   })

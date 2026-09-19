@@ -61,7 +61,7 @@ describe('바 위의 재생 위치', () => {
   it('추가 행에서도 재생 위치 표시가 따라 움직인다', async () => {
     const extension = await startWithTimeline()
     extension.player.playTo(100)
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
     expect(find(extension, PLAYHEAD).hidden).toBe(false)
 
     extension.player.playTo(200)

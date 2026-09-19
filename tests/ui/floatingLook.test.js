@@ -90,7 +90,7 @@ describe('떠 있는 위젯의 모양', () => {
     extension.player.playTo(400)
     query(ICON).click()
 
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
     fillInput(extension, '.timeline-skip-title-input', '끼운 곡')
     clickButton(extension, '저장')
 

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest'
 import { startWithFakes } from '../fixtures/fakes/startWithFakes.js'
-import { fillInput, find, findAll, loadTimeline, openEditRow, readText, readTexts } from '../fixtures/fakes/panelHelpers.js'
+import { clickButton, fillInput, find, findAll, loadTimeline, openEditRow, readText, readTexts } from '../fixtures/fakes/panelHelpers.js'
 
 const TIMELINE_COMMENT = ['00:00 첫 곡', '05:00 둘째 곡', '10:00 셋째 곡'].join('\n')
 
@@ -21,10 +21,10 @@ describe('편집 시트의 틀', () => {
     expect(readText(extension, HEADING)).toBe('트랙 수정')
   })
 
-  it('직접 추가를 누르면 시트 머리에 "트랙 추가"가 보인다', async () => {
+  it('자세히 추가를 누르면 시트 머리에 "트랙 추가"가 보인다', async () => {
     const extension = await startWithTimeline()
 
-    find(extension, '.timeline-skip-add').click()
+    clickButton(extension, '자세히 추가')
 
     expect(readText(extension, HEADING)).toBe('트랙 추가')
   })

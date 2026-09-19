@@ -10,7 +10,7 @@ const LIST_AREA = '.timeline-skip-list-area'
 const SHEET = '.timeline-skip-edit-sheet'
 const EDIT_TARGET = '.timeline-skip-list .timeline-skip-row.is-edit-target'
 const TITLE_INPUT = '.timeline-skip-title-input'
-const ADD_BUTTON = '.timeline-skip-add'
+const QUICK_ADD = '.timeline-skip-quick-input'
 
 describe('편집창 위치', () => {
   it('편집 중인 트랙의 행은 목록에 남아 강조된다', async () => {
@@ -33,8 +33,8 @@ describe('편집창 위치', () => {
     expect(find(extension, EDIT_TARGET).textContent).toContain('셋째 곡')
   })
 
-  // 추가 버튼은 빼지 않고 CSS로 숨긴다. 실제로 숨는지는 e2e가, 숨기라는 표시는 여기서 본다.
-  it('저장하면 강조가 사라지고 직접 추가 버튼이 돌아온다', async () => {
+  // 추가 칸은 CSS로 뺀다. 실제로 숨는지는 e2e가, 숨기라는 표시는 여기서 본다.
+  it('저장하면 강조가 사라지고 한 줄 추가 칸이 돌아온다', async () => {
     const extension = await startWithTimeline()
     openEditRow(extension, '둘째 곡')
     expect(find(extension, LIST_AREA).classList.contains('is-editing')).toBe(true)
@@ -43,14 +43,14 @@ describe('편집창 위치', () => {
 
     expect(findAll(extension, EDIT_TARGET)).toHaveLength(0)
     expect(find(extension, LIST_AREA).classList.contains('is-editing')).toBe(false)
-    expect(find(extension, ADD_BUTTON)).not.toBeNull()
+    expect(find(extension, QUICK_ADD)).not.toBeNull()
   })
 
-  it('트랙이 없어도 직접 추가를 누르면 추가 폼이 열린다', async () => {
+  it('트랙이 없어도 자세히 추가를 누르면 추가 폼이 열린다', async () => {
     const extension = await startWithFakes()
     expect(find(extension, '.timeline-skip-empty')).not.toBeNull()
 
-    find(extension, ADD_BUTTON).click()
+    clickButton(extension, '자세히 추가')
 
     expect(find(extension, SHEET)).not.toBeNull()
     expect(find(extension, TITLE_INPUT)).not.toBeNull()

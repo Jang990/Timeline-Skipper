@@ -37,6 +37,27 @@ describe('createEditingState', () => {
     expect(editing.getAddingDraftSeconds()).toBe(0)
   })
 
+  it('추가를 제목과 함께 시작하면 그 제목을 초안으로 잡는다', () => {
+    const editing = createEditingState()
+
+    editing.startAdding(311, '음악1')
+
+    expect(editing.getAddingDraftSeconds()).toBe(311)
+    expect(editing.getAddingDraftTitle()).toBe('음악1')
+  })
+
+  it('한 줄 칸의 글자는 수정과 추가를 열고 닫아도 남는다', () => {
+    const editing = createEditingState()
+    editing.setQuickAddText('05:11 음악1')
+
+    editing.startAdding(311, '음악1')
+    editing.cancel()
+    editing.startEditing(100)
+    editing.finishEdit()
+
+    expect(editing.getQuickAddText()).toBe('05:11 음악1')
+  })
+
   it('수정 중에 추가를 시작하면 열려 있던 수정이 닫힌다', () => {
     const editing = createEditingState()
 

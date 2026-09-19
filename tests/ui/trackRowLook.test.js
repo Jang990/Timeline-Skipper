@@ -64,10 +64,10 @@ describe('트랙 목록 행의 모양', () => {
     }
   })
 
-  it('추가 버튼에 "지금 위치에 트랙 추가"가 보인다', async () => {
+  it('목록 아래 추가 칸에 "05:11 곡명 붙여넣기, 또는 제목만" 안내가 보인다', async () => {
     const extension = await startWithTimeline()
 
-    expect(find(extension, '.timeline-skip-add').textContent).toBe('지금 위치에 트랙 추가')
+    expect(find(extension, '.timeline-skip-quick-input').placeholder).toBe('05:11 곡명 붙여넣기, 또는 제목만')
   })
 })
 
