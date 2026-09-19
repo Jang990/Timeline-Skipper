@@ -81,23 +81,27 @@ function drawInto(target, view) {
 
   keepListPosition(target.querySelector(LIST_SELECTOR), previousScrollTop)
 
-  // 고치려는 사람은 제목부터 손댄다. 바로 덮어쓸 수 있게 골라둔 채로 시작한다.
+  // 고치려는 사람은 제목부터 손댄다. 초점은 주되 글자를 골라 두지는 않는다.
+  // 선택 표시가 있으면 방금 누른 행의 글자를 그 자리에서 고치는 것처럼 보인다.
   if (editing.isEditing()) {
-    const titleInput = target.querySelector(TITLE_INPUT_SELECTOR)
-
-    titleInput?.focus()
-    titleInput?.select()
+    focusAtEnd(target.querySelector(TITLE_INPUT_SELECTOR))
 
     return
   }
 
   // 재생 중에는 트랙이 바뀔 때마다 다시 그린다. 치던 칸의 초점을 되돌려야 이어서 칠 수 있다.
   if (wasTypingQuick) {
-    const quickInput = target.querySelector(QUICK_INPUT_SELECTOR)
-
-    quickInput.focus()
-    quickInput.setSelectionRange(quickInput.value.length, quickInput.value.length)
+    focusAtEnd(target.querySelector(QUICK_INPUT_SELECTOR))
   }
+}
+
+function focusAtEnd(input) {
+  if (input === null) {
+    return
+  }
+
+  input.focus()
+  input.setSelectionRange(input.value.length, input.value.length)
 }
 
 // 시트가 열리면 추가 칸이 빠지고 목록이 그만큼 늘어난다(trackList.css). 칸 높이는 안내 글씨가
