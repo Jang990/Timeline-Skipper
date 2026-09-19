@@ -23,11 +23,13 @@ const YOUTUBE_PATTERN = 'https://www.youtube.com/**'
 export { expect }
 
 export const test = base.extend({
-  extensionContext: async ({}, use) => {
+  // 고정 viewport는 PiP 창에도 그대로 씌워진다. 창의 진짜 크기를 봐야 하는 spec은 viewport를 null로 둔다.
+  extensionContext: async ({ viewport }, use) => {
     const userDataDir = await mkdtemp(join(tmpdir(), 'timeline-skip-e2e-'))
     const context = await chromium.launchPersistentContext(userDataDir, {
       channel: BROWSER_CHANNEL,
       headless: IS_HEADLESS,
+      viewport,
       args: [
         `--disable-extensions-except=${EXTENSION_PATH}`,
         `--load-extension=${EXTENSION_PATH}`,

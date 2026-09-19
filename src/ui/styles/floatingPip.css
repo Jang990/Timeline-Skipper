@@ -12,3 +12,48 @@
   border-radius: 0;
   box-shadow: none;
 }
+
+/* 창을 낮게 두면 제목과 버튼을 한 줄에 놓고 진행 바는 그 아래 한 줄로만 남긴다. 크롬이 창 위에
+   주소 줄을 따로 달아서 내용까지 세 줄이면 창이 화면을 너무 많이 가린다.
+   창 크기는 사람이 바꾸므로 창 높이로 가른다. 창을 키우면 원래 모양으로 돌아간다. */
+@media (max-height: 100px) {
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-card {
+    flex-flow: row wrap;
+    align-content: center;
+    gap: 4px 6px;
+    padding: 0 8px 0 12px;
+  }
+
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-line:first-child {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-progress {
+    flex-basis: 100%;
+    order: 1;
+    padding: 4px 0;
+  }
+
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-meta,
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-now-playing-elapsed,
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-now-playing-length,
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-control.is-loop,
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-jump {
+    display: none;
+  }
+
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-controls {
+    margin-left: 0;
+  }
+
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-control {
+    width: 32px;
+    height: 32px;
+  }
+
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-control.is-primary {
+    width: 36px;
+    height: 36px;
+  }
+}
