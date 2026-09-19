@@ -29,17 +29,3 @@ export function createPictureInPictureButton(onOpen) {
 
   return button
 }
-
-// 기호만으로는 무엇을 하는지 몰라 글자를 적는다. 위 화살표는 위젯에서 패널로 올라간다는 뜻이다.
-export function createJumpButton(onRevealPanel) {
-  const button = createButton({
-    label: '목록 보기',
-    className: 'timeline-skip-floating-jump',
-    title: '타임라인 목록으로 이동',
-    ariaLabel: '타임라인 목록으로 이동',
-    onClick: onRevealPanel
-  })
-  button.append(createIcon('chevron-up'))
-
-  return button
-}

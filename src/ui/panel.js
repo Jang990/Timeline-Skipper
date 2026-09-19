@@ -1,6 +1,6 @@
 import { findPanelContainer, isBelowVideo } from '../adapters/panelContainer.js'
 import { createEditingState } from './editingState.js'
-import { keepListPosition } from './listScroll.js'
+import { keepListPosition, scrollToPlayingRow } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
 import { createNowPlayingCard } from './parts/nowPlayingCard.js'
 import { createHeader } from './parts/panelHeader.js'
@@ -66,7 +66,11 @@ export function isEditing() {
 function drawInto(target, view) {
   const previousScrollTop = target.querySelector(LIST_SELECTOR)?.scrollTop ?? 0
 
-  target.replaceChildren(createHeader(view), createNowPlayingCard(view), createListArea(toListView(view)))
+  target.replaceChildren(
+    createHeader(view),
+    createNowPlayingCard({ ...view, onShowPlayingRow: () => scrollToPlayingRow(target) }),
+    createListArea(toListView(view))
+  )
 
   keepListPosition(target.querySelector(LIST_SELECTOR), previousScrollTop)
 

@@ -1,0 +1,66 @@
+/* 패널 카드와 위젯의 제목은 누르면 목록의 재생 중인 행으로 간다. 버튼의 기본 모양을 걷어 제목 글자
+   그대로 보이게 하고, 누를 수 있다는 것은 손가락 커서와 밑줄로만 알린다. 말줄임은 block이어야 먹는다. */
+.timeline-skip-title-link {
+  display: block;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* 위젯 제목은 흐르는 글자를 담는 칸이다. 칸의 폭을 재서 흐를 거리를 정하므로 칸이 줄 폭을 다 채워야 한다. */
+.timeline-skip-floating-title.timeline-skip-title-link {
+  width: 100%;
+}
+
+/* 흐르는 글자는 inline-block이라 버튼의 밑줄이 번지지 않는다. 글자에 직접 긋는다. */
+.timeline-skip-title-link:hover,
+.timeline-skip-title-link:hover .timeline-skip-floating-title-text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.timeline-skip-title-link:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--timeline-skip-color-accent);
+  outline-offset: 2px;
+}
+
+/* 제목을 눌러 재생 중인 행까지 데려갈 때만 붙는다. listScroll.js가 붙인다.
+   부드럽게 흐르는 것은 데려갈 때만 켠다. 늘 켜 두면 다시 그린 뒤 스크롤 위치를 되돌릴 때도 흘러 버린다. */
+.timeline-skip-list.is-gliding {
+  scroll-behavior: smooth;
+}
+
+/* 목록이 움직이는 동안 놓친 눈이 멈출 자리를 두 번 깜빡여 알린다.
+   재생 중 배경은 그대로 두고 테두리만 켰다 끈다. */
+.timeline-skip-row.is-arrived {
+  animation: timeline-skip-arrived 0.6s ease-in-out 2;
+}
+
+@keyframes timeline-skip-arrived {
+  0%, 100% {
+    box-shadow: inset 0 0 0 0 transparent;
+  }
+
+  50% {
+    box-shadow: inset 0 0 0 2px var(--timeline-skip-color-accent);
+  }
+}
+
+/* 움직임을 줄이도록 설정한 사람에게는 흐르는 스크롤도 깜빡임도 방해다. 곧장 옮기고 테두리만 잠깐 켠다. */
+@media (prefers-reduced-motion: reduce) {
+  .timeline-skip-list.is-gliding {
+    scroll-behavior: auto;
+  }
+
+  .timeline-skip-row.is-arrived {
+    animation: none;
+    box-shadow: inset 0 0 0 2px var(--timeline-skip-color-accent);
+  }
+}
