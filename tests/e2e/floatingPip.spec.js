@@ -4,15 +4,14 @@ const TIMELINE_COMMENT = ['00:00 첫 곡', '05:00 둘째 곡', '10:00 셋째 곡
 
 const FLOATING = '#timeline-skip-floating'
 const CARD = `${FLOATING} .timeline-skip-floating-card`
-const JUMP = `${FLOATING} .timeline-skip-floating-jump`
+const TITLE = `${FLOATING} .timeline-skip-floating-title`
 
-// 창이 낮을 때 숨기는 것들. 순번, 진행 바 양옆 시간, 반복, 목록 보기다.
+// 창이 낮을 때 숨기는 것들. 순번, 진행 바 양옆 시간, 반복이다.
 const COMPACT_HIDDEN = [
   '.timeline-skip-floating-meta',
   '.timeline-skip-now-playing-elapsed',
   '.timeline-skip-now-playing-length',
-  '.timeline-skip-control.is-loop',
-  '.timeline-skip-floating-jump'
+  '.timeline-skip-control.is-loop'
 ]
 
 // 같은 기능의 여러 경우는 floatingPip.test.js가 본다. 여기서는 jsdom이 흉내 내지 못하는 것,
@@ -35,7 +34,7 @@ test.describe('PiP로 띄운 플로팅 위젯', () => {
     })
   })
 
-  test('PiP 창을 키우면 순번·시간·반복·목록 보기가 있는 세 줄 모양으로 돌아간다', async ({ openWatchPage }) => {
+  test('PiP 창을 키우면 순번·시간·반복이 있는 세 줄 모양으로 돌아간다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await openPictureInPicture(page)
 
@@ -57,7 +56,7 @@ test.describe('PiP로 띄운 플로팅 위젯', () => {
     expect(readConsoleErrors()).toEqual([])
   })
 
-  test('PiP 창에서 목록 보기를 누르면 다른 탭에 가려져 있던 영상 탭이 앞으로 온다', async ({ openWatchPage, extensionContext }) => {
+  test('PiP 창에서 제목을 누르면 다른 탭에 가려져 있던 영상 탭이 앞으로 온다', async ({ openWatchPage, extensionContext }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await openPictureInPicture(page)
     const watchTabId = await readActiveTabId(extensionContext)
@@ -65,9 +64,9 @@ test.describe('PiP로 띄운 플로팅 위젯', () => {
     await otherPage.bringToFront()
     await expect.poll(() => readActiveTabId(extensionContext)).not.toBe(watchTabId)
 
-    await page.evaluate((jumpSelector) => {
-      window.documentPictureInPicture.window.document.querySelector(jumpSelector).click()
-    }, JUMP)
+    await page.evaluate((titleSelector) => {
+      window.documentPictureInPicture.window.document.querySelector(titleSelector).click()
+    }, TITLE)
 
     await expect.poll(() => readActiveTabId(extensionContext)).toBe(watchTabId)
     await expect(page.locator('#timeline-skip-panel')).toHaveClass(/is-revealed/)

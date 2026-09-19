@@ -73,7 +73,7 @@
   padding: 6px 0;
 }
 
-/* 패널의 카드와 달리 버튼을 왼쪽부터 붙여 세운다. 오른쪽 끝은 목록 보기 버튼의 자리다. */
+/* 패널의 카드와 달리 버튼을 왼쪽부터 붙여 세운다. */
 .timeline-skip-floating-card .timeline-skip-controls {
   margin-bottom: 0;
   margin-left: -6px;
@@ -92,8 +92,7 @@
 }
 
 .timeline-skip-floating-collapse,
-.timeline-skip-floating-pip,
-.timeline-skip-floating-jump {
+.timeline-skip-floating-pip {
   display: flex;
   flex: none;
   align-items: center;
@@ -113,29 +112,14 @@
   color: var(--timeline-skip-color-text-secondary);
 }
 
-.timeline-skip-floating-jump {
-  gap: 6px;
-  margin-left: auto;
-  padding: 0 12px;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 500;
-}
-
 .timeline-skip-floating-collapse .timeline-skip-icon,
 .timeline-skip-floating-pip .timeline-skip-icon {
   width: 18px;
   height: 18px;
 }
 
-.timeline-skip-floating-jump .timeline-skip-icon {
-  width: 14px;
-  height: 14px;
-}
-
 .timeline-skip-floating-collapse:hover,
-.timeline-skip-floating-pip:hover,
-.timeline-skip-floating-jump:hover {
+.timeline-skip-floating-pip:hover {
   background: var(--timeline-skip-color-tonal);
 }
 

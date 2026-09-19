@@ -19,6 +19,7 @@
         "src/ui/styles/controls.css",
         "src/ui/styles/progressBar.css",
         "src/ui/styles/trackList.css",
+        "src/ui/styles/listArrival.css",
         "src/ui/styles/trackListControls.css",
         "src/ui/styles/editSheet.css",
         "src/ui/styles/editForm.css",

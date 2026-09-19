@@ -1,10 +1,11 @@
+import { createButton } from '../elements.js'
 import { createEqualizerIcon } from '../icons.js'
-import { createJumpButton } from './floatingButtons.js'
 import { createControls } from './playbackControls.js'
 import { createTimedTrackProgress } from './timedTrackProgress.js'
 
 // 첫 트랙 앞은 어느 트랙에도 속하지 않는다. 그때도 제목 자리가 비지 않게 채운다.
 const NO_TRACK_LABEL = '트랙 밖 구간'
+const TITLE_LINK_HINT = ' · 눌러서 목록에서 보기'
 
 const TITLE_SELECTOR = '.timeline-skip-floating-title'
 const TITLE_TEXT_SELECTOR = '.timeline-skip-floating-title-text'
@@ -25,7 +26,7 @@ export function createCard(view, playing, headingButtons) {
   card.className = 'timeline-skip-floating-card'
 
   card.append(
-    createTitleLine(playing, headingButtons),
+    createTitleLine(playing, headingButtons, view.onRevealPanel),
     ...createProgress(playing.track, view.onSeek),
     createButtonLine(view)
   )
@@ -71,10 +72,10 @@ function toMarqueeSeconds(overflowPixels) {
   return Math.max(MARQUEE_MINIMUM_SECONDS, Math.round(scrollSeconds / MARQUEE_SCROLL_RATIO))
 }
 
-function createTitleLine({ title, meta }, headingButtons) {
+function createTitleLine({ title, meta }, headingButtons, onRevealPanel) {
   const heading = document.createElement('div')
   heading.className = 'timeline-skip-floating-heading'
-  heading.append(createTitle(title), ...(meta === null ? [] : [createMeta(meta)]))
+  heading.append(createTitle(title, onRevealPanel), ...(meta === null ? [] : [createMeta(meta)]))
 
   const line = document.createElement('div')
   line.className = 'timeline-skip-floating-line'
@@ -92,9 +93,11 @@ function createMeta(meta) {
 }
 
 // 흐름이 꺼진 환경에서는 제목이 잘린 채로 남는다. 잘린 뒷부분은 툴팁으로 읽는다.
-function createTitle(playingTitle) {
-  const title = document.createElement('div')
-  title.className = 'timeline-skip-floating-title'
+// 트랙이 있으면 제목이 목록으로 가는 유일한 입구다. 누를 수 있다는 것은 툴팁 끝의 힌트로 알린다.
+// 누르는 자리는 흐르는 글자가 아니라 제목 칸 전체라 글자가 움직여도 짚을 수 있다.
+function createTitle(playingTitle, onRevealPanel) {
+  const title = playingTitle === null ? document.createElement('div') : createTitleButton(playingTitle, onRevealPanel)
+  title.classList.add('timeline-skip-floating-title')
 
   const text = document.createElement('span')
   text.className = 'timeline-skip-floating-title-text'
@@ -103,16 +106,25 @@ function createTitle(playingTitle) {
   text.textContent = playingTitle ?? NO_TRACK_LABEL
 
   title.append(text)
-  title.title = text.textContent
+  title.title = playingTitle === null ? NO_TRACK_LABEL : `${playingTitle}${TITLE_LINK_HINT}`
 
   return title
+}
+
+function createTitleButton(playingTitle, onRevealPanel) {
+  return createButton({
+    label: '',
+    className: 'timeline-skip-title-link',
+    ariaLabel: `목록에서 보기: ${playingTitle}`,
+    onClick: onRevealPanel
+  })
 }
 
 function createButtonLine(view) {
   const line = document.createElement('div')
   line.className = 'timeline-skip-floating-line'
 
-  line.append(createControls(view), createJumpButton(view.onRevealPanel))
+  line.append(createControls(view))
 
   return line
 }

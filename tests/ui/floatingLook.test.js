@@ -17,7 +17,6 @@ const TITLE = `${FLOATING} .timeline-skip-floating-title`
 const META = `${FLOATING} .timeline-skip-floating-meta`
 const LENGTH = `${FLOATING} .timeline-skip-now-playing-length`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
-const JUMP = `${FLOATING} .timeline-skip-floating-jump`
 const EQUALIZER = '.timeline-skip-equalizer'
 
 // jsdom 환경의 전역 URL은 jsdom의 것이라 node의 파일 도구와 섞이지 않는다. 파일 경로로만 계산한다.
@@ -108,17 +107,6 @@ describe('떠 있는 위젯의 모양', () => {
     expect(collapse.textContent).toBe('')
     expect(collapse.querySelectorAll('svg[data-icon="chevron-down"]')).toHaveLength(1)
     expect(collapse.getAttribute('aria-label')).toBe('플레이어 접기')
-  })
-
-  it('목록 보기 버튼에는 "목록 보기"가 적혀 있고 위 화살표 아이콘이 있다', async () => {
-    await startWithTimeline()
-
-    query(ICON).click()
-
-    const jump = query(JUMP)
-    expect(jump.textContent).toBe('목록 보기')
-    expect(jump.querySelectorAll('svg[data-icon="chevron-up"]')).toHaveLength(1)
-    expect(jump.getAttribute('aria-label')).toBe('타임라인 목록으로 이동')
   })
 
   it('접힌 아이콘의 바탕은 강조색이 아니라 메뉴 바탕색이다', () => {
