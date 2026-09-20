@@ -41,8 +41,8 @@ export async function readSettings() {
   return stored[SETTINGS_KEY]
 }
 
-export async function writeSettings({ floatingHidden, floatingExpanded }) {
-  await chrome.storage.local.set({ [SETTINGS_KEY]: { floatingHidden, floatingExpanded } })
+export async function writeSettings({ floatingHidden, floatingExpanded, floatingPosition }) {
+  await chrome.storage.local.set({ [SETTINGS_KEY]: { floatingHidden, floatingExpanded, floatingPosition } })
 }
 
 // Set은 그대로 저장되지 않으므로 경계에서 배열로 바꾼다.

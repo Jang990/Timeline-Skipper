@@ -1,6 +1,7 @@
 import { createCard, startTitleMarquee } from './parts/floatingBar.js'
 import { createCollapseButton, createPictureInPictureButton } from './parts/floatingButtons.js'
 import { createButton } from './elements.js'
+import { bindFloatingDrag, placeFloating } from './parts/floatingDrag.js'
 import { createEqualizerIcon } from './icons.js'
 import { showTrackProgress } from './parts/trackProgressBar.js'
 
@@ -10,8 +11,12 @@ const PICTURE_IN_PICTURE_CLASS = 'is-picture-in-picture'
 // 재생 중에는 그리라는 요청이 쉬지 않고 들어온다. 보이는 것이 같으면 건너뛴다.
 let lastSignature = null
 
+// 끌어 옮기는 손은 위젯을 만들 때 한 번만 붙인다. 그 뒤에 바뀐 view는 여기서 받아 간다.
+let latestView = null
+
 // view.pictureInPictureDocument가 있으면 위젯은 탭을 떠나 그 창에 그려진다. 한 번에 한 곳에만 있다.
 export function render(view) {
+  latestView = view
   const targetDocument = view.pictureInPictureDocument ?? document
 
   if (!shouldShow(view)) {
@@ -37,6 +42,9 @@ export function render(view) {
     lastSignature = signature
     drawInto(root, view, playing)
   }
+
+  // 창이 좁아지면 저장해 둔 자리가 화면 밖이 될 수 있다. 그릴 때마다 화면 안으로 들인다.
+  placeFloating(root, view.floatingPosition, view.pictureInPictureDocument !== null)
 
   // 다시 그리지 않아도 진행 바의 자리는 재생 위치를 따라가야 한다.
   showTrackProgress(root, view.getCurrentTimeSeconds())
@@ -99,6 +107,7 @@ function createRoot(targetDocument) {
   const root = document.createElement('div')
   root.id = FLOATING_ID
   targetDocument.body.append(root)
+  bindFloatingDrag(root, (position) => latestView.onSetFloatingPosition(position))
 
   return root
 }
