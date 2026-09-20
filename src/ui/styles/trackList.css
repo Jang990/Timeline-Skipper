@@ -1,6 +1,7 @@
-/* 편집 시트가 이 안에 붙어 열린다. 트랙이 몇 개 없을 때 시트가 행을 덮지 않고 그 아래에 놓일 만큼 준다. */
+/* 편집 시트가 이 안에 붙어 열린다. 트랙이 몇 개 없을 때 시트가 행을 덮지 않고 그 아래에 놓일 만큼 주되,
+   목록이 길 때 바닥에 붙은 시트가 화면 오른쪽 아래 플로팅 버튼까지 내려가지 않을 만큼만 준다. */
 .timeline-skip-list {
-  max-height: 480px;
+  max-height: 360px;
   overflow-y: auto;
 }
 
@@ -54,7 +55,7 @@
 }
 
 .timeline-skip-list-area.is-editing .timeline-skip-list {
-  max-height: calc(480px + var(--timeline-skip-add-row-height, 0px));
+  max-height: calc(360px + var(--timeline-skip-add-row-height, 0px));
 }
 
 /* 편집 폼에 열린 트랙. 재생 중 표시(배경)와 겹칠 수 있어 테두리로 두른다. */
