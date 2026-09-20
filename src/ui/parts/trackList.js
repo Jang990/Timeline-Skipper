@@ -24,6 +24,7 @@ function createRow(track, view, isFirstTrack) {
   const isDisabled = disabledStartSeconds.has(track.startSeconds)
   const isPlaying = track.startSeconds === playingStartSeconds
   const row = createRowShell(isDisabled, isPlaying)
+  row.dataset.startSeconds = String(track.startSeconds)
   row.classList.toggle('is-edit-target', track.startSeconds === editingStartSeconds)
 
   const checkbox = document.createElement('input')

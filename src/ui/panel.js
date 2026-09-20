@@ -1,7 +1,7 @@
 import { findPanelContainer, isBelowVideo } from '../adapters/panelContainer.js'
 import { createEditingHandlers } from './editingHandlers.js'
 import { createEditingState } from './editingState.js'
-import { keepListPosition, scrollToPlayingRow } from './listScroll.js'
+import { keepListPosition, scrollToPlayingRow, scrollToTrackRow } from './listScroll.js'
 import { createListArea } from './parts/listArea.js'
 import { createNowPlayingCard } from './parts/nowPlayingCard.js'
 import { createHeader } from './parts/panelHeader.js'
@@ -19,9 +19,18 @@ const BELOW_VIDEO_CLASS = 'is-below-video'
 
 let lastView = null
 
+// 저장해서 막 들어간 행. 다시 그린 뒤에 한 번 보여주고 지운다.
+let arrivingStartSeconds = null
+
 const editing = createEditingState()
 const gate = createRenderGate()
-const handlers = createEditingHandlers(editing, { getView: () => lastView, redraw: () => render(lastView) })
+const handlers = createEditingHandlers(editing, {
+  getView: () => lastView,
+  redraw: () => render(lastView),
+  markArrival: (startSeconds) => {
+    arrivingStartSeconds = startSeconds
+  }
+})
 
 export function render(view) {
   lastView = view
@@ -91,6 +100,8 @@ function drawInto(target, view) {
     return
   }
 
+  showArrival(target)
+
   // 재생 중에는 트랙이 바뀔 때마다 다시 그린다. 치던 칸의 초점을 되돌려야 이어서 칠 수 있다.
   if (wasTypingQuick) {
     const quickInput = target.querySelector(QUICK_INPUT_SELECTOR)
@@ -98,6 +109,16 @@ function drawInto(target, view) {
     quickInput.focus()
     quickInput.setSelectionRange(quickInput.value.length, quickInput.value.length)
   }
+}
+
+// 막 들어간 행으로 목록을 옮긴다. 한 번 보여주고 지워야, 뒤이은 다시 그리기마다 목록이 끌려가지 않는다.
+function showArrival(target) {
+  if (arrivingStartSeconds === null) {
+    return
+  }
+
+  scrollToTrackRow(target, arrivingStartSeconds)
+  arrivingStartSeconds = null
 }
 
 // 시트가 열리면 추가 칸이 빠지고 목록이 그만큼 늘어난다(trackList.css). 칸 높이는 안내 글씨가
