@@ -65,6 +65,7 @@ function toView(modules, state, actions, commitSettings) {
     isFullscreen: fullscreen.isFullscreen(),
     floatingHidden: state.floatingHidden,
     floatingExpanded: state.floatingExpanded,
+    floatingPosition: state.floatingPosition,
     pictureInPictureDocument: pictureInPicture.getDocument(),
     canOpenPictureInPicture: pictureInPicture.isSupported(),
     getCurrentTimeSeconds: player.getCurrentTimeSeconds,
@@ -85,6 +86,7 @@ function toView(modules, state, actions, commitSettings) {
     onRevealPanel: () => tabFocus.focusTab().then(panelReveal.reveal),
     onSetFloatingHidden: (floatingHidden) => commitSettings({ floatingHidden }),
     onSetFloatingExpanded: (floatingExpanded) => commitSettings({ floatingExpanded }),
+    onSetFloatingPosition: (floatingPosition) => commitSettings({ floatingPosition }),
     onOpenPictureInPicture: pictureInPicture.open,
     onClosePictureInPicture: pictureInPicture.close
   }

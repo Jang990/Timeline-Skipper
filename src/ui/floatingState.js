@@ -9,6 +9,16 @@
 export function toValidSettings(stored) {
   return {
     floatingHidden: stored?.floatingHidden === true,
-    floatingExpanded: stored?.floatingExpanded === true
+    floatingExpanded: stored?.floatingExpanded === true,
+    floatingPosition: toValidPosition(stored?.floatingPosition)
   }
+}
+
+// 자리는 두 숫자가 모두 있어야 쓸 수 있다. 하나라도 없으면 기본 자리로 돌린다.
+function toValidPosition(stored) {
+  if (!Number.isFinite(stored?.rightPixels) || !Number.isFinite(stored?.bottomPixels)) {
+    return null
+  }
+
+  return { rightPixels: stored.rightPixels, bottomPixels: stored.bottomPixels }
 }
