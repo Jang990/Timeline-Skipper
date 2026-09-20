@@ -25,7 +25,6 @@
         "src/ui/styles/editSheet.css",
         "src/ui/styles/editForm.css",
         "src/ui/styles/timeFields.css",
-        "src/ui/styles/rangeBar.css",
         "src/ui/styles/commentButton.css",
         "src/ui/styles/floating.css",
         "src/ui/styles/floatingMarquee.css",

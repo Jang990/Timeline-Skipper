@@ -25,20 +25,10 @@ function isEveryTrackDisabled(tracks, disabledStartSeconds) {
   return tracks.every((track) => disabledStartSeconds.has(track.startSeconds))
 }
 
-// 떠나야 하는 자리는 두 가지다. 해제된 트랙 안, 그리고 트랙과 트랙 사이의 빈 구간.
+// 트랙들이 영상을 빈틈없이 나누므로 떠나야 하는 자리는 해제된 트랙 안뿐이다.
+// 첫 트랙 시작 전과 마지막 트랙이 끝난 뒤는 트랙 밖이라 건드리지 않는다.
 function shouldLeaveHere(tracks, disabledStartSeconds, currentTimeSeconds) {
   const currentTrack = findTrackAtTime(tracks, currentTimeSeconds)
 
-  return currentTrack === null
-    ? isBetweenTracks(tracks, currentTimeSeconds)
-    : disabledStartSeconds.has(currentTrack.startSeconds)
-}
-
-// 첫 트랙 시작 전과 마지막 트랙이 끝난 뒤도 트랙 밖이지만, 그 둘은 건드리지 않는다.
-// 특히 뒤쪽을 빼두지 않으면 이미 지나온 지점으로 끝없이 되감는다.
-function isBetweenTracks(tracks, currentTimeSeconds) {
-  return (
-    tracks.some((track) => track.startSeconds <= currentTimeSeconds) &&
-    tracks.some((track) => track.startSeconds > currentTimeSeconds)
-  )
+  return currentTrack !== null && disabledStartSeconds.has(currentTrack.startSeconds)
 }
