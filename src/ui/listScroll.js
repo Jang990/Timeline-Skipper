@@ -41,9 +41,19 @@ export function keepListPosition(list, previousScrollTop) {
 // 도착한 행을 잠깐 반짝여, 목록이 움직이는 동안 놓친 눈이 멈출 자리를 알려준다.
 export function scrollToPlayingRow(panel) {
   const list = panel.querySelector(LIST_SELECTOR)
-  const row = list?.querySelector(PLAYING_ROW_SELECTOR)
 
-  if (row == null) {
+  revealRow(list, list?.querySelector(PLAYING_ROW_SELECTOR))
+}
+
+// 추가하거나 고쳐서 저장한 행. 목록이 늘어나도 스크롤은 그대로라, 들어간 자리를 따로 알려야 한다.
+export function scrollToTrackRow(panel, startSeconds) {
+  const list = panel.querySelector(LIST_SELECTOR)
+
+  revealRow(list, list?.querySelector(`[data-start-seconds="${startSeconds}"]`))
+}
+
+function revealRow(list, row) {
+  if (list == null || row == null) {
     return
   }
 
