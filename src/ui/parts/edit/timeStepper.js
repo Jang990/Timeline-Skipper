@@ -1,6 +1,5 @@
-import { findEditRange } from '../../../core/editing/findEditRange.js'
 import { findEndSeekSeconds } from '../../../core/editing/findEndSeekSeconds.js'
-import { nudgeStartSeconds } from '../../../core/editing/nudgeTime.js'
+import { findNextStartSeconds } from '../../../core/editing/findNextStartSeconds.js'
 import { parseTrackInput } from '../../../core/parse/parseTrackInput.js'
 import { createButton, createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
@@ -61,18 +60,19 @@ function createDivider() {
   return divider
 }
 
-// 찍는 값은 이웃 경계 안으로 맞춘다. 재생 준비 전에는 재생 위치가 NaN이라 아무것도 하지 않는다.
+// 찍는 값은 아무 데도 가두지 않는다. 경계를 어디로 옮기든 목록은 시각 순으로 다시 선다.
+// 재생 준비 전에는 재생 위치가 NaN이라 칸을 망가뜨리느니 아무것도 하지 않는다.
 function captureCurrentTime(context) {
   const currentTimeSeconds = context.view.getCurrentTimeSeconds()
 
   if (Number.isFinite(currentTimeSeconds)) {
-    writeSeconds(context.startInput, nudgeStartSeconds(currentTimeSeconds, 0, findRange(context)))
+    writeSeconds(context.startInput, Math.floor(currentTimeSeconds))
   }
 }
 
 // 끝은 값이 아니라 다음 트랙의 시작이다. 칸의 시작을 고치면 이 자리도 함께 움직인다.
 function findEndSeconds(context) {
-  return findEndSeekSeconds(readStartSeconds(context), findRange(context).toSeconds)
+  return findEndSeekSeconds(readStartSeconds(context), findNextSeconds(context))
 }
 
 function seekTo({ view }, targetSeconds) {
@@ -82,10 +82,10 @@ function seekTo({ view }, targetSeconds) {
 }
 
 // 영상 길이는 누를 때마다 다시 묻는다. 편집을 연 뒤에야 길이가 정해지기도 한다.
-function findRange({ draft, view, startInput }) {
+function findNextSeconds({ draft, view, startInput }) {
   const startSeconds = readStartSeconds({ draft, startInput })
 
-  return findEditRange(view.tracks, draft.previousStartSeconds, startSeconds, view.getDurationSeconds())
+  return findNextStartSeconds(view.tracks, draft.previousStartSeconds, startSeconds, view.getDurationSeconds())
 }
 
 // 읽을 수 없는 시작은 편집을 연 때의 값으로 본다.

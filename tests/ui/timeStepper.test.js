@@ -11,14 +11,35 @@ const ROW_TIME = '.timeline-skip-time'
 const START_INPUT = '.timeline-skip-time-input'
 
 describe('시각 조정 버튼', () => {
-  it('앞 트랙 시작에서 시작의 [지금으로]를 누르면 앞 트랙 시작 1초 뒤가 들어간다', async () => {
+  it('[지금]을 누르면 앞 트랙 시작이어도 그 시각이 그대로 들어간다', async () => {
     const extension = await startWithTimeline()
     openEditRow(extension, '둘째 곡')
     extension.player.playTo(0)
 
     clickButton(extension, '시작을 지금 위치로')
 
-    expect(find(extension, START_INPUT).value).toBe('00:01')
+    expect(find(extension, START_INPUT).value).toBe('00:00')
+  })
+
+  it('[지금]을 누르면 다음 트랙보다 뒤여도 그 시각이 그대로 들어간다', async () => {
+    const extension = await startWithTimeline()
+    openEditRow(extension, '둘째 곡')
+    extension.player.playTo(700)
+
+    clickButton(extension, '시작을 지금 위치로')
+
+    expect(find(extension, START_INPUT).value).toBe('11:40')
+  })
+
+  it('다음 트랙보다 뒤로 옮겨 저장하면 목록에서 그 자리로 간다', async () => {
+    const extension = await startWithTimeline()
+    openEditRow(extension, '둘째 곡')
+    extension.player.playTo(700)
+    clickButton(extension, '시작을 지금 위치로')
+
+    clickButton(extension, '저장')
+
+    expect(readTexts(extension, ROW_TIME)).toEqual(['00:00', '10:00', '11:40'])
   })
 
   it('시작의 [지금으로]를 누르면 지금 재생 위치가 시작 칸에 들어간다', async () => {
