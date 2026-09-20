@@ -38,7 +38,20 @@ test.describe('편집창 위치', () => {
     const list = await readBox(page, LIST)
     const sheet = await readBox(page, SHEET)
     expect(sheet.top).toBeLessThan(list.bottom)
-    expect(sheet.bottom).toBeCloseTo(list.bottom, 0)
+    expect(sheet.bottom).toBeLessThan(list.bottom)
+  })
+
+  // 목록 바닥에 딱 붙이면 둥근 아래 모서리가 잘린 자국처럼 남는다.
+  test('편집창은 목록 바닥에 닿지 않고 좌우로도 좁다', async ({ openWatchPage }) => {
+    const page = await openTimeline(openWatchPage, LONG_TIMELINE_COMMENT)
+
+    await clickEdit(page, '곡 2')
+
+    const list = await readBox(page, LIST)
+    const sheet = await readBox(page, SHEET)
+    expect(list.bottom - sheet.bottom).toBeGreaterThan(TOLERANCE)
+    expect(sheet.left - list.left).toBeGreaterThan(TOLERANCE)
+    expect(list.right - sheet.right).toBeGreaterThan(TOLERANCE)
   })
 
   test('목록이 길면 편집을 열어도 패널 높이가 그대로다', async ({ openWatchPage }) => {
@@ -122,7 +135,7 @@ async function scrollListToEnd(page) {
 async function readBox(page, selector) {
   const box = await page.locator(selector).boundingBox()
 
-  return { top: box.y, bottom: box.y + box.height }
+  return { top: box.y, bottom: box.y + box.height, left: box.x, right: box.x + box.width }
 }
 
 async function readHeight(page, selector) {
