@@ -1,7 +1,7 @@
 /* 제목 칸은 한 줄을 혼자 차지한다. 트랙 제목은 길어서 버튼과 나눠 쓰면 잘린다. */
 .timeline-skip-edit-title-row {
   display: flex;
-  padding: 4px 8px 8px;
+  padding: 2px 8px 6px;
 }
 
 .timeline-skip-title-input {
