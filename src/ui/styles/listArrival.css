@@ -63,4 +63,33 @@
     animation: none;
     box-shadow: inset 0 0 0 2px var(--timeline-skip-color-accent);
   }
+
+  .timeline-skip-insert-line.is-arrived {
+    animation: none;
+  }
+}
+
+/* 고치는 중인 시각이 들어갈 틈. 행 사이에 선만 긋고 행은 제자리에 둔다.
+   목록을 실제로 다시 세우면 무엇을 고치고 있었는지 눈이 놓친다. */
+.timeline-skip-insert-line {
+  height: 2px;
+  margin: 1px 10px;
+  border-radius: 1px;
+  background: var(--timeline-skip-color-accent);
+}
+
+/* 선이 옮겨 다니는 동안 놓친 눈이 멈출 자리를 두 번 깜빡여 알린다. */
+.timeline-skip-insert-line.is-arrived {
+  animation: timeline-skip-insert-arrived 0.6s ease-in-out 2;
+}
+
+@keyframes timeline-skip-insert-arrived {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
 }

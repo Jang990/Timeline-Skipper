@@ -3,6 +3,7 @@ import { isTimestampTaken } from '../../../core/tracks/isTimestampTaken.js'
 import { createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
 import { createSheetFooter, createSheetHeader } from './editSheetFrame.js'
+import { createInsertLine } from './insertLine.js'
 import { createTimeStepper } from './timeStepper.js'
 
 const INVALID_CLASS = 'is-invalid'
@@ -38,7 +39,14 @@ export function createEditRow(draft, view) {
     onSubmitEdit(draft.previousStartSeconds, result.entry)
   }
 
-  startInput.addEventListener('input', () => clearError(error, startInput))
+  // 고친 시각이 목록의 어느 틈으로 가는지 그 자리에 선을 긋는다. 편집 중에는 목록이 다시 그려지지
+  // 않으므로 선이 칸의 글자를 직접 받는다.
+  const insertLine = createInsertLine(wrapper, draft, tracks)
+
+  startInput.addEventListener('input', () => {
+    clearError(error, startInput)
+    insertLine.show(startInput.value)
+  })
 
   // 칸이 여러 줄로 나뉘었다. 어느 줄에 포커스가 있든 Enter와 Esc는 같은 뜻이다.
   wrapper.addEventListener('keydown', (event) => handleKey(event, submit, onCancelEdit))
