@@ -8,7 +8,9 @@
   bottom: 0;
   z-index: 3;
   margin-top: 6px;
-  padding: 6px 8px 12px;
+  /* 시트 전체 높이는 311px이다. 목록 캡(360px) 안에 행 세 개와 함께 들어가야 짧은 목록에서 행을 덮지 않는다.
+     이 안의 여백을 늘리면 그 선을 넘는다 — 늘릴 일이 있으면 trackList.css의 캡과 함께 본다. */
+  padding: 6px 8px 8px;
   border-radius: 16px;
   background: var(--timeline-skip-color-raised-background);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
@@ -63,7 +65,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  padding: 8px 8px 0;
+  padding: 4px 8px 0;
 }
 
 .timeline-skip-sheet-cancel,
