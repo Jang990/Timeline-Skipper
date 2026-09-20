@@ -19,8 +19,8 @@ export function createFakeStorage() {
 
     readSettings: async () => structuredClone(settings),
 
-    writeSettings: async ({ floatingHidden, floatingExpanded }) => {
-      settings = { floatingHidden, floatingExpanded }
+    writeSettings: async ({ floatingHidden, floatingExpanded, floatingPosition }) => {
+      settings = structuredClone({ floatingHidden, floatingExpanded, floatingPosition })
     }
   }
 }
