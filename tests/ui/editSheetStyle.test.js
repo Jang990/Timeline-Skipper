@@ -28,6 +28,15 @@ describe('편집 시트의 모양', () => {
   it('시트가 열리면 목록은 빠진 추가 칸의 높이만큼 늘어난다', () => {
     const rule = readRule('src/ui/styles/trackList.css', '.timeline-skip-list-area.is-editing .timeline-skip-list')
 
-    expect(rule).toMatch(/max-height:\s*calc\(480px \+ var\(--timeline-skip-add-row-height/)
+    expect(rule).toMatch(/max-height:\s*calc\(360px \+ var\(--timeline-skip-add-row-height/)
+  })
+})
+
+// 목록이 길면 바닥에 붙은 시트도 그만큼 아래로 내려가, 화면 오른쪽 아래 플로팅 버튼에 닿는다.
+describe('트랙 목록의 높이', () => {
+  it('목록은 360px보다 길어지지 않는다', () => {
+    const rule = readRule('src/ui/styles/trackList.css', '.timeline-skip-list')
+
+    expect(rule).toMatch(/max-height:\s*360px;/)
   })
 })
