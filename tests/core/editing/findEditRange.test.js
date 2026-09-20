@@ -3,9 +3,9 @@ import { describe, it, expect } from 'vitest'
 import { findEditRange } from '../../../src/core/editing/findEditRange.js'
 
 const tracks = [
-  { startSeconds: 0, endSeconds: 300, trimmedEndSeconds: null, title: '첫 곡' },
-  { startSeconds: 300, endSeconds: 600, trimmedEndSeconds: null, title: '둘째 곡' },
-  { startSeconds: 600, endSeconds: 1800, trimmedEndSeconds: null, title: '셋째 곡' }
+  { startSeconds: 0, endSeconds: 300, title: '첫 곡' },
+  { startSeconds: 300, endSeconds: 600, title: '둘째 곡' },
+  { startSeconds: 600, endSeconds: 1800, title: '셋째 곡' }
 ]
 
 const DURATION_SECONDS = 1800

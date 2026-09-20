@@ -8,8 +8,8 @@ const EDITING_KEY = '269#null'
 // 두 번째 트랙의 한 칸만 바꾼 목록. 다른 칸이 함께 바뀌면 무엇 때문에 다시 그렸는지 알 수 없다.
 function createTracks(secondTrackChanges = {}) {
   return [
-    { startSeconds: 0, trimmedEndSeconds: null, title: 'Intro' },
-    { startSeconds: 269, trimmedEndSeconds: 300, title: 'Ballerino', ...secondTrackChanges }
+    { startSeconds: 0, title: 'Intro' },
+    { startSeconds: 269, title: 'Ballerino', ...secondTrackChanges }
   ]
 }
 
@@ -58,7 +58,6 @@ describe('createRenderGate', () => {
 
   it.each([
     ['트랙 시작 시각', { tracks: createTracks({ startSeconds: 270 }) }],
-    ['당긴 끝 시각', { tracks: createTracks({ trimmedEndSeconds: 290 }) }],
     ['제목', { tracks: createTracks({ title: 'Outro' }) }],
     ['해제한 트랙', { disabledStartSeconds: new Set([269]) }],
     ['일시정지', { isPaused: true }],

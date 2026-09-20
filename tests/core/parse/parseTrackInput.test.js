@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { parseEndSeconds, parseTrackInput } from '../../../src/core/parse/parseTrackInput.js'
+import { parseTrackInput } from '../../../src/core/parse/parseTrackInput.js'
 
 describe('parseTrackInput', () => {
   it('"4:29"와 제목을 초 단위 시각과 제목으로 만든다', () => {
@@ -93,28 +93,3 @@ describe('parseTrackInput', () => {
   })
 })
 
-describe('parseEndSeconds', () => {
-  it('"6:00"을 360초로 읽는다', () => {
-    const result = parseEndSeconds('6:00')
-
-    expect(result).toBe(360)
-  })
-
-  it('콜론 없는 "600"도 시작 시각 칸과 같은 규칙으로 읽는다', () => {
-    const result = parseEndSeconds('600')
-
-    expect(result).toBe(360)
-  })
-
-  it('읽을 수 없는 글자는 null을 반환한다', () => {
-    const result = parseEndSeconds('어제')
-
-    expect(result).toBeNull()
-  })
-
-  it('빈 칸은 null을 반환한다', () => {
-    const result = parseEndSeconds('')
-
-    expect(result).toBeNull()
-  })
-})
