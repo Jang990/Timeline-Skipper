@@ -5,19 +5,19 @@ const TIMELINE_COMMENT = ['00:00 첫 곡', '05:00 둘째 곡', '10:00 셋째 곡
 const PANEL = '#timeline-skip-panel'
 const SHEET = `${PANEL} .timeline-skip-edit-sheet`
 const TITLE_INPUT = `${SHEET} .timeline-skip-title-input`
-const END_INPUT = `${SHEET} .timeline-skip-end-input`
+const START_INPUT = `${SHEET} .timeline-skip-time-input`
 const ERROR = `${SHEET} .timeline-skip-error`
 const RAISED_VARIABLE = '--yt-sys-color-baseline--raised-background'
 
 test.describe('편집 시트의 틀', () => {
-  test('저장·취소 버튼은 끝 칸보다 아래에 있다', async ({ openWatchPage }) => {
+  test('저장·취소 버튼은 시각 칸보다 아래에 있다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage)
 
     await openEditSheet(page, '둘째 곡')
 
-    const endBottom = await readBottom(page.locator(END_INPUT))
-    expect(await readTop(button(page, '저장'))).toBeGreaterThan(endBottom)
-    expect(await readTop(button(page, '취소'))).toBeGreaterThan(endBottom)
+    const startBottom = await readBottom(page.locator(START_INPUT))
+    expect(await readTop(button(page, '저장'))).toBeGreaterThan(startBottom)
+    expect(await readTop(button(page, '취소'))).toBeGreaterThan(startBottom)
   })
 
   test('저장 버튼은 취소 버튼과 배경색이 다르다', async ({ openWatchPage }) => {
@@ -33,7 +33,7 @@ test.describe('편집 시트의 틀', () => {
   test('저장되지 않은 이유는 저장 버튼보다 위에 보인다', async ({ openWatchPage }) => {
     const page = await openTimeline(openWatchPage)
     await openEditSheet(page, '둘째 곡')
-    await page.locator(END_INPUT).fill('1:00')
+    await page.locator(START_INPUT).fill('어제')
 
     await button(page, '저장').click()
 

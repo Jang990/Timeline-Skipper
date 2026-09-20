@@ -33,7 +33,7 @@ export function createRenderGate() {
 }
 
 function toSignature({ tracks, disabledStartSeconds, isPaused, loopEnabled, playingStartSeconds, floatingHidden }) {
-  const trackPart = tracks.map((track) => `${track.startSeconds}:${track.trimmedEndSeconds}:${track.title}`).join('|')
+  const trackPart = tracks.map((track) => `${track.startSeconds}:${track.title}`).join('|')
 
   return `${trackPart}#${[...disabledStartSeconds].join(',')}#${isPaused}#${loopEnabled}#${playingStartSeconds}#${floatingHidden}`
 }

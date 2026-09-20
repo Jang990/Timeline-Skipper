@@ -33,5 +33,5 @@ function readSingleLine(line, currentTimeSeconds) {
 
 // usesNow는 저장하지 않는 표시다. 미리보기가 "지금 위치"를 붙일지 가르는 데만 쓴다.
 function toEntry(timestampSeconds, title, usesNow) {
-  return { timestampSeconds, title, endSeconds: null, usesNow }
+  return { timestampSeconds, title, usesNow }
 }

@@ -1,4 +1,4 @@
-import { parseEndSeconds, parseTrackInput } from '../../../core/parse/parseTrackInput.js'
+import { parseTrackInput } from '../../../core/parse/parseTrackInput.js'
 import { isTimestampTaken } from '../../../core/tracks/isTimestampTaken.js'
 import { createInput } from '../../elements.js'
 import { formatTimestamp } from '../../formatTimestamp.js'
@@ -7,7 +7,6 @@ import { createTimeStepper } from './timeStepper.js'
 
 const INVALID_CLASS = 'is-invalid'
 const UNREADABLE_TIME = '시각을 읽을 수 없습니다. 예: 4:29 또는 429'
-const END_BEFORE_START = '끝 시각이 시작 시각보다 빠릅니다'
 
 export function createEditRow(draft, view) {
   const { tracks, onSubmitEdit, onCancelEdit } = view
@@ -21,14 +20,13 @@ export function createEditRow(draft, view) {
   const error = document.createElement('div')
   error.className = 'timeline-skip-error'
 
-  // 시작·끝 칸은 조정 버튼과 한 줄에 산다. 저장할 때 읽어야 해서 칸을 건네받는다.
+  // 시작 칸은 버튼들과 한 줄에 산다. 저장할 때 읽어야 해서 칸을 건네받는다.
   const stepper = createTimeStepper(draft, view)
-  const { startInput, endInput } = stepper
+  const { startInput } = stepper
   const titleInput = createTitleInput(draft)
-  const inputs = [startInput, endInput, titleInput]
 
   const submit = () => {
-    const result = readEntry(inputs, draft, tracks)
+    const result = readEntry([startInput, titleInput], draft, tracks)
 
     // 조용히 무시하면 고친 줄 알고 넘어간다. 왜 저장되지 않았는지 그 자리에서 말한다.
     if (result.entry === undefined) {
@@ -40,9 +38,7 @@ export function createEditRow(draft, view) {
     onSubmitEdit(draft.previousStartSeconds, result.entry)
   }
 
-  for (const input of [startInput, endInput]) {
-    input.addEventListener('input', () => clearError(error, startInput, endInput))
-  }
+  startInput.addEventListener('input', () => clearError(error, startInput))
 
   // 칸이 여러 줄로 나뉘었다. 어느 줄에 포커스가 있든 Enter와 Esc는 같은 뜻이다.
   wrapper.addEventListener('keydown', (event) => handleKey(event, submit, onCancelEdit))
@@ -72,7 +68,7 @@ function createTitleInput(draft) {
 }
 
 // 저장할 항목을 만든다. 막힌 이유가 있으면 어느 칸의 문제인지까지 함께 돌려준다.
-function readEntry([timeInput, endInput, titleInput], draft, tracks) {
+function readEntry([timeInput, titleInput], draft, tracks) {
   const entry = parseTrackInput(timeInput.value, titleInput.value)
 
   if (entry === null) {
@@ -83,20 +79,7 @@ function readEntry([timeInput, endInput, titleInput], draft, tracks) {
     return { input: timeInput, message: `${formatTimestamp(entry.timestampSeconds)}에 이미 트랙이 있습니다` }
   }
 
-  const endText = endInput.value.trim()
-
-  // 빈 칸은 "다음 트랙까지"라는 뜻이다. 잘못 적은 것과 갈라야 그 자리에서 이유를 말할 수 있다.
-  const endSeconds = endText === '' ? null : parseEndSeconds(endText)
-
-  if (endText !== '' && endSeconds === null) {
-    return { input: endInput, message: UNREADABLE_TIME }
-  }
-
-  if (endSeconds !== null && endSeconds <= entry.timestampSeconds) {
-    return { input: endInput, message: END_BEFORE_START }
-  }
-
-  return { entry: { ...entry, endSeconds } }
+  return { entry }
 }
 
 function showError(error, { input, message }) {

@@ -54,14 +54,14 @@ describe('떠 있는 위젯의 모양', () => {
     expect(query(META).textContent).toBe('2 / 3')
   })
 
-  it('재생 중인 트랙의 끝 시각을 고치면 위젯의 트랙 길이도 바뀐다', async () => {
+  it('다음 트랙의 시작을 앞당기면 재생 중인 트랙의 길이도 줄어든다', async () => {
     const extension = await startWithTimeline()
     extension.player.playTo(400)
     query(ICON).click()
     expect(query(LENGTH).textContent).toBe('05:00')
 
-    openEditRow(extension, '둘째 곡')
-    fillInput(extension, '.timeline-skip-end-input', '8:00')
+    openEditRow(extension, '셋째 곡')
+    fillInput(extension, '.timeline-skip-time-input', '8:00')
     clickButton(extension, '저장')
 
     expect(query(LENGTH).textContent).toBe('03:00')

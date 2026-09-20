@@ -62,7 +62,7 @@ function createForm(view) {
 
   if (view.addingDraftSeconds !== null) {
     return createEditRow(
-      { startSeconds: view.addingDraftSeconds, trimmedEndSeconds: null, title: view.addingDraftTitle, previousStartSeconds: null },
+      { startSeconds: view.addingDraftSeconds, title: view.addingDraftTitle, previousStartSeconds: null },
       { ...view, onSubmitEdit: (previousStartSeconds, entry) => view.onSubmitAdd(entry) }
     )
   }
