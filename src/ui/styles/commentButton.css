@@ -6,18 +6,18 @@
   width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
-  margin: 8px 0;
-  padding: 8px 8px 8px 12px;
-  border-radius: 12px;
+  margin: 6px 0;
+  padding: 4px 4px 4px 10px;
+  border-radius: 10px;
   background: color-mix(in srgb, var(--timeline-skip-color-accent) 12%, transparent);
   color: var(--timeline-skip-color-text-primary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .timeline-skip-load-banner > .timeline-skip-icon {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: var(--timeline-skip-color-accent);
 }
 
@@ -32,23 +32,23 @@
 
 .timeline-skip-load-button {
   flex-shrink: 0;
-  height: 32px;
-  padding: 0 14px;
+  height: 28px;
+  padding: 0 12px;
   border: 0;
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--timeline-skip-color-accent);
   color: var(--timeline-skip-color-base-background);
   cursor: pointer;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 }
 
 /* 버튼이 빠져도 높이가 줄지 않게 해서 아래 본문이 튀지 않게 한다. */
 .timeline-skip-load-banner.is-loaded {
-  min-height: 48px;
+  min-height: 36px;
   box-sizing: border-box;
-  padding-right: 12px;
+  padding-right: 10px;
   background: var(--timeline-skip-color-tonal);
   color: var(--timeline-skip-color-text-secondary);
 }
