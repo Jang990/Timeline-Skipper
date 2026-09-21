@@ -1,16 +1,58 @@
-.timeline-skip-load-button {
-  display: block;
+/* 유튜브에 옅은 파랑 배경 토큰이 없어서 강조색을 옅게 섞는다. 라이트·다크 모두 강조색을 따라간다. */
+.timeline-skip-load-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 6px 0;
-  padding: 4px 10px;
-  border: 1px solid var(--timeline-skip-color-tonal);
-  border-radius: 999px;
-  background: none;
-  color: var(--timeline-skip-color-accent);
-  cursor: pointer;
-  font-size: 12px;
+  padding: 4px 4px 4px 10px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--timeline-skip-color-accent) 12%, transparent);
+  color: var(--timeline-skip-color-text-primary);
+  font-size: 13px;
 }
 
-.timeline-skip-load-button:disabled {
+.timeline-skip-load-banner > .timeline-skip-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--timeline-skip-color-accent);
+}
+
+/* 띠가 글자 폭만큼만 차지해서, 버튼이 글자에 붙지 않게 사이를 조금 더 띄운다. */
+.timeline-skip-load-banner > span {
+  margin-right: 6px;
+}
+
+.timeline-skip-load-banner b {
+  font-weight: 500;
+}
+
+.timeline-skip-load-button {
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--timeline-skip-color-accent);
+  color: var(--timeline-skip-color-base-background);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 버튼이 빠져도 높이가 줄지 않게 해서 아래 본문이 튀지 않게 한다. */
+.timeline-skip-load-banner.is-loaded {
+  min-height: 36px;
+  box-sizing: border-box;
+  padding-right: 10px;
+  background: var(--timeline-skip-color-tonal);
   color: var(--timeline-skip-color-text-secondary);
-  cursor: default;
+}
+
+.timeline-skip-load-banner.is-loaded > .timeline-skip-icon {
+  color: var(--timeline-skip-color-text-secondary);
 }
