@@ -1,16 +1,54 @@
-.timeline-skip-load-button {
-  display: block;
-  margin: 6px 0;
-  padding: 4px 10px;
-  border: 1px solid var(--timeline-skip-color-tonal);
-  border-radius: 999px;
-  background: none;
-  color: var(--timeline-skip-color-accent);
-  cursor: pointer;
-  font-size: 12px;
+/* 유튜브에 옅은 파랑 배경 토큰이 없어서 강조색을 옅게 섞는다. 라이트·다크 모두 강조색을 따라간다. */
+.timeline-skip-load-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  padding: 8px 8px 8px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--timeline-skip-color-accent) 12%, transparent);
+  color: var(--timeline-skip-color-text-primary);
+  font-size: 14px;
 }
 
-.timeline-skip-load-button:disabled {
+.timeline-skip-load-banner > .timeline-skip-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--timeline-skip-color-accent);
+}
+
+.timeline-skip-load-banner > span {
+  flex-grow: 1;
+}
+
+.timeline-skip-load-banner b {
+  font-weight: 500;
+}
+
+.timeline-skip-load-button {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--timeline-skip-color-accent);
+  color: var(--timeline-skip-color-base-background);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 버튼이 빠져도 높이가 줄지 않게 해서 아래 본문이 튀지 않게 한다. */
+.timeline-skip-load-banner.is-loaded {
+  min-height: 48px;
+  box-sizing: border-box;
+  padding-right: 12px;
+  background: var(--timeline-skip-color-tonal);
   color: var(--timeline-skip-color-text-secondary);
-  cursor: default;
+}
+
+.timeline-skip-load-banner.is-loaded > .timeline-skip-icon {
+  color: var(--timeline-skip-color-text-secondary);
 }
