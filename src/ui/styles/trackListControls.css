@@ -83,10 +83,9 @@
   height: 16px;
 }
 
-/* 툴팁은 1초쯤 뒤에야 뜬다. 그 전에 눌러도 알 수 있도록,
-   빼기 버튼에 마우스를 올리면 합쳐질 두 행을 함께 밝힌다. hover보다 진하게 둔다. */
-.timeline-skip-row:has(.timeline-skip-remove:hover),
-.timeline-skip-row:has(+ .timeline-skip-row .timeline-skip-remove:hover) {
+/* 빼기 버튼에 마우스를 올리면 뺄 행만 hover보다 진하게 밝힌다.
+   앞 행에 합쳐진다는 것은 툴팁이 알린다. 앞 행까지 칠하면 두 행을 다 빼는 것처럼 보인다. */
+.timeline-skip-row:has(.timeline-skip-remove:hover) {
   background: var(--timeline-skip-color-tonal);
 }
 
