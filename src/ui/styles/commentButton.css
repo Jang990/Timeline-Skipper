@@ -3,6 +3,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 8px 0;
   padding: 8px 8px 8px 12px;
   border-radius: 12px;
@@ -18,8 +21,9 @@
   color: var(--timeline-skip-color-accent);
 }
 
+/* 띠가 글자 폭만큼만 차지해서, 버튼이 글자에 붙지 않게 사이를 조금 더 띄운다. */
 .timeline-skip-load-banner > span {
-  flex-grow: 1;
+  margin-right: 6px;
 }
 
 .timeline-skip-load-banner b {
