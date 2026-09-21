@@ -56,6 +56,18 @@ describe('findPlaybackTarget', () => {
     expect(findPlaybackTarget(playback, 300)).toBeNull()
   })
 
+  it('꺼져 있으면 해제한 트랙 위에서도 옮기지 않는다', () => {
+    const playback = createPlayback({ disabledStartSeconds: new Set([100]), isTurnedOff: true })
+
+    expect(findPlaybackTarget(playback, 120)).toBeNull()
+  })
+
+  it('꺼져 있으면 반복이 켜져 있어도 되감지 않는다', () => {
+    const playback = createPlayback({ loopEnabled: true, isTurnedOff: true })
+
+    expect(findPlaybackTarget(playback, 300)).toBeNull()
+  })
+
   it('트랙이 하나도 없으면 null을 돌려준다', () => {
     const playback = createPlayback({ tracks: [], loopEnabled: true })
 

@@ -5,7 +5,7 @@ import { buildFixturePage } from '../buildFixturePage.js'
 import { FIXTURE_VIDEO_SECONDS } from '../media/fixtureVideo.js'
 import { createFakePlayer } from './fakePlayer.js'
 import { createFakeStorage } from './fakeStorage.js'
-import { createFakeComments, createFakeFullscreen, createFakePage, createFakePictureInPicture, createFakeTabFocus } from './fakePlatform.js'
+import { createFakeComments, createFakeFullscreen, createFakePage, createFakePictureInPicture, createFakePower, createFakeTabFocus } from './fakePlatform.js'
 import { MODULE_PATHS } from '../../../src/modulePaths.js'
 
 const PANEL_ID = 'timeline-skip-panel'
@@ -21,7 +21,8 @@ export async function startWithFakes({
   videoId = 'fixture-video',
   durationSeconds = FIXTURE_VIDEO_SECONDS,
   storage = createFakeStorage(),
-  pictureInPicture = createFakePictureInPicture()
+  pictureInPicture = createFakePictureInPicture(),
+  power = createFakePower()
 } = {}) {
   // panel과 floating은 모듈 안에 상태를 들고 있다. 새로 불러오지 않으면 앞 테스트의 상태가 남는다.
   vi.resetModules()
@@ -34,7 +35,8 @@ export async function startWithFakes({
     comments: createFakeComments(),
     fullscreen: createFakeFullscreen(),
     pictureInPicture,
-    tabFocus: createFakeTabFocus()
+    tabFocus: createFakeTabFocus(),
+    power
   }
   const wiring = await import('../../../src/wiring.js')
 

@@ -52,9 +52,9 @@ export function render(view) {
 
 // 목록이 없는 영상에서까지 떠 있으면 그냥 거슬리는 물건이 된다.
 // 전체화면은 영상만 보겠다는 뜻이라 탭의 위젯은 치운다. 건너뛰기는 위젯 없이도 돈다.
-// PiP 창은 탭 밖에 있어 전체화면을 가리지 않으므로 그대로 둔다.
-function shouldShow({ tracks, floatingHidden, isFullscreen, pictureInPictureDocument }) {
-  if (tracks.length === 0 || floatingHidden) {
+// PiP 창은 탭 밖에 있어 전체화면을 가리지 않으므로 그대로 둔다. 꺼 두었으면 PiP 창까지 치운다.
+function shouldShow({ tracks, floatingHidden, isFullscreen, pictureInPictureDocument, isTurnedOff }) {
+  if (isTurnedOff || tracks.length === 0 || floatingHidden) {
     return false
   }
 

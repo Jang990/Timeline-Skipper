@@ -37,6 +37,12 @@ describe('findEndedTarget', () => {
     expect(result).toBe(null)
   })
 
+  it('꺼져 있으면 영상이 끝나도 처음으로 돌아가지 않는다', () => {
+    const result = findEndedTarget(createPlayback({ isTurnedOff: true }))
+
+    expect(result).toBe(null)
+  })
+
   it('켜진 트랙이 하나도 없으면 null을 반환한다', () => {
     const result = findEndedTarget(createPlayback({ disabledStartSeconds: new Set([10, 100, 200]) }))
 

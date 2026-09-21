@@ -94,3 +94,19 @@ export function createFakeTabFocus() {
     getFocusCount: () => focusCount
   }
 }
+
+// 진짜는 팝업이 chrome.storage에 쓴 값을 모든 탭이 알림으로 받는다. 테스트가 팝업 자리에서 스위치를 누른다.
+export function createFakePower({ isTurnedOff = false } = {}) {
+  let turnedOff = isTurnedOff
+  const handlers = []
+
+  return {
+    readTurnedOff: async () => turnedOff,
+    onTurnedOffChanged: (handler) => handlers.push(handler),
+
+    setTurnedOff: (nextTurnedOff) => {
+      turnedOff = nextTurnedOff
+      handlers.forEach((handler) => handler(nextTurnedOff))
+    }
+  }
+}

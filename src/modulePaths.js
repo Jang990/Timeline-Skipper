@@ -18,8 +18,10 @@ export const MODULE_PATHS = {
   storage: 'src/adapters/storage.js',
   pictureInPicture: 'src/adapters/pictureInPicture.js',
   tabFocus: 'src/adapters/tabFocus.js',
+  power: 'src/adapters/powerSwitch.js',
   panel: 'src/ui/panel.js',
   floatingState: 'src/ui/floatingState.js',
   panelReveal: 'src/ui/panelReveal.js',
-  floating: 'src/ui/floating.js'
+  floating: 'src/ui/floating.js',
+  powerMarker: 'src/ui/powerMarker.js'
 }
