@@ -9,6 +9,7 @@ const ROW = `${PANEL} .timeline-skip-row`
 const CHECKBOX = 'input[type="checkbox"]'
 const EQUALIZER = '.timeline-skip-equalizer'
 const EDIT_BUTTON = 'button[aria-label$=" 수정"]'
+const REMOVE_BUTTON = 'button[aria-label$=" 목록에서 빼기"]'
 const PLAYING_SECONDS = 1100
 const PLAYING_INDEX = 4
 
@@ -45,6 +46,20 @@ test.describe('트랙 목록 행의 모양', () => {
 
     await expect.poll(() => readBackgroundColor(row)).not.toBe(restingColor)
     await expect(row.locator(EDIT_BUTTON)).toHaveCSS('opacity', '1')
+  })
+
+  test('빼기 버튼에 마우스를 올리면 그 행만 밝아지고 앞 행은 그대로다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts })
+    await loadTimeline(page)
+    const previousRow = page.locator(ROW).nth(2)
+    const row = page.locator(ROW).nth(3)
+    const restingColor = await readBackgroundColor(previousRow)
+
+    await row.hover()
+    await row.locator(REMOVE_BUTTON).hover()
+
+    await expect.poll(() => readBackgroundColor(row)).not.toBe(restingColor)
+    expect(await readBackgroundColor(previousRow)).toBe(restingColor)
   })
 })
 
