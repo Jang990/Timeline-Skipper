@@ -9,6 +9,7 @@ export function start(modules) {
     entries: [],
     disabledStartSeconds: new Set(),
     loopEnabled: false,
+    isTurnedOff: false,
     tracks: [],
 
     // 저장된 설정을 읽어 오기 전까지 쓸 값. 저장분이 없을 때와 같은 모습이어야 한다.
@@ -45,6 +46,20 @@ export function start(modules) {
   fullscreen.onFullscreenChanged(draw)
   pictureInPicture.onChanged(draw)
   loadSettings(modules, state, draw)
+  bindPower(modules, state, draw)
+}
+
+// 스위치는 팝업에 있다. 어느 탭에서 바꿔도 열린 탭이 모두 새로고침 없이 따라온다.
+// 건너뛰기 판정은 state를 통째로 받으므로 isTurnedOff를 따로 넘기지 않는다.
+function bindPower({ power, powerMarker }, state, draw) {
+  const apply = (isTurnedOff) => {
+    state.isTurnedOff = isTurnedOff
+    powerMarker.showTurnedOff(isTurnedOff)
+    draw()
+  }
+
+  power.onTurnedOffChanged(apply)
+  power.readTurnedOff().then(apply)
 }
 
 // 설정을 읽는 동안에도 화면은 떠 있어야 한다. 읽고 나서 다시 그린다.
@@ -60,6 +75,7 @@ function toView(modules, state, actions, commitSettings) {
     tracks: state.tracks,
     disabledStartSeconds: state.disabledStartSeconds,
     loopEnabled: state.loopEnabled,
+    isTurnedOff: state.isTurnedOff,
     playingStartSeconds: playing.findPlayingStartSeconds(state.tracks, player.getCurrentTimeSeconds()),
     isPaused: player.isPaused(),
     isFullscreen: fullscreen.isFullscreen(),

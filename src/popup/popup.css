@@ -1,0 +1,92 @@
+/* 팝업은 유튜브 밖이라 유튜브 색 변수를 받을 수 없다. 유튜브와 같은 값을 직접 둔다. */
+:root {
+  --popup-background: #fff;
+  --popup-text-primary: #0f0f0f;
+  --popup-text-secondary: #606060;
+  --popup-accent: #065fd4;
+  --popup-track: rgba(0, 0, 0, 0.2);
+  --popup-knob: #fff;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --popup-background: #212121;
+    --popup-text-primary: #f1f1f1;
+    --popup-text-secondary: #aaa;
+    --popup-accent: #3ea6ff;
+    --popup-track: rgba(255, 255, 255, 0.3);
+    --popup-knob: #0f0f0f;
+  }
+}
+
+body {
+  width: 260px;
+  margin: 0;
+  background: var(--popup-background);
+  color: var(--popup-text-primary);
+  font-family: Roboto, "Noto Sans KR", Arial, sans-serif;
+}
+
+.power {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+.power-text {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.power-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.power-state {
+  color: var(--popup-text-secondary);
+  font-size: 12px;
+}
+
+.power-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  margin: 0;
+  border-radius: 10px;
+  background: var(--popup-track);
+  appearance: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.power-switch::before {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--popup-knob);
+  content: "";
+  transition: transform 0.15s;
+}
+
+.power-switch:checked {
+  background: var(--popup-accent);
+}
+
+.power-switch:checked::before {
+  transform: translateX(16px);
+}
+
+.power-switch:focus-visible {
+  outline: 2px solid var(--popup-accent);
+  outline-offset: 2px;
+}

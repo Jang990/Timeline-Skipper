@@ -1,0 +1,5 @@
+/* 플로팅 위젯은 여기서 숨기지 않는다. PiP 창은 이 문서 밖이라, 위젯이 스스로 치우고 창을 닫는다. */
+.timeline-skip-turned-off #timeline-skip-panel,
+.timeline-skip-turned-off .timeline-skip-load-banner {
+  display: none !important;
+}
