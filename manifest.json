@@ -38,7 +38,8 @@
         "src/ui/styles/floating.css",
         "src/ui/styles/floatingMarquee.css",
         "src/ui/styles/floatingPip.css",
-        "src/ui/styles/powerOff.css"
+        "src/ui/styles/powerOff.css",
+        "src/ui/styles/toast.css"
       ],
       "run_at": "document_idle"
     }

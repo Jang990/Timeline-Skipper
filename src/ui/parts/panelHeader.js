@@ -1,7 +1,9 @@
 import { createButton } from '../elements.js'
 import { createHeaderMenu } from './headerMenu.js'
+import { showToast } from '../toast.js'
 
 const TITLE_LABEL = '타임라인'
+const SHARE_LABEL = '트랙 복사'
 
 // 불러온 목록과 고친 내용은 어디에도 따로 남지 않는다. 한 번 누른 것으로 지우지 않는다.
 const CLEAR_CONFIRMATION = {
@@ -58,12 +60,22 @@ function createActionButton(label, onClick, isDisabled) {
 
 // 드물게 쓰는 동작은 메뉴에 넣는다. 숨긴 위젯을 되돌리는 길은 여기 하나뿐이라,
 // 목록이 비어도 메뉴는 늘 열린다. 그래야 다음 영상에서 위젯이 뜬다.
-function toMenuItems({ floatingHidden, onClear, onSetFloatingHidden }) {
+// 빈 목록은 복사해도 붙여넣을 것이 없어 복사 항목을 두지 않는다.
+function toMenuItems({ tracks, floatingHidden, onClear, onShare, onSetFloatingHidden }) {
   return [
+    ...(tracks.length > 0 ? [{ label: SHARE_LABEL, onSelect: () => share(onShare) }] : []),
     {
       label: floatingHidden ? '위젯 보이기' : '위젯 숨기기',
       onSelect: () => onSetFloatingHidden(!floatingHidden)
     },
     { label: '목록 비우기', onSelect: onClear, isDestructive: true, confirmation: CLEAR_CONFIRMATION }
   ]
+}
+
+// 메뉴는 누르자마자 닫혀서 무슨 일이 있었는지 남지 않는다. 결과를 알림으로 알린다.
+function share(onShare) {
+  onShare().then(
+    () => showToast('💬 복사했습니다. 댓글에 붙여넣어 다른 사람과 나눠 보세요'),
+    () => showToast('복사하지 못했습니다. 다시 눌러 주세요')
+  )
 }

@@ -31,13 +31,13 @@ describe('헤더 더보기 메뉴', () => {
     expect(find(extension, MENU).hidden).toBe(true)
   })
 
-  it('더보기 버튼을 누르면 위젯 숨기기와 목록 비우기가 담긴 메뉴가 열린다', async () => {
+  it('더보기 버튼을 누르면 트랙 복사, 위젯 숨기기, 목록 비우기가 담긴 메뉴가 열린다', async () => {
     const extension = await startWithTimeline()
 
     find(extension, MORE_BUTTON).click()
 
     expect(find(extension, MENU).hidden).toBe(false)
-    expect(readMenuLabels(extension)).toEqual(['위젯 숨기기', '목록 비우기'])
+    expect(readMenuLabels(extension)).toEqual(['트랙 복사', '위젯 숨기기', '목록 비우기'])
   })
 
   it('더보기 버튼의 aria-expanded가 메뉴가 열렸는지를 따른다', async () => {
@@ -102,7 +102,7 @@ describe('헤더 더보기 메뉴', () => {
     find(extension, MORE_BUTTON).click()
 
     expect(find(extension, MENU).hidden).toBe(false)
-    expect(readMenuLabels(extension)).toEqual(['위젯 숨기기', '목록 비우기'])
+    expect(readMenuLabels(extension)).toEqual(['트랙 복사', '위젯 숨기기', '목록 비우기'])
     expect(isConfirmOpen(extension)).toBe(false)
   })
 
