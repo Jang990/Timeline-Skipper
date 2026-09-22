@@ -1,0 +1,25 @@
+/* 유튜브 알림처럼 화면 아래에 잠깐 뜬다. 글자색과 바탕색을 뒤집어 어두운 테마에서도 도드라진다.
+   플로팅 위젯(2500)보다 위에 올라와야 가려지지 않는다. */
+.timeline-skip-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 2600;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  background: var(--timeline-skip-color-text-primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  color: var(--timeline-skip-color-base-background);
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 14px;
+  white-space: nowrap;
+  animation: timeline-skip-toast-in 150ms ease-out;
+}
+
+@keyframes timeline-skip-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}

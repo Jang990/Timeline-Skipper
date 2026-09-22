@@ -69,7 +69,7 @@ async function loadSettings({ storage, floatingState }, state, draw) {
 }
 
 function toView(modules, state, actions, commitSettings) {
-  const { player, playing, panelReveal, fullscreen, pictureInPicture, tabFocus } = modules
+  const { player, playing, panelReveal, fullscreen, pictureInPicture, tabFocus, share, clipboard } = modules
 
   return {
     tracks: state.tracks,
@@ -90,6 +90,7 @@ function toView(modules, state, actions, commitSettings) {
     onTogglePlay: player.togglePlay,
     onToggle: actions.toggleTrack,
     onClear: actions.clearEntries,
+    onShare: () => clipboard.writeText(share.formatShareText(state.tracks, state.disabledStartSeconds)),
     onToggleLoop: actions.toggleLoop,
     onDelete: actions.deleteTrack,
     onEdit: actions.editTrack,
