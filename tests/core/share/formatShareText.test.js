@@ -5,8 +5,7 @@ import { parseTimelineComment } from '../../../src/core/parse/parseTimelineComme
 
 const PROMOTION = [
   '',
-  '크롬 확장 Timeline Skipper로 만든 타임라인입니다. 영상에서 좋아하는 부분만 골라 즐겨보세요.',
-  'https://chromewebstore.google.com/detail/timeline-skipper/hhddcgcemnlnlhbllopmpgipfhpdenik'
+  '크롬 확장 Timeline Skipper로 만든 타임라인입니다. 좋아하는 부분만 골라 즐겨보세요.'
 ]
 
 const TRACKS = [
@@ -36,10 +35,16 @@ describe('formatShareText', () => {
     expect(result.split('\n')[0]).toBe('1:02:33 끝 곡')
   })
 
-  it('트랙 줄 뒤에 빈 줄을 두고 확장 소개와 웹 스토어 주소를 붙인다', () => {
+  it('트랙 줄 뒤에 빈 줄을 두고 확장 소개 한 줄을 붙인다', () => {
     const result = formatShareText(TRACKS, new Set())
 
-    expect(result.split('\n').slice(-3)).toEqual(PROMOTION)
+    expect(result.split('\n').slice(-2)).toEqual(PROMOTION)
+  })
+
+  it('복사한 글에는 링크가 없다', () => {
+    const result = formatShareText(TRACKS, new Set())
+
+    expect(result.split('\n').filter((line) => line.includes('http'))).toEqual([])
   })
 
   it('트랙이 없으면 소개 문구도 없이 빈 문자열을 돌려준다', () => {
