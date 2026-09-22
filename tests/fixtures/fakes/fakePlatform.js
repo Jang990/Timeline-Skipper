@@ -110,3 +110,16 @@ export function createFakePower({ isTurnedOff = false } = {}) {
     }
   }
 }
+
+// 진짜는 시스템 클립보드에 쓴다. jsdom에는 클립보드가 없어서 마지막에 받은 글만 들고 있는다.
+export function createFakeClipboard() {
+  let copiedText = null
+
+  return {
+    writeText: async (text) => {
+      copiedText = text
+    },
+
+    readText: () => copiedText
+  }
+}

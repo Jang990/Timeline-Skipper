@@ -5,7 +5,7 @@ import { buildFixturePage } from '../buildFixturePage.js'
 import { FIXTURE_VIDEO_SECONDS } from '../media/fixtureVideo.js'
 import { createFakePlayer } from './fakePlayer.js'
 import { createFakeStorage } from './fakeStorage.js'
-import { createFakeComments, createFakeFullscreen, createFakePage, createFakePictureInPicture, createFakePower, createFakeTabFocus } from './fakePlatform.js'
+import { createFakeClipboard, createFakeComments, createFakeFullscreen, createFakePage, createFakePictureInPicture, createFakePower, createFakeTabFocus } from './fakePlatform.js'
 import { MODULE_PATHS } from '../../../src/modulePaths.js'
 
 const PANEL_ID = 'timeline-skip-panel'
@@ -36,6 +36,7 @@ export async function startWithFakes({
     fullscreen: createFakeFullscreen(),
     pictureInPicture,
     tabFocus: createFakeTabFocus(),
+    clipboard: createFakeClipboard(),
     power
   }
   const wiring = await import('../../../src/wiring.js')
