@@ -140,6 +140,8 @@ describe('parseTimelineComment', () => {
 - type과 뜻이 겹치는 라벨 만들지 않는다.
 - **커밋 메시지와 브랜치 이름에는 반대로 prefix를 쓴다.** `fix: 여백을 준다`,
   `<type>/#<이슈번호>`. `git log`에는 라벨이 없어서 prefix가 유일한 신호다.
+- `manifest.json`의 `version`은 `/release`에서만 올린다. 릴리스 브랜치만 예외로
+  `release/v<버전>`을 쓴다. 릴리스에는 이슈가 없다.
 
 ### 이슈와 PR 본문
 
