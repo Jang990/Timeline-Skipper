@@ -1,7 +1,7 @@
 import { parseQuickAddInput } from '../../core/parse/parseQuickAddInput.js'
 import { findTakenTimestamp } from '../../core/tracks/findTakenTimestamp.js'
 import { createButton } from '../elements.js'
-import { formatTimestamp } from '../formatTimestamp.js'
+import { formatTimestamp } from '../../core/time/formatTimestamp.js'
 import { createIcon } from '../icons.js'
 
 const PLACEHOLDER = '05:11 곡명 붙여넣기, 또는 제목만'

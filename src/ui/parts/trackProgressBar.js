@@ -1,5 +1,5 @@
 import { toBarRatio } from '../../core/editing/toBarRatio.js'
-import { formatTimestamp } from '../formatTimestamp.js'
+import { formatTimestamp } from '../../core/time/formatTimestamp.js'
 import { bindProgressSeek } from './progressBarSeek.js'
 
 const BAR_SELECTOR = '.timeline-skip-now-playing-bar'

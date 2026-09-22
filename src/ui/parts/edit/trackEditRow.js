@@ -1,7 +1,7 @@
 import { parseTrackInput } from '../../../core/parse/parseTrackInput.js'
 import { isTimestampTaken } from '../../../core/tracks/isTimestampTaken.js'
 import { createInput } from '../../elements.js'
-import { formatTimestamp } from '../../formatTimestamp.js'
+import { formatTimestamp } from '../../../core/time/formatTimestamp.js'
 import { createSheetFooter, createSheetHeader } from './editSheetFrame.js'
 import { createInsertLine } from './insertLine.js'
 import { createTimeStepper } from './timeStepper.js'

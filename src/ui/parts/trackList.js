@@ -1,5 +1,5 @@
 import { createButton } from '../elements.js'
-import { formatTimestamp } from '../formatTimestamp.js'
+import { formatTimestamp } from '../../core/time/formatTimestamp.js'
 import { createIcon } from '../icons.js'
 
 // 원본 댓글은 그대로 남아 언제든 다시 불러올 수 있다. 그래서 "삭제"가 아니라 "빼기"다.
