@@ -19,6 +19,10 @@ const TRAILING_TIME_LINE = /^(.*?\S)[\s([{<▶‣•·*\-–—]*(?:(\d{1,2}):)?
 // 시각과 제목 사이에 흔히 들어가는 장식 기호. 제목의 일부가 아니다.
 const SEPARATORS_AROUND_TITLE = /^[-~:|/,.·\s]+|[-~:|/,·\s]+$/g
 
+// 공유 텍스트가 꺼 둔 트랙을 나타내는 표시. "-"처럼 댓글에 흔한 기호는 평범한 목록이
+// 통째로 꺼져 들어오므로 쓰지 않는다. 제목 맨 앞에 있을 때만 표시로 본다.
+const SKIP_MARK = '[skip]'
+
 export function parseTimelineComment(commentText) {
   if (typeof commentText !== 'string') {
     return []
@@ -60,10 +64,17 @@ function toEntry(hoursText, minutesText, secondsText, titleText) {
     return null
   }
 
-  return {
-    timestampSeconds: hours * 3600 + minutes * 60 + seconds,
-    title: extractTitle(titleText)
+  return readSkipMark({ timestampSeconds: hours * 3600 + minutes * 60 + seconds, title: extractTitle(titleText) })
+}
+
+// 표시가 없는 줄에는 isDisabled를 붙이지 않는다. 항목 모양은 그대로 두고 꺼 둔 줄만 표시를 더 든다.
+// 빠른 추가의 제목만 쓴 줄은 시각이 없어 이 파서를 못 거치므로 따로 불러 쓴다.
+export function readSkipMark(entry) {
+  if (!entry.title.startsWith(SKIP_MARK)) {
+    return entry
   }
+
+  return { ...entry, title: extractTitle(entry.title.slice(SKIP_MARK.length)), isDisabled: true }
 }
 
 function extractTitle(titleText) {

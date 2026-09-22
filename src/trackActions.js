@@ -14,8 +14,19 @@ export function createTrackActions(context) {
 }
 
 function addSource({ state, modules, commit }, commentText) {
-  state.entries.push(...modules.parser.parseTimelineComment(commentText))
+  modules.parser.parseTimelineComment(commentText).forEach((parsed) => {
+    state.entries.push(takeSkipMark(state, parsed))
+  })
   commit()
+}
+
+// isDisabled는 체크 상태로 옮기고 항목에서는 뗀다. 저장되는 항목은 언제나 시각과 제목뿐이다.
+function takeSkipMark(state, { isDisabled, ...entry }) {
+  if (isDisabled === true) {
+    state.disabledStartSeconds.add(entry.timestampSeconds)
+  }
+
+  return entry
 }
 
 // 비우기는 목록과 체크 상태만 지운다. 불러오기 버튼은 다시 누를 수 있게 되돌린다.
@@ -58,7 +69,8 @@ function editTrack(context, startSeconds, entry) {
   applyEntryChange(context, nextEntries, startSeconds, entry.timestampSeconds)
 }
 
-function addTrack(context, entry) {
+function addTrack(context, parsed) {
+  const entry = takeSkipMark(context.state, parsed)
   const nextEntries = context.modules.upserter.upsertEntry(context.state.entries, null, entry)
 
   applyEntryChange(context, nextEntries, null, entry.timestampSeconds)
