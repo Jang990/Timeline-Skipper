@@ -1,4 +1,4 @@
-import { parseTimelineComment } from './parseTimelineComment.js'
+import { parseTimelineComment, readSkipMark } from './parseTimelineComment.js'
 
 const LINE_BREAK = /\r\n|\r|\n/
 
@@ -15,23 +15,19 @@ export function parseQuickAddInput(text, currentTimeSeconds) {
     return [readSingleLine(lines[0], currentTimeSeconds)]
   }
 
-  return lines.flatMap(parseTimelineComment).map((entry) => toEntry(entry.timestampSeconds, entry.title, false))
+  return lines.flatMap(parseTimelineComment).map((entry) => ({ ...entry, usesNow: false }))
 }
 
 function readSingleLine(line, currentTimeSeconds) {
   const [parsed] = parseTimelineComment(line)
 
   if (parsed !== undefined) {
-    return toEntry(parsed.timestampSeconds, parsed.title, false)
+    return { ...parsed, usesNow: false }
   }
 
   // 재생 준비 전이나 라이브에서는 재생 위치가 NaN이다. 그때는 0초로 둔다.
   const timestampSeconds = Number.isFinite(currentTimeSeconds) ? Math.floor(currentTimeSeconds) : 0
 
-  return toEntry(timestampSeconds, line, true)
-}
-
-// usesNow는 저장하지 않는 표시다. 미리보기가 "지금 위치"를 붙일지 가르는 데만 쓴다.
-function toEntry(timestampSeconds, title, usesNow) {
-  return { timestampSeconds, title, usesNow }
+  // usesNow는 저장하지 않는 표시다. 미리보기가 "지금 위치"를 붙일지 가르는 데만 쓴다.
+  return { ...readSkipMark({ timestampSeconds, title: line }), usesNow: true }
 }

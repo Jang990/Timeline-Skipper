@@ -65,4 +65,31 @@ describe('parseQuickAddInput', () => {
 
     expect(Object.keys(result[0]).sort()).toEqual(['timestampSeconds', 'title', 'usesNow'])
   })
+
+  it('[skip]이 붙은 한 줄은 비활성화 표시를 함께 돌려준다', () => {
+    const result = parseQuickAddInput('05:11 [skip] 음악1', 40)
+
+    expect(result).toEqual([{ timestampSeconds: 311, title: '음악1', usesNow: false, isDisabled: true }])
+  })
+
+  it('여러 줄 중 [skip]이 붙은 줄만 비활성화 표시를 돌려준다', () => {
+    const text = ['00:05 첫 곡', '03:20 [skip] 둘째 곡', '05:00 셋째 곡'].join('\n')
+
+    const result = parseQuickAddInput(text, 40)
+
+    expect(result.map((entry) => entry.isDisabled === true)).toEqual([false, true, false])
+    expect(result[1].title).toBe('둘째 곡')
+  })
+
+  it('시각 없이 "[skip] 음악1"만 쓴 한 줄은 지금 재생 위치에 비활성화 표시를 붙여 돌려준다', () => {
+    const result = parseQuickAddInput('[skip] 음악1', 92.7)
+
+    expect(result).toEqual([{ timestampSeconds: 92, title: '음악1', usesNow: true, isDisabled: true }])
+  })
+
+  it('시각 없이 [skip]만 쓴 한 줄은 제목을 "제목 없음"으로 채운다', () => {
+    const result = parseQuickAddInput('[skip]', 40)
+
+    expect(result).toEqual([{ timestampSeconds: 40, title: '제목 없음', usesNow: true, isDisabled: true }])
+  })
 })

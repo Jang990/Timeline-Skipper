@@ -38,12 +38,12 @@ export function createEditingHandlers(editing, { getView, redraw, markArrival })
     onQuickAdd: (entries) => {
       editing.setQuickAddText('')
 
-      entries.forEach(({ timestampSeconds, title }, index) => {
+      entries.forEach(({ timestampSeconds, title, isDisabled }, index) => {
         if (index === entries.length - 1) {
           markArrival(entries[0].timestampSeconds)
         }
 
-        getView().onAdd({ timestampSeconds, title })
+        getView().onAdd({ timestampSeconds, title, isDisabled })
       })
     },
 

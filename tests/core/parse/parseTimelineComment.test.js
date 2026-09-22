@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { parseTimelineComment } from '../../../src/core/parse/parseTimelineComment.js'
+import { parseTimelineComment, readSkipMark } from '../../../src/core/parse/parseTimelineComment.js'
 
 describe('parseTimelineComment', () => {
   it('"00:01 Ballerino" 형식의 줄을 시각과 제목으로 분리한다', () => {
@@ -151,5 +151,63 @@ describe('parseTimelineComment', () => {
     const result = parseTimelineComment(commentText)
 
     expect(result).toEqual([])
+  })
+
+  it('"00:01 [skip] 곡명"은 [skip]을 제목에서 떼고 비활성화로 표시한다', () => {
+    const commentText = '00:01 [skip] 안녕하세요'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([{ timestampSeconds: 1, title: '안녕하세요', isDisabled: true }])
+  })
+
+  it('[skip] 뒤에 제목이 없으면 제목을 "제목 없음"으로 채운다', () => {
+    const commentText = '00:01 [skip]'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([{ timestampSeconds: 1, title: '제목 없음', isDisabled: true }])
+  })
+
+  it('제목 중간의 [skip]은 표시로 보지 않고 제목에 남긴다', () => {
+    const commentText = '00:01 안녕 [skip] 하세요'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([{ timestampSeconds: 1, title: '안녕 [skip] 하세요' }])
+  })
+
+  it('"[skip] Maroon 5 - Sugar 3:12"처럼 시각이 줄 끝에 있어도 [skip]을 읽는다', () => {
+    const commentText = '[skip] Maroon 5 - Sugar 3:12'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([{ timestampSeconds: 192, title: 'Maroon 5 - Sugar', isDisabled: true }])
+  })
+
+  it('[skip]이 없는 줄에는 비활성화 표시가 붙지 않는다', () => {
+    const commentText = ['00:01 [skip] 첫 곡', '03:20 둘째 곡'].join('\n')
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result[1]).toEqual({ timestampSeconds: 200, title: '둘째 곡' })
+  })
+})
+
+describe('readSkipMark', () => {
+  it('제목 맨 앞의 [skip]을 떼고 비활성화 표시를 붙인다', () => {
+    const entry = { timestampSeconds: 40, title: '[skip] 음악1' }
+
+    const result = readSkipMark(entry)
+
+    expect(result).toEqual({ timestampSeconds: 40, title: '음악1', isDisabled: true })
+  })
+
+  it('[skip]이 없으면 항목을 그대로 돌려준다', () => {
+    const entry = { timestampSeconds: 40, title: '음악1' }
+
+    const result = readSkipMark(entry)
+
+    expect(result).toEqual({ timestampSeconds: 40, title: '음악1' })
   })
 })
