@@ -1,4 +1,4 @@
-import { formatTimestamp } from '../formatTimestamp.js'
+import { formatTimestamp } from '../../core/time/formatTimestamp.js'
 import { PROGRESS_PLACED_EVENT, createTrackProgressBar } from './trackProgressBar.js'
 
 // 카드와 위젯은 곡 하나를 트는 플레이어로 읽힌다. 영상 전체에서의 시각은 목록에 있으니 여기서는 트랙 안의 시간만 쓴다.
