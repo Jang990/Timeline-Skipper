@@ -23,7 +23,7 @@ export function mountLoadButtons({ countTimelines, onLoad }) {
     const timelineCount = countTimelines(textElement.innerText)
 
     if (timelineCount > 0) {
-      textElement.insertAdjacentElement('beforebegin', createBanner(textElement, timelineCount, onLoad))
+      textElement.insertAdjacentElement('beforebegin', createBanner(textElement, timelineCount, { countTimelines, onLoad }))
     }
   }
 }
@@ -35,17 +35,36 @@ export function resetLoadButtons() {
   }
 }
 
+// 접힌 댓글은 뒷부분이 DOM에 없다. 펼치기 버튼을 눌러야 같은 노드의 본문이 늘어난다.
+// 클릭 직후에는 옛 본문이고 다음 마이크로태스크에 갱신된다(2026-09-23 치지직 실측).
+// 한 프레임을 기다렸다가 읽는다.
+async function expandAndReadText(textElement) {
+  const expandButton =
+    SELECTORS.commentExpandButton === null ? null : textElement.querySelector(SELECTORS.commentExpandButton)
+
+  if (expandButton === null) {
+    return textElement.innerText
+  }
+
+  expandButton.click()
+  await new Promise(requestAnimationFrame)
+
+  return textElement.innerText
+}
+
 // 되돌릴 때 댓글 본문과 onLoad가 다시 필요하다. 띠가 되돌리기 이벤트를 스스로 들어서
 // 그 둘을 어디에도 따로 보관하지 않는다.
-function createBanner(textElement, timelineCount, onLoad) {
+function createBanner(textElement, timelineCount, { countTimelines, onLoad }) {
   const banner = document.createElement('div')
   banner.className = BANNER_CLASS
 
   const showIdle = () => {
     banner.classList.remove('is-loaded')
-    banner.replaceChildren(createIcon('list'), createIdleMessage(timelineCount), createLoadButton(() => {
-      onLoad(textElement.innerText)
-      showLoaded(banner, timelineCount)
+    banner.replaceChildren(createIcon('list'), createIdleMessage(timelineCount), createLoadButton(async () => {
+      const commentText = await expandAndReadText(textElement)
+
+      onLoad(commentText)
+      showLoaded(banner, countTimelines(commentText))
     }))
   }
 

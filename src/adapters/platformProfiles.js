@@ -18,7 +18,8 @@ export const PLATFORM_PROFILES = {
       twoColumnLayout: 'ytd-watch-flexy[is-two-columns_]',
       narrowPanelContainer: '#below',
       commentThread: 'ytd-comment-thread-renderer',
-      commentText: '#content-text'
+      commentText: '#content-text',
+      commentExpandButton: null
     },
 
     videoIdFrom: (url) => url.searchParams.get('v'),
@@ -43,7 +44,12 @@ export const PLATFORM_PROFILES = {
       narrowPanelContainer: null,
 
       commentThread: '[id^="commentBox-"]',
-      commentText: '[class^="_text_"]'
+
+      // 닉네임도 클래스가 _text_로 시작한다. 본문 칸 안으로 좁혀야 본문만 잡힌다.
+      commentText: '[class^="_content_"] [class^="_text_"]',
+
+      // 긴 댓글은 뒷부분이 DOM에서 잘린 채 이 버튼으로 끝난다. 눌러야 나머지가 붙는다.
+      commentExpandButton: '[class^="_button_more_"]'
     },
 
     videoIdFrom: (url) => url.pathname.match(CHZZK_VIDEO_PATH)?.[1] ?? null,
