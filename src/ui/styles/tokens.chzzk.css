@@ -1,0 +1,17 @@
+/* 치지직 색 변수의 이름은 이 파일에만 둔다. 이름이 여기 모여 있어야 치지직이 이름을 바꿔도
+   이 파일 하나만 고친다. 아래 값은 2026-09-23 실제 다시보기 페이지에서 확인했다.
+   치지직은 테마를 바꿀 때 html에 이 변수들을 다시 정한다. :root에서 받아야 패널 밖의
+   위젯과 댓글 버튼까지 같은 값을 쓴다. 대체값은 치지직 다크 테마의 값이다. */
+:root {
+  --timeline-skip-color-text-primary: var(--color-content-01, #fff);
+  --timeline-skip-color-text-secondary: var(--color-content-02, #dfe2ea);
+  --timeline-skip-color-base-background: var(--sem-color-surface-neutral-weak, #202224);
+  --timeline-skip-color-accent: var(--sem-color-content-brand-base, #00e693);
+  --timeline-skip-color-tonal: var(--sem-color-surface-neutral-alpha-weakest, rgba(255, 255, 255, 0.05));
+  --timeline-skip-color-raised-background: var(--sem-color-surface-neutral-base, #2e3033);
+  --timeline-skip-color-playhead: var(--sem-color-content-brand-strong, #00ffa3);
+  --timeline-skip-color-menu-background: var(--sem-color-surface-neutral-base, #2e3033);
+
+  /* 치지직에는 경고색에 해당하는 변수가 없다(2026-09-23 확인). 고정값을 쓴다. */
+  --timeline-skip-color-danger: #ff6b6b;
+}

@@ -1,3 +1,5 @@
+import { CURRENT_PROFILE } from './selectors.js'
+
 // 유튜브는 댓글을 스크롤에 맞춰 나중에 붙이고, 다른 영상으로 옮겨도 페이지를 새로 읽지 않는다.
 // 그래서 한 번 훑고 끝낼 수 없고 DOM 변화를 계속 지켜봐야 한다.
 const PAGE_SETTLE_MILLISECONDS = 300
@@ -24,7 +26,7 @@ export function onPageChanged(handler) {
   handler()
 }
 
-// 시청 페이지의 영상 식별자. 시청 페이지가 아니면 null이다.
+// 시청 페이지의 영상 식별자. 시청 페이지가 아니면 null이다. 읽는 법은 플랫폼마다 다르다.
 export function readVideoId() {
-  return new URL(location.href).searchParams.get('v')
+  return CURRENT_PROFILE.videoIdFrom(new URL(location.href))
 }

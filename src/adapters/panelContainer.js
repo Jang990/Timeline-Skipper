@@ -10,6 +10,11 @@ export function findPanelContainer() {
 
 // 영상 아래 칸이 없는 페이지(픽스처 등)는 예전처럼 추천 영상 칸을 쓴다.
 export function isBelowVideo() {
+  // 좁아져도 칸이 그대로인 플랫폼은 옮길 자리가 없다.
+  if (SELECTORS.narrowPanelContainer === null) {
+    return false
+  }
+
   const isTwoColumns = document.querySelector(SELECTORS.twoColumnLayout) !== null
 
   return !isTwoColumns && document.querySelector(SELECTORS.narrowPanelContainer) !== null
