@@ -16,6 +16,9 @@ const IS_HEADLESS = process.env.TIMELINE_SKIP_HEADFUL !== '1'
 // 버튼을 찾지 못해 실패하는 일이 없다.
 export const WATCH_URL = 'https://www.youtube.com/watch?v=3yG8GXdnEFQ'
 
+// 타임라인 댓글이 BEST로 올라와 있고, 그 댓글이 더보기로 접혀 있다. 접힘까지 함께 확인된다.
+export const CHZZK_VIDEO_URL = 'https://chzzk.naver.com/video/9366573'
+
 export { expect }
 
 export const test = base.extend({
@@ -41,16 +44,20 @@ export const test = base.extend({
   ],
 
   openWatchPage: async ({ extensionContext }, use) => {
-    await use(() => openWatchPage(extensionContext))
+    await use(() => openPage(extensionContext, WATCH_URL))
+  },
+
+  openChzzkPage: async ({ extensionContext }, use) => {
+    await use(() => openPage(extensionContext, CHZZK_VIDEO_URL))
   }
 })
 
-async function openWatchPage(context) {
+async function openPage(context, url) {
   const page = await context.newPage()
   const extensionErrors = collectExtensionErrors(page)
 
   // load까지 기다리면 광고와 추천 영상 썸네일이 다 내려올 때까지 잡혀 있다.
-  await page.goto(WATCH_URL, { waitUntil: 'domcontentloaded' })
+  await page.goto(url, { waitUntil: 'domcontentloaded' })
 
   return { page, readExtensionErrors: () => [...extensionErrors] }
 }

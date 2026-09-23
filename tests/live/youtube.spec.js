@@ -15,6 +15,11 @@ test.describe('실제 유튜브 시청 페이지', () => {
     const { page } = await openWatchPage()
 
     for (const [name, selector] of Object.entries(PLATFORM_PROFILES.youtube.selectors)) {
+      // 그 플랫폼에 없는 자리는 프로필에서 null이다. 유튜브는 댓글을 잘라내지 않아 펼치기 버튼이 없다.
+      if (selector === null) {
+        continue
+      }
+
       await expect(page.locator(selector).first(), `${name}: ${selector}`).toBeAttached()
     }
   })
