@@ -21,7 +21,11 @@ export const PLATFORM_PROFILES = {
       commentText: '#content-text'
     },
 
-    videoIdFrom: (url) => url.searchParams.get('v')
+    videoIdFrom: (url) => url.searchParams.get('v'),
+
+    // 유튜브는 끝까지 재생해도 video의 ended를 켜지 않는다. 그 자리에서 멈추고 플레이어에
+    // 이 표시만 붙인다. 2026-09-18 실제 시청 페이지에서 확인했다.
+    playerEndedClass: 'ended-mode'
   },
 
   chzzk: {
@@ -42,7 +46,10 @@ export const PLATFORM_PROFILES = {
       commentText: '[class^="_text_"]'
     },
 
-    videoIdFrom: (url) => url.pathname.match(CHZZK_VIDEO_PATH)?.[1] ?? null
+    videoIdFrom: (url) => url.pathname.match(CHZZK_VIDEO_PATH)?.[1] ?? null,
+
+    // 치지직은 표준 ended 이벤트를 준다(2026-09-23 확인). 감시할 표시가 없다.
+    playerEndedClass: null
   }
 }
 
