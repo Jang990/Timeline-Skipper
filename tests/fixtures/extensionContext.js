@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 
 import { test as base, chromium, expect } from '@playwright/test'
 
+import { buildChzzkFixturePage } from './buildChzzkFixturePage.js'
 import { buildFixturePage } from './buildFixturePage.js'
 import { FIXTURE_VIDEO_URL, readFixtureVideo } from './media/fixtureVideo.js'
 
@@ -18,7 +19,13 @@ const BROWSER_CHANNEL = process.env.TIMELINE_SKIP_BROWSER_CHANNEL ?? 'chromium'
 const IS_HEADLESS = process.env.TIMELINE_SKIP_HEADFUL !== '1'
 
 export const WATCH_URL = 'https://www.youtube.com/watch?v=e2eFixture'
-const YOUTUBE_PATTERN = 'https://www.youtube.com/**'
+export const CHZZK_VIDEO_URL = 'https://chzzk.naver.com/video/e2eFixture'
+
+// 플랫폼마다 다른 것은 주소와 픽스처 문서뿐이다. 가로채는 방식은 같다.
+const PLATFORMS = {
+  youtube: { url: WATCH_URL, pattern: 'https://www.youtube.com/**', buildPage: buildFixturePage },
+  chzzk: { url: CHZZK_VIDEO_URL, pattern: 'https://chzzk.naver.com/**', buildPage: buildChzzkFixturePage }
+}
 
 export { expect }
 
@@ -45,17 +52,21 @@ export const test = base.extend({
   },
 
   openWatchPage: async ({ extensionContext }, use) => {
-    await use((fixture) => openWatchPage(extensionContext, fixture))
+    await use((fixture) => openPlatformPage(extensionContext, PLATFORMS.youtube, fixture))
+  },
+
+  openChzzkPage: async ({ extensionContext }, use) => {
+    await use((fixture) => openPlatformPage(extensionContext, PLATFORMS.chzzk, fixture))
   }
 })
 
-// 주소는 youtube.com 그대로 두고 문서만 갈아끼운다. 그래야 manifest의 matches에 걸려
+// 주소는 플랫폼 것 그대로 두고 문서만 갈아끼운다. 그래야 manifest의 matches에 걸려
 // content script가 평소처럼 주입된다.
-async function openWatchPage(context, fixture) {
+async function openPlatformPage(context, platform, fixture) {
   const page = await context.newPage()
   const consoleErrors = collectConsoleErrors(page)
 
-  await page.route(YOUTUBE_PATTERN, (route) => {
+  await page.route(platform.pattern, (route) => {
     if (route.request().url().endsWith(FIXTURE_VIDEO_URL)) {
       return fulfillFixtureVideo(route)
     }
@@ -64,15 +75,15 @@ async function openWatchPage(context, fixture) {
       return route.fulfill({
         status: 200,
         contentType: 'text/html; charset=utf-8',
-        body: buildFixturePage({ videoSourceUrl: FIXTURE_VIDEO_URL, ...fixture })
+        body: platform.buildPage({ videoSourceUrl: FIXTURE_VIDEO_URL, ...fixture })
       })
     }
 
-    // favicon 같은 나머지는 진짜 유튜브로 새지 않게 여기서 끊는다.
+    // favicon 같은 나머지는 진짜 플랫폼으로 새지 않게 여기서 끊는다.
     return route.fulfill({ status: 204, body: '' })
   })
 
-  await page.goto(WATCH_URL)
+  await page.goto(platform.url)
 
   return { page, readConsoleErrors: () => [...consoleErrors] }
 }

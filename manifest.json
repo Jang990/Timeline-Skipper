@@ -18,10 +18,9 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*"],
+      "matches": ["https://www.youtube.com/*", "https://chzzk.naver.com/*"],
       "js": ["src/content.js"],
       "css": [
-        "src/ui/styles/tokens.css",
         "src/ui/styles/panel.css",
         "src/ui/styles/header.css",
         "src/ui/styles/menuConfirm.css",
@@ -42,12 +41,22 @@
         "src/ui/styles/toast.css"
       ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "css": ["src/ui/styles/tokens.youtube.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://chzzk.naver.com/*"],
+      "css": ["src/ui/styles/tokens.chzzk.css"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
       "resources": ["src/modulePaths.js", "src/wiring.js", "src/trackActions.js", "src/core/*/*.js", "src/adapters/*.js", "src/ui/*.js", "src/ui/parts/*.js", "src/ui/parts/edit/*.js", "src/ui/styles/*.css"],
-      "matches": ["https://www.youtube.com/*"]
+      "matches": ["https://www.youtube.com/*", "https://chzzk.naver.com/*"]
     }
   ]
 }
