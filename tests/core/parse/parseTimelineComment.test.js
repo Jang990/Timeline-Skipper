@@ -102,12 +102,43 @@ describe('parseTimelineComment', () => {
     expect(result).toEqual([{ timestampSeconds: 1, title: '첫 곡' }])
   })
 
-  it('시각이 문장 중간에 있으면 타임라인으로 보지 않는다', () => {
+  // 읽히지 않는 불편이 잘못 읽히는 불편보다 크다고 보고 자리를 따지지 않기로 했다.
+  it('문장 중간에 있는 시각도 트랙으로 읽는다', () => {
     const commentText = '노래 3:45 부분이 제일 좋아요'
 
     const result = parseTimelineComment(commentText)
 
-    expect(result).toEqual([])
+    expect(result).toEqual([{ timestampSeconds: 225, title: '부분이 제일 좋아요' }])
+  })
+
+  it('"001 ┌ [00:48:52 곡명]" 처럼 순번과 괘선이 앞에 와도 읽는다', () => {
+    const commentText = '001 ┌ [00:48:52 Shaboozey - A bar Song]'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([{ timestampSeconds: 2932, title: 'Shaboozey - A bar Song]' }])
+  })
+
+  it('한 줄에 시각이 둘이면 각각을 트랙으로 읽는다', () => {
+    const commentText = '1:00 GD - GOOD BOY / 5:43 GD - CRAYON'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([
+      { timestampSeconds: 60, title: 'GD - GOOD BOY' },
+      { timestampSeconds: 343, title: 'GD - CRAYON' }
+    ])
+  })
+
+  it('앞선 시각이 있는 줄에서 시각 뒤가 비면 제목을 "제목 없음"으로 채운다', () => {
+    const commentText = '1:00 첫 곡 5:43'
+
+    const result = parseTimelineComment(commentText)
+
+    expect(result).toEqual([
+      { timestampSeconds: 60, title: '첫 곡' },
+      { timestampSeconds: 343, title: '제목 없음' }
+    ])
   })
 
   it('주소가 적힌 줄은 타임라인으로 보지 않는다', () => {
