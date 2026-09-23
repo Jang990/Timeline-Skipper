@@ -4,13 +4,26 @@ import { CURRENT_PROFILE } from './selectors.js'
 // 그래서 한 번 훑고 끝낼 수 없고 DOM 변화를 계속 지켜봐야 한다.
 const PAGE_SETTLE_MILLISECONDS = 300
 
+// 치지직 다시보기는 채팅이 같은 문서에 계속 붙어서 잠잠해지는 순간이 거의 오지 않는다.
+// 잠잠해지길 끝없이 기다리지 않고, 변화가 이어져도 이만큼 지나면 한 번은 부른다.
+const PAGE_SETTLE_MAX_MILLISECONDS = 1000
+
 // handler는 몇 번 불려도 같은 결과가 되도록(멱등) 만들어서 넘겨야 한다.
 export function onPageChanged(handler) {
   let settleTimerId = null
+  let maxWaitTimerId = null
   let lastHref = location.href
+
+  const settle = () => {
+    clearTimeout(settleTimerId)
+    clearTimeout(maxWaitTimerId)
+    maxWaitTimerId = null
+    handler()
+  }
 
   const observer = new MutationObserver(() => {
     clearTimeout(settleTimerId)
+    maxWaitTimerId ??= setTimeout(settle, PAGE_SETTLE_MAX_MILLISECONDS)
 
     // 옮긴 직후엔 유튜브가 몇 초간 DOM을 계속 붙여 조용해지길 기다리면 이전 영상의 트랙이 남는다.
     // 주소가 바뀐 것만은 바로 알린다. 뒤늦게 붙는 댓글은 아래 타이머가 이어서 잡는다.
@@ -19,7 +32,7 @@ export function onPageChanged(handler) {
       handler()
     }
 
-    settleTimerId = setTimeout(handler, PAGE_SETTLE_MILLISECONDS)
+    settleTimerId = setTimeout(settle, PAGE_SETTLE_MILLISECONDS)
   })
 
   observer.observe(document.body, { childList: true, subtree: true })

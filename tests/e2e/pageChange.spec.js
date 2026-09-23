@@ -23,3 +23,24 @@ test('다른 영상으로 옮기면 DOM이 계속 바뀌는 중에도 목록이 
 
   await expect(page.locator(TITLE)).toHaveCount(0, { timeout: SWITCH_DEADLINE_MILLISECONDS })
 })
+
+// 치지직 다시보기는 채팅이 같은 문서에 계속 붙어서 페이지가 잠잠해지는 순간이 오지 않는다.
+test('DOM이 계속 바뀌는 중에 붙은 타임라인 댓글에도 불러오기 버튼이 곧바로 붙는다', async ({ openWatchPage }) => {
+  const { page } = await openWatchPage()
+
+  await page.evaluate((intervalMilliseconds) => {
+    setInterval(() => document.body.append(document.createElement('div')), intervalMilliseconds)
+  }, BUSY_MUTATION_MILLISECONDS)
+  await page.waitForTimeout(SWITCH_DEADLINE_MILLISECONDS)
+
+  await page.evaluate((commentText) => {
+    const thread = document.createElement('ytd-comment-thread-renderer')
+    const text = document.createElement('yt-attributed-string')
+    text.id = 'content-text'
+    text.textContent = commentText
+    thread.append(text)
+    document.body.append(thread)
+  }, TIMELINE_COMMENT)
+
+  await expect(page.locator(LOAD_BUTTON)).toBeVisible({ timeout: SWITCH_DEADLINE_MILLISECONDS * 2 })
+})
