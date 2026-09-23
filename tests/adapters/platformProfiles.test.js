@@ -22,6 +22,16 @@ describe('플랫폼 프로필', () => {
     expect(chzzkNames).toEqual(youtubeNames)
   })
 
+  // 프로필에 값이 하나 빠지면 그 플랫폼에서만 조용히 실패한다.
+  // 값이 맞는지는 실제 재생으로 e2e가 본다.
+  it('두 프로필이 같은 이름의 값을 모두 갖는다', () => {
+    const youtubeNames = Object.keys(PLATFORM_PROFILES.youtube).sort()
+
+    const chzzkNames = Object.keys(PLATFORM_PROFILES.chzzk).sort()
+
+    expect(chzzkNames).toEqual(youtubeNames)
+  })
+
   it('유튜브 주소의 v 값을 영상 ID로 읽는다', () => {
     const videoId = PLATFORM_PROFILES.youtube.videoIdFrom(new URL('https://www.youtube.com/watch?v=3yG8GXdnEFQ'))
 
