@@ -1,8 +1,8 @@
-import { SELECTORS } from '../../src/adapters/selectors.js'
+import { PLATFORM_PROFILES } from '../../src/adapters/platformProfiles.js'
 import { test, expect } from './liveContext.js'
 
 // 픽스처는 지난번에 본 마크업을 재현할 뿐이라, 유튜브가 마크업을 바꿔도 픽스처 위 테스트는
-// 전부 통과한다. selectors.js가 오늘도 유효한지는 이 파일만이 답한다.
+// 전부 통과한다. 유튜브 프로필의 셀렉터가 오늘도 유효한지는 이 파일만이 답한다.
 //
 // 댓글은 남이 언제든 고칠 수 있다. 그래서 트랙 개수나 곡 제목은 단언하지 않는다.
 // 이 파일이 답해야 하는 질문은 "유튜브가 그 모양 그대로인가"지 "댓글이 그대로인가"가 아니다.
@@ -11,10 +11,10 @@ const ROW = `${PANEL} .timeline-skip-row`
 const LOAD_BUTTON = '.timeline-skip-load-button'
 
 test.describe('실제 유튜브 시청 페이지', () => {
-  test('selectors.js의 셀렉터가 모두 요소를 찾는다', async ({ openWatchPage }) => {
+  test('유튜브 프로필의 셀렉터가 모두 요소를 찾는다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage()
 
-    for (const [name, selector] of Object.entries(SELECTORS)) {
+    for (const [name, selector] of Object.entries(PLATFORM_PROFILES.youtube.selectors)) {
       await expect(page.locator(selector).first(), `${name}: ${selector}`).toBeAttached()
     }
   })
@@ -22,7 +22,7 @@ test.describe('실제 유튜브 시청 페이지', () => {
   test('패널이 추천 영상 칸 안에 그려진다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage()
 
-    await expect(page.locator(`${SELECTORS.panelContainer} > ${PANEL}`)).toBeVisible()
+    await expect(page.locator(`${PLATFORM_PROFILES.youtube.selectors.panelContainer} > ${PANEL}`)).toBeVisible()
   })
 
   // 2026-09-18 실측으로 800px 이하는 모두 한 줄 배치였다. 추천 영상 칸이 숨겨지는 너비다.
@@ -31,7 +31,7 @@ test.describe('실제 유튜브 시청 페이지', () => {
 
     await page.setViewportSize({ width: 800, height: 900 })
 
-    await expect(page.locator(`${SELECTORS.narrowPanelContainer} > ${PANEL}`)).toBeVisible()
+    await expect(page.locator(`${PLATFORM_PROFILES.youtube.selectors.narrowPanelContainer} > ${PANEL}`)).toBeVisible()
   })
 
   test('타임라인 댓글에 불러오기 버튼이 달린다', async ({ openWatchPage }) => {
