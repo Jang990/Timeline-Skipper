@@ -1,4 +1,4 @@
-import { PLAYER_STATE_CLASSES, SELECTORS } from './selectors.js'
+import { CURRENT_PROFILE, SELECTORS } from './selectors.js'
 
 function findVideoElement() {
   return document.querySelector(SELECTORS.video)
@@ -67,10 +67,21 @@ export function onPlayStateChanged(handler) {
   listenInCapturePhase(['play', 'pause'], () => handler())
 }
 
+// 영상이 끝난 것을 아는 방법은 플랫폼마다 다르다.
+export function onEnded(handler) {
+  if (CURRENT_PROFILE.playerEndedClass === null) {
+    listenInCapturePhase(['ended'], () => handler())
+
+    return
+  }
+
+  watchPlayerEndedMark(handler)
+}
+
 // 유튜브는 끝 너머로 옮기거나 끝까지 재생해도 video의 ended를 켜지 않는다. 그 자리에서 멈추고
 // 플레이어에 종료 표시만 붙인다. 재생 시각으로는 알 수 없어서 이 표시가 붙는 순간을 듣는다.
 // 플레이어는 영상이 바뀌어도 그대로라, 처음 재생될 때 한 번만 지켜보기 시작하면 된다.
-export function onEnded(handler) {
+function watchPlayerEndedMark(handler) {
   const watchedPlayers = new WeakSet()
 
   listenInCapturePhase(['play'], (event) => {
@@ -87,10 +98,10 @@ export function onEnded(handler) {
 
 // 표시가 없다가 생길 때만 알린다. 클래스는 종료와 무관한 이유로도 수시로 바뀐다.
 function watchEndedMark(playerElement, handler) {
-  let wasEnded = playerElement.classList.contains(PLAYER_STATE_CLASSES.ended)
+  let wasEnded = playerElement.classList.contains(CURRENT_PROFILE.playerEndedClass)
 
   new MutationObserver(() => {
-    const isEnded = playerElement.classList.contains(PLAYER_STATE_CLASSES.ended)
+    const isEnded = playerElement.classList.contains(CURRENT_PROFILE.playerEndedClass)
 
     if (isEnded && !wasEnded) {
       handler()
