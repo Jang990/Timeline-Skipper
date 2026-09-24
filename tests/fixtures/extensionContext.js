@@ -1,22 +1,9 @@
-import { mkdtemp, rm } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-import { test as base, chromium, expect } from '@playwright/test'
+import { test as base, expect } from '@playwright/test'
 
 import { buildChzzkFixturePage } from './buildChzzkFixturePage.js'
 import { buildFixturePage } from './buildFixturePage.js'
+import { launchExtensionBrowser, resetExtensionBrowser } from './extensionBrowser.js'
 import { FIXTURE_VIDEO_URL, readFixtureVideo } from './media/fixtureVideo.js'
-
-// 확장은 일반 launch()로는 안 붙는다. persistent context여야 한다.
-const EXTENSION_PATH = fileURLToPath(new URL('../../', import.meta.url))
-
-// 로컬에 깔린 Chrome이 아니라 Playwright 번들 Chromium을 쓴다.
-// Chrome 137부터 브랜드 Chrome은 --load-extension을 무시한다(152에서 실측: 확장이
-// chrome://extensions-internals에 아예 안 뜬다). 브랜딩 없는 Chromium은 아직 받아준다.
-const BROWSER_CHANNEL = process.env.TIMELINE_SKIP_BROWSER_CHANNEL ?? 'chromium'
-const IS_HEADLESS = process.env.TIMELINE_SKIP_HEADFUL !== '1'
 
 export const WATCH_URL = 'https://www.youtube.com/watch?v=e2eFixture'
 export const CHZZK_VIDEO_URL = 'https://chzzk.naver.com/video/e2eFixture'
@@ -30,25 +17,34 @@ const PLATFORMS = {
 export { expect }
 
 export const test = base.extend({
+  // 크로미움을 띄우는 데 테스트당 0.4초가 든다. 워커마다 하나만 띄우고 테스트 사이에 비워 쓴다.
+  // 워커 안의 테스트는 차례로 돌아 한 브라우저를 동시에 쓰는 일은 없다.
+  sharedExtensionBrowser: [async ({}, use) => {
+    let sharedBrowser = null
+    const acquire = async (viewport) => {
+      sharedBrowser ??= await launchExtensionBrowser(viewport)
+      return isSameViewport(sharedBrowser.viewport, viewport) ? sharedBrowser : null
+    }
+
+    await use(acquire)
+
+    await sharedBrowser?.close()
+  }, { scope: 'worker' }],
+
   // 고정 viewport는 PiP 창에도 그대로 씌워진다. 창의 진짜 크기를 봐야 하는 spec은 viewport를 null로 둔다.
-  extensionContext: async ({ viewport }, use) => {
-    const userDataDir = await mkdtemp(join(tmpdir(), 'timeline-skip-e2e-'))
-    const context = await chromium.launchPersistentContext(userDataDir, {
-      channel: BROWSER_CHANNEL,
-      headless: IS_HEADLESS,
-      viewport,
-      args: [
-        `--disable-extensions-except=${EXTENSION_PATH}`,
-        `--load-extension=${EXTENSION_PATH}`,
-        // 자동 재생 정책에 걸리면 currentTime이 움직이지 않아 재생 관련 검증이 막힌다.
-        '--autoplay-policy=no-user-gesture-required'
-      ]
-    })
+  // viewport가 다르면 공유 브라우저에 맞출 수 없으므로 그 테스트만 따로 띄운다.
+  extensionContext: async ({ viewport, sharedExtensionBrowser }, use) => {
+    const sharedBrowser = viewport === null ? null : await sharedExtensionBrowser(viewport)
 
-    await use(context)
+    if (sharedBrowser === null) {
+      const ownBrowser = await launchExtensionBrowser(viewport)
+      await use(ownBrowser.context)
+      await ownBrowser.close()
+      return
+    }
 
-    await context.close()
-    await rm(userDataDir, { recursive: true, force: true })
+    await use(sharedBrowser.context)
+    await resetExtensionBrowser(sharedBrowser)
   },
 
   openWatchPage: async ({ extensionContext }, use) => {
@@ -113,4 +109,8 @@ function collectConsoleErrors(page) {
   page.on('pageerror', (error) => consoleErrors.push(error.message))
 
   return consoleErrors
+}
+
+function isSameViewport(left, right) {
+  return left?.width === right?.width && left?.height === right?.height
 }
