@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test'
 
-// 확장은 persistent context 하나에 얹히므로 병렬로 띄우면 서로 방해한다.
+// 테스트마다 프로필 폴더를 따로 만들어 크로미움을 띄우므로 워커끼리 상태가 섞이지 않는다.
+// CI 러너가 4코어라 워커를 더 늘리면 CPU가 먼저 찬다.
 export default defineConfig({
   testDir: './tests',
 
@@ -12,7 +13,7 @@ export default defineConfig({
   testIgnore: '**/live/**',
 
   fullyParallel: false,
-  workers: 1,
+  workers: 2,
 
   // 재시도하지 않는다. 이 스위트는 네트워크를 전부 route로 끊어 결정론적이라, 재시도는
   // "핸들러가 두 번 불린다" 같은 멱등성 버그를 초록으로 덮는 것 말고 하는 일이 없다.
