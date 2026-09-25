@@ -13,9 +13,10 @@
   cursor: pointer;
 }
 
-/* 위젯 제목은 흐르는 글자를 담는 칸이다. 칸의 폭을 재서 흐를 거리를 정하므로 칸이 줄 폭을 다 채워야 한다. */
+/* 짧은 제목 오른쪽의 빈 여백까지 눌리면 아무것도 없는 곳을 눌러 목록으로 넘어간다. 글자만큼만 차지한다.
+   긴 제목은 max-width에 막혀 줄 폭을 채우므로, 흐를 거리를 재는 칸의 폭은 그대로다. */
 .timeline-skip-floating-title.timeline-skip-title-link {
-  width: 100%;
+  width: fit-content;
 }
 
 /* 흐르는 글자는 inline-block이라 버튼의 밑줄이 번지지 않는다. 글자에 직접 긋는다. */
