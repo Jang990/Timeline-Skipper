@@ -1,4 +1,4 @@
-/* 위젯 제목이 폭을 넘을 때만 흐른다. 넘치는지는 floatingBar.js가 재서 is-scrolling을 붙인다. */
+/* 위젯 제목이 폭을 넘을 때만 흐른다. 넘치는지는 titleMarquee.js가 재서 is-scrolling을 붙인다. */
 .timeline-skip-floating-title-text {
   display: inline-block;
 }
