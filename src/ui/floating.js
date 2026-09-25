@@ -1,4 +1,5 @@
-import { createCard, startTitleMarquee } from './parts/floatingBar.js'
+import { createCard } from './parts/floatingBar.js'
+import { startTitleMarquee } from './parts/titleMarquee.js'
 import { createCollapseButton, createPictureInPictureButton } from './parts/floatingButtons.js'
 import { createButton } from './elements.js'
 import { bindFloatingDrag, placeFloating } from './parts/floatingDrag.js'
