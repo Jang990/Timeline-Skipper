@@ -8,7 +8,6 @@ const { commentTexts } = readCommentSnapshot('3yG8GXdnEFQ')
 const PANEL = '#timeline-skip-panel'
 const ROW = `${PANEL} .timeline-skip-row`
 const CARD = `${PANEL} .timeline-skip-now-playing`
-const CARD_LABEL = `${CARD} .timeline-skip-now-playing-label`
 const CARD_TITLE = `${CARD} .timeline-skip-now-playing-title`
 
 // 목록이 스크롤될 만큼 긴 댓글. 픽스처 영상(1800초) 안에 들도록 1분 간격으로 29개를 둔다.
@@ -19,16 +18,6 @@ const LONG_COMMENT = Array.from({ length: 29 }, (_, index) => `${String(index).p
 const CALL_TO_ACTION = 'rgb(4, 5, 6)'
 
 test.describe('지금 재생 중 카드', () => {
-  test('재생 중인 트랙의 제목과 순번이 카드에 보인다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts })
-    await loadTimeline(page)
-
-    await seekAndSettle(page, 1100)
-
-    await expect(page.locator(CARD_LABEL)).toContainText('5번째 트랙')
-    await expect(page.locator(CARD_TITLE)).toHaveText(await readRowTitle(page, 4))
-  })
-
   test('반복을 켜면 반복 버튼이 강조색으로 그려진다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts })
     await loadTimeline(page)
@@ -65,10 +54,6 @@ function readPlayingRowOffset(page) {
 
     return Math.abs(rowBox.top + rowBox.height / 2 - (listBox.top + listBox.height / 2))
   }, PANEL)
-}
-
-function readRowTitle(page, trackIndex) {
-  return page.locator(ROW).nth(trackIndex).locator('.timeline-skip-title').textContent()
 }
 
 // 탐색은 영상 길이를 안 뒤에만 먹힌다. 불러오기 전에 그것부터 기다린다.

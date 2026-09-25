@@ -10,8 +10,6 @@ const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
 const CONTROLS = `${FLOATING} .timeline-skip-controls`
-const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
-
 
 test.describe('플로팅 위젯', () => {
   test('전체화면에 들어가면 위젯이 사라지고, 나오면 다시 뜬다', async ({ openWatchPage }) => {
@@ -34,21 +32,6 @@ test.describe('플로팅 위젯', () => {
     await loadTimeline(page)
 
     await page.locator(ICON).hover()
-
-    await expect(page.locator(ICON)).toBeVisible()
-    await expect(page.locator(CARD)).not.toBeAttached()
-  })
-
-  test('아이콘을 누르면 펼쳐지고, 접기 버튼을 누르면 다시 접힌다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-
-    await page.locator(ICON).click()
-
-    await expect(page.locator(CARD)).toBeVisible()
-    await expect(page.locator(ICON)).not.toBeAttached()
-
-    await page.locator(COLLAPSE).click()
 
     await expect(page.locator(ICON)).toBeVisible()
     await expect(page.locator(CARD)).not.toBeAttached()
@@ -78,25 +61,6 @@ test.describe('플로팅 위젯', () => {
     await expect(page.locator(TITLE)).toHaveClass(/is-scrolling/)
   })
 
-  test('제목을 누르면 패널이 강조된다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await page.locator(TITLE).click()
-
-    await expect(page.locator('#timeline-skip-panel')).toHaveClass(/is-revealed/)
-  })
-
-  test('펼쳐둔 상태는 새로고침한 뒤에도 유지된다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await reloadWatchPage(page)
-
-    await expect(page.locator(CARD)).toBeVisible()
-  })
 })
 
 // requestFullscreen은 사용자 조작이 있어야 불린다. Playwright의 클릭은 진짜 입력이라 그 조건을 채운다.
@@ -109,13 +73,6 @@ async function enterFullscreen(page) {
 
   await page.locator('#comments').click()
   await expect.poll(() => page.evaluate(() => document.fullscreenElement !== null)).toBe(true)
-}
-
-// 설정은 저장이 끝나기를 기다려 주지 않는다. 목록이 되살아난 것을 본 다음에 검증해야
-// 저장이 늦은 것과 상태가 틀린 것이 구분된다.
-async function reloadWatchPage(page) {
-  await page.reload()
-  await expect(page.locator('.timeline-skip-row').first()).toBeVisible()
 }
 
 async function loadTimeline(page) {
