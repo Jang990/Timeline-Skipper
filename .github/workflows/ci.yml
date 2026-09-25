@@ -34,6 +34,26 @@ jobs:
       - run: npm ci
       - run: npm test
 
+      # 브라우저 테스트는 e2e 작업과 나란히 돌도록 여기 둔다. 크로미움은 e2e 작업과 같은 캐시를 쓴다.
+      - name: Playwright 버전 읽기
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: 크로미움 캐시
+        id: browser-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - run: npm run test:browser
+
   e2e:
     runs-on: ubuntu-latest
     steps:

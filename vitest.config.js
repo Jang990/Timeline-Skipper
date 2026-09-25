@@ -5,6 +5,8 @@ import { defineConfig } from 'vitest/config'
 // Playwright는 *.spec.js. 같은 디렉토리에 나란히 있어도 서로 넘보지 않는다.
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.js']
+    include: ['tests/**/*.test.js'],
+    // 브라우저 테스트는 크로미움이 있어야 돈다. npm run test:browser가 따로 맡는다.
+    exclude: ['tests/browser/**', '**/node_modules/**']
   }
 })
