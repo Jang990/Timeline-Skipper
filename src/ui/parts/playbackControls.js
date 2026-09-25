@@ -9,7 +9,16 @@ export function createControls({ isPaused, loopEnabled, playingStartSeconds, onP
   controls.append(
     createControlButton('previous', '이전 트랙', onPrevious),
     createControlButton(isPaused ? 'play' : 'pause', isPaused ? '재생' : '일시정지', onTogglePlay, 'is-primary'),
-    createControlButton('next', '다음 트랙', onNext),
+    createControlButton('next', '다음 트랙', onNext)
+  )
+
+  // 넘기기도 곡을 옮기는 버튼이라 ⏭ 곁에 둔다. 반복은 성격이 달라 늘 마지막이다.
+  // 첫 트랙 앞 구간은 뺄 트랙이 없다. 눌러도 아무 일이 없는 버튼은 두지 않는다.
+  if (playingStartSeconds !== null) {
+    controls.append(createControlButton('skip-track', '체크 해제하고 넘기기', onSkipPlaying))
+  }
+
+  controls.append(
     createControlButton(
       'repeat',
       loopEnabled ? '반복 끄기' : '반복 켜기',
@@ -17,11 +26,6 @@ export function createControls({ isPaused, loopEnabled, playingStartSeconds, onP
       loopEnabled ? 'is-loop is-active' : 'is-loop'
     )
   )
-
-  // 첫 트랙 앞 구간은 뺄 트랙이 없다. 눌러도 아무 일이 없는 버튼은 두지 않는다.
-  if (playingStartSeconds !== null) {
-    controls.append(createControlButton('skip-track', '체크 해제하고 넘기기', onSkipPlaying))
-  }
 
   return controls
 }
