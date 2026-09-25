@@ -9,6 +9,7 @@ const FLOATING = '#timeline-skip-floating'
 const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
+const HEADING = `${FLOATING} .timeline-skip-floating-heading`
 const CONTROLS = `${FLOATING} .timeline-skip-controls`
 
 test.describe('플로팅 위젯', () => {
@@ -61,6 +62,24 @@ test.describe('플로팅 위젯', () => {
     await expect(page.locator(TITLE)).toHaveClass(/is-scrolling/)
   })
 
+  // 누를 수 있는 범위는 제목 버튼의 크기 그대로다. 폭을 재면 빈 여백이 눌리는지가 드러난다.
+  test('짧은 제목은 글자 폭만큼만 차지하고, 긴 제목은 제목 칸 폭을 채운다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
+    await loadTimeline(page)
+    await expandWidget(page)
+
+    const shortTitleBox = await page.locator(TITLE).boundingBox()
+    const headingBox = await page.locator(HEADING).boundingBox()
+
+    expect(shortTitleBox.width).toBeLessThan(headingBox.width / 2)
+
+    await seekTo(page, 400)
+    await expect(page.locator(TITLE)).toHaveText(LONG_TITLE)
+
+    const longTitleBox = await page.locator(TITLE).boundingBox()
+
+    expect(Math.abs(longTitleBox.width - headingBox.width)).toBeLessThanOrEqual(1)
+  })
 })
 
 // requestFullscreen은 사용자 조작이 있어야 불린다. Playwright의 클릭은 진짜 입력이라 그 조건을 채운다.
