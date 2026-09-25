@@ -38,7 +38,8 @@
   #timeline-skip-floating.is-picture-in-picture .timeline-skip-floating-meta,
   #timeline-skip-floating.is-picture-in-picture .timeline-skip-now-playing-elapsed,
   #timeline-skip-floating.is-picture-in-picture .timeline-skip-now-playing-length,
-  #timeline-skip-floating.is-picture-in-picture .timeline-skip-control.is-loop {
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-control.is-loop,
+  #timeline-skip-floating.is-picture-in-picture .timeline-skip-control.is-skip-track {
     display: none;
   }
 
