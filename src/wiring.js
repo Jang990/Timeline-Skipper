@@ -99,6 +99,7 @@ function toView(modules, state, actions, commitSettings) {
     onDisableAll: () => actions.setAllTracks(false),
     onPrevious: () => goToAdjacentTrack(modules, state, 'previous'),
     onNext: () => goToAdjacentTrack(modules, state, 'next'),
+    onSkipPlaying: actions.skipPlayingTrack,
     // PiP 창에서 누르면 탭은 가려져 있다. 탭이 앞으로 온 뒤에 옮겨야 목록 표시가 눈에 띈다.
     onRevealPanel: () => tabFocus.focusTab().then(panelReveal.reveal),
     onSetFloatingHidden: (floatingHidden) => commitSettings({ floatingHidden }),

@@ -9,7 +9,8 @@ export function createTrackActions(context) {
     setAllTracks: (isEnabled) => setAllTracks(context, isEnabled),
     deleteTrack: (startSeconds) => deleteTrack(context, startSeconds),
     editTrack: (startSeconds, entry) => editTrack(context, startSeconds, entry),
-    addTrack: (entry) => addTrack(context, entry)
+    addTrack: (entry) => addTrack(context, entry),
+    skipPlayingTrack: () => skipPlayingTrack(context)
   }
 }
 
@@ -81,4 +82,20 @@ function applyEntryChange({ state, modules, commit }, nextEntries, fromSeconds, 
   state.entries = nextEntries
   state.disabledStartSeconds = modules.flagMover.moveDisabledFlag(state.disabledStartSeconds, fromSeconds, toSeconds)
   commit()
+}
+
+// 체크를 푼 뒤의 이동은 자동 건너뛰기와 같은 판정을 쓴다. 반복·편집·전체 해제의 예외가 그대로 따라온다.
+// 일시정지 중이면 시각이 흐르지 않아 자동 건너뛰기가 돌지 않으므로 여기서 직접 옮긴다.
+function skipPlayingTrack({ state, modules, commit }) {
+  const { player, playing, playback, panel } = modules
+  const currentTimeSeconds = player.getCurrentTimeSeconds()
+
+  state.disabledStartSeconds.add(playing.findPlayingStartSeconds(state.tracks, currentTimeSeconds))
+  commit()
+
+  const targetSeconds = playback.findPlaybackTarget({ ...state, isEditing: panel.isEditing() }, currentTimeSeconds)
+
+  if (targetSeconds !== null) {
+    player.seekTo(targetSeconds)
+  }
 }

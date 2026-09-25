@@ -2,7 +2,7 @@ import { createButton } from '../elements.js'
 import { createIcon } from '../icons.js'
 
 // 패널 카드와 떠 있는 위젯이 함께 쓴다. 버튼을 한 줄로 세우기만 하고, 배치는 놓이는 곳이 정한다.
-export function createControls({ isPaused, loopEnabled, onPrevious, onTogglePlay, onNext, onToggleLoop }) {
+export function createControls({ isPaused, loopEnabled, playingStartSeconds, onPrevious, onTogglePlay, onNext, onToggleLoop, onSkipPlaying }) {
   const controls = document.createElement('div')
   controls.className = 'timeline-skip-controls'
 
@@ -17,6 +17,11 @@ export function createControls({ isPaused, loopEnabled, onPrevious, onTogglePlay
       loopEnabled ? 'is-loop is-active' : 'is-loop'
     )
   )
+
+  // 첫 트랙 앞 구간은 뺄 트랙이 없다. 눌러도 아무 일이 없는 버튼은 두지 않는다.
+  if (playingStartSeconds !== null) {
+    controls.append(createControlButton('skip-track', '체크 해제하고 넘기기', onSkipPlaying))
+  }
 
   return controls
 }
