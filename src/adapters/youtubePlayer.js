@@ -33,6 +33,17 @@ export function seekAndPlay(timestampSeconds) {
   video.play()
 }
 
+export function seekAndPause(timestampSeconds) {
+  const video = findVideoElement()
+
+  if (video === null) {
+    return
+  }
+
+  video.currentTime = timestampSeconds
+  video.pause()
+}
+
 export function isPaused() {
   return findVideoElement()?.paused ?? true
 }

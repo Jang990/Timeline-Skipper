@@ -65,14 +65,49 @@ describe('패널 재생 조작', () => {
     expect(extension.player.getCurrentTimeSeconds()).toBe(1)
   })
 
-  it('마지막 트랙에서 ⏭을 누르면 재생 위치가 그대로다', async () => {
+  it('첫 트랙 시작 3초 안에서 ⏮을 누르면 첫 트랙의 처음으로 되감는다', async () => {
     const extension = await startWithTimeline()
+    extension.player.playTo(3)
+
+    clickButton(extension, '이전 트랙')
+
+    expect(extension.player.getCurrentTimeSeconds()).toBe(1)
+  })
+
+  it('반복이 켜져 있으면 첫 트랙 시작 3초 안에서 ⏮을 누르면 마지막 트랙으로 가서 계속 재생한다', async () => {
+    const extension = await startWithTimeline()
+    clickButton(extension, '반복 켜기')
+    clickButton(extension, '재생')
+    extension.player.playTo(3)
+
+    clickButton(extension, '이전 트랙')
+
+    expect(extension.player.getCurrentTimeSeconds()).toBe(1795)
+    expect(extension.player.isPaused()).toBe(false)
+  })
+
+  it('마지막 트랙에서 ⏭을 누르면 첫 트랙으로 가고 멈춘다', async () => {
+    const extension = await startWithTimeline()
+    clickButton(extension, '재생')
     extension.player.playTo(1797)
 
     clickButton(extension, '다음 트랙')
 
-    expect(extension.player.getCurrentTimeSeconds()).toBe(1797)
-    expect(extension.player.seekHistory).toEqual([])
+    expect(extension.player.getCurrentTimeSeconds()).toBe(1)
+    expect(extension.player.isPaused()).toBe(true)
+    expect(findAll(extension, 'button[aria-label="재생"] svg[data-icon="play"]')).toHaveLength(1)
+  })
+
+  it('반복이 켜져 있으면 마지막 트랙에서 ⏭을 눌러도 첫 트랙으로 가서 계속 재생한다', async () => {
+    const extension = await startWithTimeline()
+    clickButton(extension, '반복 켜기')
+    clickButton(extension, '재생')
+    extension.player.playTo(1797)
+
+    clickButton(extension, '다음 트랙')
+
+    expect(extension.player.getCurrentTimeSeconds()).toBe(1)
+    expect(extension.player.isPaused()).toBe(false)
   })
 })
 

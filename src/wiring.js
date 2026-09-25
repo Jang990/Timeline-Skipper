@@ -1,3 +1,4 @@
+import { createPlaybackActions } from './playbackActions.js'
 import { createTrackActions } from './trackActions.js'
 
 // core / adapters / ui를 연결한다. 계산은 core에, DOM은 adapters와 ui에 있다.
@@ -39,7 +40,7 @@ export function start(modules) {
     draw()
   }
 
-  const actions = createTrackActions({ state, modules, commit })
+  const actions = { ...createTrackActions({ state, modules, commit }), ...createPlaybackActions({ state, modules }) }
 
   bindPage(modules, state, actions, draw)
   bindPlayback(modules, state, draw)
@@ -97,8 +98,8 @@ function toView(modules, state, actions, commitSettings) {
     onAdd: actions.addTrack,
     onEnableAll: () => actions.setAllTracks(true),
     onDisableAll: () => actions.setAllTracks(false),
-    onPrevious: () => goToAdjacentTrack(modules, state, 'previous'),
-    onNext: () => goToAdjacentTrack(modules, state, 'next'),
+    onPrevious: actions.goToPrevious,
+    onNext: actions.goToNext,
     onSkipPlaying: actions.skipPlayingTrack,
     // PiP 창에서 누르면 탭은 가려져 있다. 탭이 앞으로 온 뒤에 옮겨야 목록 표시가 눈에 띈다.
     onRevealPanel: () => tabFocus.focusTab().then(panelReveal.reveal),
@@ -160,17 +161,4 @@ function bindPlayback(modules, state, draw) {
       player.seekAndPlay(targetSeconds)
     }
   })
-}
-
-function goToAdjacentTrack({ adjacent, player }, state, direction) {
-  const targetSeconds = adjacent.findAdjacentTrack(
-    state.tracks,
-    state.disabledStartSeconds,
-    player.getCurrentTimeSeconds(),
-    direction
-  )
-
-  if (targetSeconds !== null) {
-    player.seekTo(targetSeconds)
-  }
 }

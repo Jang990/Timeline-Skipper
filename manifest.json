@@ -56,7 +56,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["src/modulePaths.js", "src/wiring.js", "src/trackActions.js", "src/core/*/*.js", "src/adapters/*.js", "src/ui/*.js", "src/ui/parts/*.js", "src/ui/parts/edit/*.js", "src/ui/styles/*.css"],
+      "resources": ["src/modulePaths.js", "src/wiring.js", "src/trackActions.js", "src/playbackActions.js","src/core/*/*.js", "src/adapters/*.js", "src/ui/*.js", "src/ui/parts/*.js", "src/ui/parts/edit/*.js", "src/ui/styles/*.css"],
       "matches": ["https://www.youtube.com/*", "https://chzzk.naver.com/*"]
     }
   ]
