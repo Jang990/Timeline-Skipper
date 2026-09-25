@@ -123,19 +123,6 @@
   background: var(--timeline-skip-color-tonal);
 }
 
-/* 버튼과 진행 바를 뺀 빈 곳을 잡아 옮긴다. 잡을 수 있는 자리라는 것은 커서로만 알린다.
-   PiP 창에서는 창째로 움직이므로 잡는 시늉을 하지 않는다. */
-#timeline-skip-floating:not(.is-picture-in-picture) .timeline-skip-floating-card {
-  cursor: grab;
-}
-
-/* 끄는 동안 글자가 잡히면 위젯 대신 제목이 끌려 나온다. */
-#timeline-skip-floating.is-dragging,
-#timeline-skip-floating.is-dragging .timeline-skip-floating-card {
-  cursor: grabbing;
-  user-select: none;
-}
-
 /* 위젯에서 넘어온 사람이 목록을 눈으로 찾는 동안만 켜진다. 패널이 아니라 위젯이 만드는
    상태라 이 규칙도 여기 둔다. */
 #timeline-skip-panel.is-revealed {

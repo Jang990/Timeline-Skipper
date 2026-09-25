@@ -8,6 +8,7 @@ const TIMELINE_COMMENT = ['00:00 첫 곡', '05:00 둘째 곡', '10:00 셋째 곡
 const FLOATING = '#timeline-skip-floating'
 const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
+const HANDLE = `${FLOATING} .timeline-skip-floating-handle`
 const BAR = `${FLOATING} .timeline-skip-now-playing-bar`
 const CONTROL = `${FLOATING} .timeline-skip-controls button`
 
@@ -17,12 +18,20 @@ const CARD_WIDTH_PIXELS = 340
 const CARD_HEIGHT_PIXELS = 120
 
 describe('플로팅 위젯 끌어 옮기기', () => {
-  it('빈 곳을 잡고 끌면 위젯이 그만큼 옮겨진다', async () => {
+  it('제목 옆 손잡이를 잡고 끌면 위젯이 그만큼 옮겨진다', async () => {
+    await startExpanded()
+
+    dragFrom(query(HANDLE), { xPixels: -100, yPixels: -50 })
+
+    expect(readPlacement()).toEqual({ right: '124px', bottom: '74px' })
+  })
+
+  it('펼친 카드의 빈 곳을 끌어도 위젯은 움직이지 않는다', async () => {
     await startExpanded()
 
     dragFrom(query(CARD), { xPixels: -100, yPixels: -50 })
 
-    expect(readPlacement()).toEqual({ right: '124px', bottom: '74px' })
+    expect(readPlacement()).toEqual({ right: '', bottom: '' })
   })
 
   it('재생 버튼 위에서 끌어도 위젯은 움직이지 않는다', async () => {
@@ -66,7 +75,7 @@ describe('플로팅 위젯 끌어 옮기기', () => {
 
   it('옮긴 자리는 새로고침해도 그대로다', async () => {
     const extension = await startExpanded()
-    dragFrom(query(CARD), { xPixels: -100, yPixels: -50 })
+    dragFrom(query(HANDLE), { xPixels: -100, yPixels: -50 })
 
     await extension.restart()
 
@@ -75,13 +84,13 @@ describe('플로팅 위젯 끌어 옮기기', () => {
 
   it('끄는 동안 화면이 다시 그려져도 위젯이 옛 자리로 되돌아가지 않는다', async () => {
     const extension = await startExpanded()
-    const card = query(CARD)
-    const box = card.getBoundingClientRect()
+    const handle = query(HANDLE)
+    const box = handle.getBoundingClientRect()
     const fromXPixels = box.left + box.width / 2
     const fromYPixels = box.top + box.height / 2
 
-    pointer(card, 'pointerdown', fromXPixels, fromYPixels)
-    pointer(card, 'pointermove', fromXPixels - 100, fromYPixels - 50)
+    pointer(handle, 'pointerdown', fromXPixels, fromYPixels)
+    pointer(handle, 'pointermove', fromXPixels - 100, fromYPixels - 50)
     extension.player.playTo(180)
 
     expect(readPlacement()).toEqual({ right: '124px', bottom: '74px' })
@@ -89,7 +98,7 @@ describe('플로팅 위젯 끌어 옮기기', () => {
 
   it('창이 좁아져 위젯이 화면 밖에 놓이면 화면 안으로 끌려 들어온다', async () => {
     const extension = await startExpanded()
-    dragFrom(query(CARD), { xPixels: -600, yPixels: -400 })
+    dragFrom(query(HANDLE), { xPixels: -600, yPixels: -400 })
 
     resizeWindow({ widthPixels: 500, heightPixels: 400 })
     extension.player.playTo(120)
@@ -102,8 +111,8 @@ describe('플로팅 위젯 끌어 옮기기', () => {
     extension.pictureInPicture.open()
 
     const pictureInPictureDocument = extension.pictureInPicture.getDocument()
-    const card = pictureInPictureDocument.querySelector('.timeline-skip-floating-card')
-    dragFrom(card, { xPixels: -100, yPixels: -50 })
+    const handle = pictureInPictureDocument.querySelector('.timeline-skip-floating-handle')
+    dragFrom(handle, { xPixels: -100, yPixels: -50 })
 
     const root = pictureInPictureDocument.getElementById('timeline-skip-floating')
     expect({ right: root.style.right, bottom: root.style.bottom }).toEqual({ right: '', bottom: '' })
