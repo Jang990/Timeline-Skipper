@@ -17,22 +17,28 @@ const EXTENSION_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../.
 // 영상 길이는 e2e의 픽스처 영상과 맞춘다. 짧으면 그 뒤의 트랙이 목록에서 잘려 나간다.
 // 진짜 core·ui에 가짜 플레이어·저장소·플랫폼을 붙여 확장을 띄운다.
 // 같은 storage를 넘겨 다시 부르면 새로고침과 같다. restart가 그 일을 한다.
+// commentTexts를 넘기면 그 댓글이 담긴 픽스처 위에서 진짜 댓글 코드가 띠와 버튼을 붙인다.
 export async function startWithFakes({
   videoId = 'fixture-video',
   durationSeconds = FIXTURE_VIDEO_SECONDS,
   storage = createFakeStorage(),
   pictureInPicture = createFakePictureInPicture(),
-  power = createFakePower()
+  power = createFakePower(),
+  commentTexts = null
 } = {}) {
   // panel과 floating은 모듈 안에 상태를 들고 있다. 새로 불러오지 않으면 앞 테스트의 상태가 남는다.
   vi.resetModules()
-  document.body.innerHTML = new DOMParser().parseFromString(buildFixturePage(), 'text/html').body.innerHTML
+  document.body.innerHTML = new DOMParser().parseFromString(buildFixturePage({ commentTexts: commentTexts ?? [] }), 'text/html').body.innerHTML
+
+  if (commentTexts !== null) {
+    readInnerTextAsTextContent()
+  }
 
   const fakes = {
     player: createFakePlayer({ durationSeconds }),
     storage,
     page: createFakePage({ videoId }),
-    comments: createFakeComments(),
+    ...(commentTexts === null ? { comments: createFakeComments() } : {}),
     fullscreen: createFakeFullscreen(),
     pictureInPicture,
     tabFocus: createFakeTabFocus(),
@@ -47,8 +53,24 @@ export async function startWithFakes({
   return {
     ...fakes,
     findPanel: () => document.getElementById(PANEL_ID),
-    restart: () => startWithFakes({ videoId, durationSeconds, storage })
+    restart: () => startWithFakes({ videoId, durationSeconds, storage, commentTexts })
   }
+}
+
+// jsdom은 innerText를 계산하지 않는다(undefined). 픽스처 댓글은 줄바꿈을 글자 그대로 담고
+// pre-wrap으로 보여서 진짜 브라우저에서도 innerText와 textContent가 같다.
+// 진짜 innerText로 읽는지는 loadFromComments e2e가 본다.
+function readInnerTextAsTextContent() {
+  if (Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'innerText') !== undefined) {
+    return
+  }
+
+  Object.defineProperty(HTMLElement.prototype, 'innerText', {
+    configurable: true,
+    get() {
+      return this.textContent
+    }
+  })
 }
 
 // 저장분과 설정 읽기는 비동기다. 이미 풀린 약속들이 모두 이어질 때까지 한 박자 쉰다.

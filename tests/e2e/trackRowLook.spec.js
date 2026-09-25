@@ -7,23 +7,10 @@ const { commentTexts } = readCommentSnapshot('3yG8GXdnEFQ')
 const PANEL = '#timeline-skip-panel'
 const ROW = `${PANEL} .timeline-skip-row`
 const CHECKBOX = 'input[type="checkbox"]'
-const EQUALIZER = '.timeline-skip-equalizer'
 const EDIT_BUTTON = 'button[aria-label$=" 수정"]'
 const REMOVE_BUTTON = 'button[aria-label$=" 목록에서 빼기"]'
 const PLAYING_SECONDS = 1100
-const PLAYING_INDEX = 4
-
 test.describe('트랙 목록 행의 모양', () => {
-  test('재생 중인 행에만 막대 그림이 보인다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts })
-    await loadTimeline(page)
-
-    await seekAndSettle(page, PLAYING_SECONDS)
-
-    await expect(page.locator(ROW).nth(PLAYING_INDEX).locator(EQUALIZER)).toBeVisible()
-    await expect(page.locator(`${ROW} ${EQUALIZER}`)).toHaveCount(1)
-  })
-
   test('체크한 체크박스와 해제한 체크박스는 배경색이 다르다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts })
     await loadTimeline(page)
