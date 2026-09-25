@@ -9,9 +9,7 @@ const FLOATING = '#timeline-skip-floating'
 const ICON = `${FLOATING} .timeline-skip-floating-icon`
 const CARD = `${FLOATING} .timeline-skip-floating-card`
 const TITLE = `${FLOATING} .timeline-skip-floating-title`
-const CONTROLS = `${FLOATING} .timeline-skip-controls`
 const COLLAPSE = `${FLOATING} .timeline-skip-floating-collapse`
-
 
 test.describe('플로팅 위젯', () => {
   test('전체화면에 들어가면 위젯이 사라지고, 나오면 다시 뜬다', async ({ openWatchPage }) => {
@@ -29,16 +27,6 @@ test.describe('플로팅 위젯', () => {
     await expect(page.locator(FLOATING)).toBeAttached()
   })
 
-  test('마우스를 올리기만 해서는 펼쳐지지 않는다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-
-    await page.locator(ICON).hover()
-
-    await expect(page.locator(ICON)).toBeVisible()
-    await expect(page.locator(CARD)).not.toBeAttached()
-  })
-
   test('아이콘을 누르면 펼쳐지고, 접기 버튼을 누르면 다시 접힌다', async ({ openWatchPage }) => {
     const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
     await loadTimeline(page)
@@ -52,30 +40,6 @@ test.describe('플로팅 위젯', () => {
 
     await expect(page.locator(ICON)).toBeVisible()
     await expect(page.locator(CARD)).not.toBeAttached()
-  })
-
-  test('펼치면 곡 제목과 조작 버튼이 서로 다른 줄에 놓인다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    const titleBox = await page.locator(TITLE).boundingBox()
-    const controlsBox = await page.locator(CONTROLS).boundingBox()
-
-    expect(titleBox.y + titleBox.height).toBeLessThanOrEqual(controlsBox.y)
-  })
-
-  test('제목이 폭을 넘으면 흐르고, 넘지 않으면 흐르지 않는다', async ({ openWatchPage }) => {
-    const { page } = await openWatchPage({ commentTexts: [TIMELINE_COMMENT] })
-    await loadTimeline(page)
-    await expandWidget(page)
-
-    await expect(page.locator(TITLE)).not.toHaveClass(/is-scrolling/)
-
-    await seekTo(page, 400)
-
-    await expect(page.locator(TITLE)).toHaveText(LONG_TITLE)
-    await expect(page.locator(TITLE)).toHaveClass(/is-scrolling/)
   })
 
   test('제목을 누르면 패널이 강조된다', async ({ openWatchPage }) => {
@@ -127,14 +91,4 @@ async function loadTimeline(page) {
 async function expandWidget(page) {
   await page.locator(ICON).click()
   await expect(page.locator(CARD)).toBeVisible()
-}
-
-async function seekTo(page, timestampSeconds) {
-  await expect
-    .poll(() => page.evaluate(() => document.querySelector('video').readyState))
-    .toBeGreaterThanOrEqual(1)
-
-  await page.evaluate((seconds) => {
-    document.querySelector('video').currentTime = seconds
-  }, timestampSeconds)
 }

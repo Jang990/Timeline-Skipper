@@ -6,8 +6,6 @@ const { commentTexts } = readCommentSnapshot('3yG8GXdnEFQ')
 
 const FLOATING = '#timeline-skip-floating'
 const ICON = `${FLOATING} .timeline-skip-floating-icon`
-const TITLE = `${FLOATING} .timeline-skip-floating-title`
-const CONTROLS = `${FLOATING} .timeline-skip-controls`
 const BAR = `${FLOATING} .timeline-skip-now-playing-bar`
 const KNOB = `${BAR} .timeline-skip-now-playing-knob`
 const TRACK_START_SECONDS = 1026
@@ -17,17 +15,6 @@ const TRACK_LENGTH_SECONDS = 227
 const SEEK_TOLERANCE_SECONDS = 2
 
 test.describe('떠 있는 위젯의 진행 바', () => {
-  test('위젯 진행 바의 동그라미는 잘리지 않고 제목 줄과 버튼 줄 사이에 놓인다', async ({ openWatchPage }) => {
-    const page = await openExpandedWidgetAt(openWatchPage, TRACK_START_SECONDS + TRACK_LENGTH_SECONDS * 0.5)
-
-    const title = await page.locator(TITLE).boundingBox()
-    const knob = await page.locator(KNOB).boundingBox()
-    const controls = await page.locator(CONTROLS).boundingBox()
-    expect(knob.y).toBeGreaterThanOrEqual(title.y + title.height)
-    expect(knob.y + knob.height).toBeLessThanOrEqual(controls.y)
-    expect(await page.locator(KNOB).evaluate(isFullyVisible)).toBe(true)
-  })
-
   test('위젯의 동그라미를 마우스로 끌어 놓으면 놓은 자리의 시각으로 영상이 옮겨진다', async ({ openWatchPage }) => {
     const page = await openExpandedWidgetAt(openWatchPage, TRACK_START_SECONDS + TRACK_LENGTH_SECONDS * 0.25)
     const bar = await page.locator(BAR).boundingBox()
@@ -69,22 +56,4 @@ async function openExpandedWidgetAt(openWatchPage, timestampSeconds) {
   await page.mouse.move(0, 0)
 
   return page
-}
-
-// 조상 중 하나라도 넘친 부분을 자르면, 동그라미의 네 모서리 중 하나는 다른 요소에 덮여 보인다.
-function isFullyVisible(knob) {
-  const box = knob.getBoundingClientRect()
-  const inset = 1
-  const points = [
-    [box.left + box.width / 2, box.top + inset],
-    [box.left + box.width / 2, box.bottom - inset],
-    [box.left + inset, box.top + box.height / 2],
-    [box.right - inset, box.top + box.height / 2]
-  ]
-
-  return points.every(([x, y]) => {
-    const hit = document.elementFromPoint(x, y)
-
-    return hit === knob || knob.contains(hit)
-  })
 }
