@@ -7,6 +7,7 @@ export const MODULE_PATHS = {
   playback: 'src/core/playback/findPlaybackTarget.js',
   ended: 'src/core/playback/findEndedTarget.js',
   adjacent: 'src/core/playback/findAdjacentTrack.js',
+  next: 'src/core/playback/findNextTrackTarget.js',
   bulk: 'src/core/selection/setAllTracksEnabled.js',
   remover: 'src/core/entries/removeEntriesAt.js',
   flagMover: 'src/core/selection/moveDisabledFlag.js',
