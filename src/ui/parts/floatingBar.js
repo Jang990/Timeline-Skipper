@@ -1,5 +1,5 @@
 import { createButton } from '../elements.js'
-import { createEqualizerIcon } from '../icons.js'
+import { createEqualizerIcon, createIcon } from '../icons.js'
 import { createControls } from './playbackControls.js'
 import { createTimedTrackProgress } from './timedTrackProgress.js'
 
@@ -79,9 +79,19 @@ function createTitleLine({ title, meta }, headingButtons, onRevealPanel) {
 
   const line = document.createElement('div')
   line.className = 'timeline-skip-floating-line'
-  line.append(createEqualizerIcon(), heading, ...headingButtons)
+  line.append(createDragHandle(), heading, ...headingButtons)
 
   return line
+}
+
+// 펼친 위젯은 이 손잡이로만 옮긴다. 평소엔 재생 중 표시로 보이고, 올리면 잡는 점으로 바뀐다.
+function createDragHandle() {
+  const handle = document.createElement('span')
+  handle.className = 'timeline-skip-floating-handle'
+  handle.title = '끌어서 옮기기'
+  handle.append(createEqualizerIcon(), createIcon('grip'))
+
+  return handle
 }
 
 function createMeta(meta) {

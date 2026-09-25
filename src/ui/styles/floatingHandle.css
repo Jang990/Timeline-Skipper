@@ -1,0 +1,44 @@
+/* 펼친 위젯은 제목 옆 손잡이로만 옮긴다. 잡을 수 있다는 것은 커서와 툴팁, 올렸을 때 나타나는 점으로 알린다.
+   흰 카드 위에 회색 판이 튀어나오면 버튼처럼 보여 놀란다. 바탕은 두지 않고 그림만 바꾼다. */
+.timeline-skip-floating-handle {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 32px;
+  margin-left: -6px;
+  border-radius: 6px;
+  color: var(--timeline-skip-color-text-secondary);
+}
+
+.timeline-skip-floating-handle .timeline-skip-equalizer {
+  padding-right: 0;
+}
+
+.timeline-skip-floating-handle .timeline-skip-icon {
+  display: none;
+  width: 18px;
+  height: 18px;
+}
+
+#timeline-skip-floating:not(.is-picture-in-picture) .timeline-skip-floating-handle {
+  cursor: grab;
+}
+
+#timeline-skip-floating:not(.is-picture-in-picture) .timeline-skip-floating-handle:hover .timeline-skip-equalizer,
+#timeline-skip-floating.is-dragging .timeline-skip-floating-handle .timeline-skip-equalizer {
+  display: none;
+}
+
+#timeline-skip-floating:not(.is-picture-in-picture) .timeline-skip-floating-handle:hover .timeline-skip-icon,
+#timeline-skip-floating.is-dragging .timeline-skip-floating-handle .timeline-skip-icon {
+  display: block;
+}
+
+/* 끄는 동안 글자가 잡히면 위젯 대신 제목이 끌려 나온다. */
+#timeline-skip-floating.is-dragging,
+#timeline-skip-floating.is-dragging * {
+  cursor: grabbing;
+  user-select: none;
+}

@@ -35,6 +35,7 @@
         "src/ui/styles/timeFields.css",
         "src/ui/styles/commentButton.css",
         "src/ui/styles/floating.css",
+        "src/ui/styles/floatingHandle.css",
         "src/ui/styles/floatingMarquee.css",
         "src/ui/styles/floatingPip.css",
         "src/ui/styles/powerOff.css",

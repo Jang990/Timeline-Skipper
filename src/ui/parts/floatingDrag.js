@@ -4,9 +4,8 @@ import { clampFloatingPosition, toDraggedPosition } from '../../core/floating/fl
 const DRAGGING_CLASS = 'is-dragging'
 const PICTURE_IN_PICTURE_CLASS = 'is-picture-in-picture'
 
-// 버튼과 진행 바는 각자 할 일이 있다. 그 위에서 시작한 누름은 옮기려는 뜻이 아니다.
-const INTERACTIVE_SELECTOR = 'button, input, a, [role="slider"]'
-const ICON_SELECTOR = '.timeline-skip-floating-icon'
+// 접힌 아이콘과 펼친 카드의 손잡이만 잡힌다. 카드 빈 곳까지 잡히면 버튼 사이를 누르다 위젯이 밀린다.
+const GRAB_SELECTOR = '.timeline-skip-floating-icon, .timeline-skip-floating-handle'
 
 // 위젯을 그 자리에 놓는다. 저장된 자리가 없으면 인라인 값을 걷어 CSS가 쥔 기본 자리로 돌려준다.
 // PiP 창에서는 위젯이 창을 꽉 채운다. 창을 옮기는 것은 브라우저의 몫이라 자리를 정하지 않는다.
@@ -120,12 +119,8 @@ function canGrab(root, target) {
     return false
   }
 
-  // 접힌 아이콘은 통째로 버튼이지만 그것 말고 잡을 곳이 없다. 움직인 거리로 펼치기와 갈라낸다.
-  if (target.closest(ICON_SELECTOR) !== null) {
-    return true
-  }
-
-  return target.closest(INTERACTIVE_SELECTOR) === null
+  // 접힌 아이콘은 통째로 버튼이다. 움직인 거리로 펼치기와 갈라낸다.
+  return target.closest(GRAB_SELECTOR) !== null
 }
 
 // 저장된 값이 아니라 화면에 실제로 놓인 자리에서 출발한다. 저장분이 없는 첫 끌기도 이 값으로 시작한다.
