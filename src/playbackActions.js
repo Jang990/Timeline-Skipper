@@ -8,13 +8,8 @@ export function createPlaybackActions(context) {
 }
 
 function goToPrevious({ state, modules }) {
-  const { adjacent, player } = modules
-  const targetSeconds = adjacent.findAdjacentTrack(
-    state.tracks,
-    state.disabledStartSeconds,
-    player.getCurrentTimeSeconds(),
-    'previous'
-  )
+  const { previous, player } = modules
+  const targetSeconds = previous.findPreviousTrackTarget(state, player.getCurrentTimeSeconds())
 
   if (targetSeconds !== null) {
     player.seekTo(targetSeconds)
