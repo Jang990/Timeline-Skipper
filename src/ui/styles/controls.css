@@ -100,6 +100,11 @@
   height: 20px;
 }
 
+/* ⏭을 누르려다 잘못 누르면 체크가 풀린 채 저장된다. 반대로 틀리는 것은 손해가 없어서 이쪽만 띄운다. */
+.timeline-skip-control.is-skip-track {
+  margin-left: 8px;
+}
+
 .timeline-skip-control.is-loop.is-active {
   background: color-mix(in srgb, var(--timeline-skip-color-accent) 16%, transparent);
   color: var(--timeline-skip-color-accent);
