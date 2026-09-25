@@ -34,6 +34,12 @@ export function createFakePlayer({ durationSeconds = 600 } = {}) {
       seekTo(timestampSeconds)
       paused = false
     },
+    // 진짜 영상은 멈추면 pause 이벤트를 낸다. 버튼 아이콘이 따라오려면 같이 알려야 한다.
+    seekAndPause: (timestampSeconds) => {
+      seekTo(timestampSeconds)
+      paused = true
+      playStateHandlers.forEach((handler) => handler())
+    },
 
     // 아래부터는 테스트가 쥐는 손잡이다.
     // 진짜 플레이어가 영상을 끝낸 순간. 끝난 영상은 멈춰 있다.

@@ -20,6 +20,22 @@ test.describe('패널 재생 조작', () => {
     await expect(page.locator(`${PAUSE_BUTTON} svg[data-icon="pause"]`)).toHaveCount(1)
     expect(await isPaused(page)).toBe(false)
   })
+
+  // jsdom의 가짜 플레이어가 흉내 내는 "옮기고 멈춤"을 진짜 영상도 그대로 하는지 본다.
+  test('[브라우저 기능 되나] 마지막 트랙에서 ⏭을 누르면 영상이 첫 트랙으로 옮겨지고 멈춘다', async ({ openWatchPage }) => {
+    const { page } = await openWatchPage({ commentTexts })
+    await loadTimeline(page)
+    await page.locator(PLAY_BUTTON).click()
+    await page.evaluate(() => {
+      document.querySelector('video').currentTime = 1796
+    })
+    await expect(page.locator(ROW).last()).toHaveClass(/is-playing/)
+
+    await page.locator(`${PANEL} [aria-label="다음 트랙"]`).click()
+
+    await expect.poll(() => isPaused(page)).toBe(true)
+    expect(await page.evaluate(() => document.querySelector('video').currentTime)).toBe(1)
+  })
 })
 
 // 탐색은 영상 길이를 안 뒤에만 먹힌다. 불러오기 전에 그것부터 기다린다.
