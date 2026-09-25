@@ -59,13 +59,10 @@ jobs:
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
 
       # 확장은 크로미움에서만 돈다. firefox와 webkit까지 받으면 캐시만 뚱뚱해진다.
+      # 캐시가 맞으면 OS 라이브러리(apt)도 설치하지 않는다. ubuntu-latest에는 크롬이 미리 깔려 있어
+      # 크로미움이 쓰는 라이브러리가 이미 있다. 러너 이미지에서 빠지면 e2e가 라이브러리 오류로 깨진다.
       - if: steps.browser-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
-
-      # 캐시에 들어가는 건 브라우저뿐이다. apt로 깔리는 OS 라이브러리는 매번 다시 깔아야 한다.
-      # 이 분기를 빼면 "캐시는 맞았는데 브라우저가 안 뜬다"가 된다.
-      - if: steps.browser-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
 
       - run: npm run test:e2e
 
